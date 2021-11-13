@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:tabview="clr-namespace:Xam.Plugin.TabView;assembly=Xam.Plugin.TabView"
+             mc:Ignorable="d"
+             BackgroundColor="Transparent"
+             x:Class="Daftari.Views.MasterHomePageDetail"
+             Title="Detail">
+    <NavigationPage.TitleView>
+        <StackLayout>
+            <Label Text="Home" TextColor="White" HorizontalTextAlignment="Center" FontSize="20" Margin="0, 0, 75, 0" />
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <StackLayout BackgroundColor="Transparent" Padding="10">
+        
+    <Frame BackgroundColor="White"
+           CornerRadius="20"
+           Margin="15,20">
+            <StackLayout>
+                <tabview:TabViewControl
+                HeaderBackgroundColor="Transparent"
+                HeaderSelectionUnderlineColor="Black"
+                HeaderTabTextColor="#1E3565"
+                HeaderTabTextFontAttributes="Bold"
+                HorizontalOptions="FillAndExpand"
+                IsSwipeEnabled="True"
+                TabHeaderSpacing="100"
+                VerticalOptions="FillAndExpand">
+                    <tabview:TabViewControl.ItemSource>
+                        <tabview:TabItem HeaderText="Plans">
+                            <StackLayout>
+                                <Label
+                                    FontSize="Large"
+                                    FontAttributes="Bold"
+                                    HorizontalTextAlignment="Center"
+                                    HorizontalOptions="Center"
+                                    Text="Staff plan"
+                                    Margin="0,20,0,0"
+                                    VerticalOptions="Center" />
+
+                                <BoxView BackgroundColor="#1892D5" Margin="50,0" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+
+                            </StackLayout>
+                        </tabview:TabItem>
+                        <tabview:TabItem HeaderText="Schedule">
+                            <Label
+                            FontSize="Large"
+                            HorizontalOptions="Center"
+                            Text="Hello There!"
+                            VerticalOptions="Center" />
+                        </tabview:TabItem>
+                        <tabview:TabItem HeaderText="Bills">
+                            <Label
+                            FontSize="Large"
+                            HorizontalOptions="Center"
+                            Text="Hello There!"
+                            VerticalOptions="Center" />
+                        </tabview:TabItem>
+                    </tabview:TabViewControl.ItemSource>
+                </tabview:TabViewControl>
+            </StackLayout>
+
+        </Frame>
+             
+  </StackLayout>
+</ContentPage>

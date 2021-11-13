@@ -1,0 +1,278 @@
+﻿@model Daftari.ViewModel.ChemicalRecordFormVM
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datetimepicker")
+}
+@{
+    ViewBag.Title = "New Chemical Record";
+}
+
+<h2>New Chemical Record</h2>
+
+@using (Html.BeginForm())
+{
+
+    <div class="well">
+        <fieldset style="margin-left: 20px;margin-right: 20px;">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @*@Html.HiddenFor(model => model.ChemicalRecordSettingsID)*@
+
+            @if (Model.ChemicalSettings.FreeChlorine == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.FreeChlorine, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.FreeChlorine, new { htmlAttributes = new { @class = "form-control", @required = "required", @type = "number", @min = "0", @max = "30", @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.FreeChlorine, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.TotalChlorine == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.TotalChlorine, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.TotalChlorine, new { htmlAttributes = new { @class = "form-control", @required = "required", @type = "number", @min = "0", @max = "30", @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.TotalChlorine, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.TotalBromine == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.TotalBromine, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.TotalBromine, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = "30", @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.TotalBromine, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.pH == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.pH, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.pH, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = "9", @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.pH, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.PoolTemp == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.HiddenFor(model => model.PoolTempMax, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.PoolTemp, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.PoolTemp, Model.TempUnits, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.PoolTemp, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = Model.PoolTempMax.ToString(), @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.PoolTemp, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.AirTemp == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.HiddenFor(model => model.AirTempMax, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.AirTemp, htmlAttributes: new { @class = "control-label" })
+                    @Html.LabelFor(model => model.AirTemp, Model.TempUnits, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.AirTemp, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = Model.AirTempMax.ToString(), @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.AirTemp, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.WaterClarity == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.WaterClarity, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EnumDropDownListFor(model => model.WaterClarity, "Select...", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.WaterClarity, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.Alkalinity == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.Alkalinity, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.Alkalinity, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = "300", @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.Alkalinity, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.CalciumHardness == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.CalciumHardness, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.CalciumHardness, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = "2000", @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.CalciumHardness, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.Backwash == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.Backwash, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EnumDropDownListFor(model => model.Backwash, "Select...", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Backwash, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @if (Model.ChemicalSettings.HRR_ORP == Daftari.Chemicals.Enum.Visibility.Visible)
+            {
+                <div class="form-group label-floating">
+                    @Html.LabelFor(model => model.HRR_ORP, htmlAttributes: new { @class = "control-label" })<br />
+                    @Html.EditorFor(model => model.HRR_ORP, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @max = "2000", @step = "0.01", @value = "0" } })
+                    @Html.ValidationMessageFor(model => model.HRR_ORP, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            @for (var i = 0; i < Model.ChemicalCustomValues.Count; i++)
+            {
+                var dic = new Dictionary<string, object>();
+                if (Model.ChemicalCustomValues[i].ChemicalCustomField.Required == Daftari.Chemicals.Enum.YesNo.Yes)
+                {
+                    dic.Add("required", "required");
+                }
+                <div class="form-group label-floating">
+                    @Html.HiddenFor(model => model.ChemicalCustomValues[i].ChemicalCustomField.ChemicalCustomFieldID)
+                    @Html.HiddenFor(model => model.ChemicalCustomValues[i].ChemicalCustomField.Label)
+                    @Html.HiddenFor(model => model.ChemicalCustomValues[i].ChemicalCustomField.Label)
+
+                    @Html.Label(Model.ChemicalCustomValues[i].ChemicalCustomField.Label, htmlAttributes: new { @class = "control-label" })<br />
+                    @switch (Model.ChemicalCustomValues[i].ChemicalCustomField.InputType)
+                    {
+                        case Daftari.Chemicals.Enum.InputType.Text:
+                            @Html.EditorFor(model => model.ChemicalCustomValues[i].CustomValue, new { htmlAttributes = Model.GetHtmlAttributes(new { @class = "form-control" }, dic) })
+                            break;
+                        case Daftari.Chemicals.Enum.InputType.Number:
+                            @Html.EditorFor(model => model.ChemicalCustomValues[i].CustomValue, new { htmlAttributes = Model.GetHtmlAttributes(new { @class = "form-control", @type = "number" }, dic) })
+                            break;
+                        case Daftari.Chemicals.Enum.InputType.Checkbox:
+                            @Html.CheckBox("ChemicalCustomValues[" + i + "].CustomValue", (Model.ChemicalCustomValues[i].CustomValue == "true"))
+                            break;
+                        case Daftari.Chemicals.Enum.InputType.RadioButton:
+                            foreach (var opt in Model.ChemicalCustomValues[i].ChemicalCustomField.SelectOptions?.Split(',') ?? new string[0])
+                            {
+                                @Html.RadioButtonFor(model => model.ChemicalCustomValues[i].CustomValue, opt, dic) @Html.Label(opt, htmlAttributes: new { @class = "control-label", style = "margin-right:30px;margin-left:5px;" })
+                            }
+                            break;
+                        case Daftari.Chemicals.Enum.InputType.Text_Area:
+                            @Html.TextAreaFor(model => model.ChemicalCustomValues[i].CustomValue, Model.GetHtmlAttributes(new { @class = "form-control" }, dic))
+                            break;
+                        case Daftari.Chemicals.Enum.InputType.Select:
+                            @Html.DropDownListFor(model => model.ChemicalCustomValues[i].CustomValue, new SelectList(Model.ChemicalCustomValues[i].ChemicalCustomField.SelectOptions?.Split(',').Select(x => x?.Trim())), "Select...", htmlAttributes: new { @class = "form-control select2", data_toggle = "select2" })
+                            break;
+                        case Daftari.Chemicals.Enum.InputType.Date:
+                            @Html.EditorFor(model => model.ChemicalCustomValues[i].CustomValue, new { htmlAttributes = new { @class = "form-control new-datepicker" } })
+                            break;
+                        case Daftari.Chemicals.Enum.InputType.Time:
+                            @Html.EditorFor(model => model.ChemicalCustomValues[i].CustomValue, new { htmlAttributes = Model.GetHtmlAttributes(new { @class = "form-control", data_provide = "timepicker" }, dic) })
+                            break;
+                    }
+                    @Html.ValidationMessageFor(model => model.ChemicalCustomValues[i].CustomValue, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.TextAreaFor(model => model.Notes, new { @class = "form-control", @style = "width:100%;" })
+                @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+            </div>
+
+            <text style="font-size: 20px;font-weight: 600;color: red;">Admin Only</text>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Employee, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.DropDownListFor(model => model.Employee, (MultiSelectList)ViewBag.Users, "Select...", htmlAttributes: new { @class = "form-control select2", data_toggle = "select2", @required = "required" })
+                @Html.ValidationMessageFor(model => model.Employee, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-static">
+                @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Date, "{0:yyyy/MM/dd HH:mm}", new { htmlAttributes = new { @class = "form-control new-datepicker", @required = "required" } })
+                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Add" class="btn btn-light" />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/datetimepicker")
+
+    <script>
+
+        $.fn.datetimepicker.defaults.icons = {
+                time: 'dripicons-clock',
+                date: 'dripicons-calendar',
+                up: 'dripicons-chevron-up',
+                down: 'dripicons-chevron-down',
+                previous: 'dripicons-chevron-left',
+                next: 'dripicons-chevron-right',
+                today: 'dripicons-crosshair',
+                clear: 'dripicons-trash'
+        };
+
+        //$.fn.datetimepicker.defaults.collapse = false;
+        //$.fn.datetimepicker.defaults.sideBySide = true;
+        //$.fn.datetimepicker.defaults.keepOpen = true;
+        //$.fn.datetimepicker.defaults.useCurrent = true;
+        $.fn.datetimepicker.defaults.showTodayButton = true;
+
+        //$.fn.datetimepicker.defaults = {
+        //    format: false,
+        //    dayViewHeaderFormat: 'MMMM YYYY',
+        //    extraFormats: false,
+        //    stepping: 1,
+        //    minDate: false,
+        //    maxDate: false,
+        //    useCurrent: true,
+        //    collapse: true,
+        //    locale: moment.locale(),
+        //    defaultDate: false,
+        //    disabledDates: false,
+        //    enabledDates: false,
+        //    icons: {
+        //        time: 'glyphicon glyphicon-time',
+        //        date: 'glyphicon glyphicon-calendar',
+        //        up: 'glyphicon glyphicon-chevron-up',
+        //        down: 'glyphicon glyphicon-chevron-down',
+        //        previous: 'glyphicon glyphicon-chevron-left',
+        //        next: 'glyphicon glyphicon-chevron-right',
+        //        today: 'glyphicon glyphicon-screenshot',
+        //        clear: 'glyphicon glyphicon-trash'
+        //    },
+        //    useStrict: false,
+        //    sideBySide: false,
+        //    daysOfWeekDisabled: [],
+        //    calendarWeeks: false,
+        //    viewMode: 'days',
+        //    toolbarPlacement: 'default',
+        //    showTodayButton: false,
+        //    showClear: false,
+        //    widgetPositioning: {
+        //        horizontal: 'auto',
+        //        vertical: 'auto'
+        //    },
+        //    widgetParent: null,
+        //    keepOpen: false
+        //};
+
+        var rootURL = '@Url.Action("/")';
+
+        $(document).ready(function () {
+            $(".new-datepicker").datetimepicker({
+                format: 'YYYY/MM/DD HH:mm'
+                //format: 'YYYY-MM-DD HH:mm:ss'
+            });
+            $('#Date').val(moment(new Date()).format('YYYY/MM/DD HH:mm'));
+        });
+    </script>
+
+}

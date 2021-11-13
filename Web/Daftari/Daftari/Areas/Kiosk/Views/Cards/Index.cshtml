@@ -1,0 +1,282 @@
+﻿@model Daftari.Areas.Kiosk.ViewModel.KioskCardVM
+@section CustomStyles {
+
+    @Styles.Render("~/Content/mobilecss")
+
+    <style>
+        .star {
+            visibility: hidden;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+            .star:before {
+                content: "\2606";
+                position: absolute;
+                visibility: visible;
+                margin-top: -14px;
+            }
+
+            .star:checked:before {
+                content: "\2605";
+                position: absolute;
+            }
+
+        .star-label {
+            padding-left: 10px;
+        }
+
+        .list-group-item {
+            width: 100%;
+            border: solid;
+            border-width: 0.5px;
+            padding: 5px;
+            border-color: lightgray;
+        }
+
+        .title-row {
+            background: #102d5d;
+            color: white;
+        }
+
+        .BEGINNER-Title {
+            color: #ed1c24;
+        }
+
+        .INTERMEDIATE-Title {
+            color: #b3e7fb;
+        }
+
+        .ADVANCED-Title {
+            color: #80cc28;
+        }
+
+        .BEGINNER-Content {
+            color: #dc2b31;
+        }
+
+        .INTERMEDIATE-Content {
+            color: #0f7db8;
+        }
+
+        .ADVANCED-Content {
+            color: #109e53;
+        }
+
+        .Skill-Content {
+            background: #e9e9e9;
+            color: #102d5d;
+            font-weight: bold;
+        }
+
+        @@media (max-width: 767px) {
+            .profilePic {
+                display: block;
+                max-height: 200px;
+                max-width: 200px;
+                height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        .profilePic {
+            display: block;
+            max-height: 200px;
+            width: 100%;
+            height: auto;
+        }
+    </style>
+}
+@{
+    ViewBag.Title = "Card";
+}
+
+    @foreach (var item in Model.Ids)
+    {
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">@item.Value</div>
+                    @Html.ActionLink("Go to Card", "Index", new { ids = string.Join(",", Model.Ids.Select(i => i.Key)), displayID = item.Key }, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Card == null)
+    {
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">No Card Found</div>
+                    @Html.ActionLink("Back", "Search", null, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Card</h5>
+
+
+                    @Html.HiddenFor(model => model.Card.StudentCardID)
+                    @Html.HiddenFor(model => model.Card.CustomerID)
+                    @Html.HiddenFor(model => model.Card.ExternalReferenceID)
+                    @Html.HiddenFor(model => model.Card.Level)
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img class="img-responsive profilePic" src="@Model.Card.Customer.PhotoLG" />
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Card.Initial, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.Card.Initial, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Card.Initial, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Card.LastName, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.Card.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Card.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    &nbsp;
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <h3 class="pull-right" style="text-decoration:underline"><b>@Model.Card.Level.GetDisplay()</b></h3>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Card.StudentName, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.Card.StudentName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Card.StudentName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Card.Age, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.Card.Age, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Card.Age, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Card.StartDate, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.Card.StartDate, new { htmlAttributes = new { @class = "form-control dp" } })
+                                        @Html.ValidationMessageFor(model => model.Card.StartDate, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="title-row">
+                                <th class="title">SKILL SET</th>
+                                <th class="title BEGINNER-Title">BEGINNER SKILL</th>
+                                <th class="title INTERMEDIATE-Title">INTERMEDIATE SKILL</th>
+                                <th class="title ADVANCED-Title">ADVANCED SKILLS - FINAL SKILL MASTERED 3 TIMES</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model.Card.StudentCardDetails.OrderBy(s => s.StudentCardDetailID).ThenBy(s => s.SkillID).GroupBy(s => s.Skill.SetName))
+                            {
+                                <tr class="card-content-row">
+                                    <td class="card-content Skill-Content">@item.Key</td>
+                                    <td class="card-content BEGINNER-Content">
+                                        @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.BEGINNER))
+                                        {
+                                            @Html.EditorFor(model => skillitem, "CardDetail")<br />
+                                        }
+                                    </td>
+                                    <td class="card-content INTERMEDIATE-Content">
+                                        @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.INTERMEDIATE))
+                                        {
+                                            @Html.EditorFor(model => skillitem, "CardDetail")<br />
+                                        }
+                                    </td>
+                                    <td class="card-content ADVANCED-Content">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED && !i.Skill.Name.Contains("Mastery")))
+                                                {
+                                                    @Html.EditorFor(model => skillitem, "CardDetail")<br />
+                                                }
+                                            </div>
+                                            @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED && i.Skill.Name.Contains("Mastery")))
+                                            {
+                                                var htmlAttributesMastery = new Dictionary<string, object>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        {
+                                            { "class" , $"tick{(skillitem.IsComplete ? "" : " toSave")}" },
+                                            { "checked", skillitem.IsComplete },
+                                            { "data-detailID", skillitem.StudentCardDetailID },
+                                        };
+
+
+                                                htmlAttributesMastery.Add("disabled", "disabled");
+
+
+                                                <div class="col-md-1">
+                                                    <div class="checkbox">
+                                                        <label>
+
+                                                            @Html.EditorFor(i => skillitem.IsComplete, new { htmlAttributes = htmlAttributesMastery })
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div> <!-- end card-body-->
+            </div>
+        </div>
+    }
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('[data-toggle="tooltip"]').tooltip({ delay: { "hide": 100 } });
+
+            $("#checkAll").click(function(){
+                $('form input.toSave').not(this).prop('checked', this.checked);
+            });
+        });
+
+        function getTime() {
+            try {
+                return moment('@ViewBag.StartDate');
+            } catch (e) {
+                return null;
+            }
+        }
+
+    function setInputValue(selector, value) {
+        $(selector).val(value);
+        $(selector).closest('div.form-group').removeClass('is-empty');
+    }
+    </script>
+}

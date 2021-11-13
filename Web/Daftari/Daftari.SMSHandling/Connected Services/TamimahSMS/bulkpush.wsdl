@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="https://www.tamimahsms.com/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="https://www.tamimahsms.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://www.tamimahsms.com/">
+      <s:element name="SendSMS">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Priority" type="s:long" />
+            <s:element minOccurs="0" maxOccurs="1" name="Schdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Sender" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AppID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SourceRef" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MSISDNs" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SendSMSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendSMSResult" type="tns:SendStatus" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="SendStatus">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Proccessed" type="s:long" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BatchRefCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusDesc" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SendSMSSoapIn">
+    <wsdl:part name="parameters" element="tns:SendSMS" />
+  </wsdl:message>
+  <wsdl:message name="SendSMSSoapOut">
+    <wsdl:part name="parameters" element="tns:SendSMSResponse" />
+  </wsdl:message>
+  <wsdl:portType name="BulkPushSoap">
+    <wsdl:operation name="SendSMS">
+      <wsdl:input message="tns:SendSMSSoapIn" />
+      <wsdl:output message="tns:SendSMSSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BulkPushSoap" type="tns:BulkPushSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendSMS">
+      <soap:operation soapAction="https://www.tamimahsms.com/SendSMS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="BulkPushSoap12" type="tns:BulkPushSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendSMS">
+      <soap12:operation soapAction="https://www.tamimahsms.com/SendSMS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BulkPush">
+    <wsdl:port name="BulkPushSoap" binding="tns:BulkPushSoap">
+      <soap:address location="https://tamimahsms.com/User/bulkpush.asmx" />
+    </wsdl:port>
+    <wsdl:port name="BulkPushSoap12" binding="tns:BulkPushSoap12">
+      <soap12:address location="https://tamimahsms.com/User/bulkpush.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

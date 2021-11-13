@@ -1,0 +1,196 @@
+﻿@using System.Web.Script.Serialization
+@model IEnumerable<Daftari.Chemicals.Models.ChemicalRecord>
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+    @Styles.Render("~/Content/loader")
+    @Styles.Render("~/Content/notification")
+    <style>
+
+        #tableContainer {
+            overflow: auto;
+            min-height: 300px;
+        }
+
+        .loader {
+            display: none;
+            overflow: hidden;
+        }
+        td:nth-child(1) {  
+            width: 45px !important;
+        }
+        tr th:nth-child(1n + 2){
+          width: 45px !important;
+        }
+    </style>
+}
+
+@{
+    ViewBag.Title = "Chemical Records";
+
+    var columns = (ViewBag.ColumnDefinitions as Dictionary<string, string>).Select(x => new
+    {
+        data = x.Key
+    }).ToList();
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Chemical Records</h5>
+
+                <div class="form-group label-static">
+                    @Html.Label("Date", htmlAttributes: new { @class = "control-label" })
+                    @Html.Editor("Date", new { htmlAttributes = new { @class = "form-control date", data_toggle = "date-picker", data_time_Picker = "true" } })
+                    @Html.ValidationMessage("Date", "", new { @class = "text-danger" })
+                </div>
+
+                <table id="dtTable" class="table table-bordered table-hover">
+                    <thead class="thead-default">
+                        <tr>
+                            @if (ViewBag.ColumnDefinitions != null)
+                            {
+                                foreach (KeyValuePair<string, string> column in ViewBag.ColumnDefinitions as Dictionary<string, string>)
+                                {
+                                    <th>
+                                        @column.Value
+                                    </th>
+                                }
+                            }
+                            else
+                            {
+                                <th>
+                                    Time
+                                </th>
+                                <th>
+                                    Free Cl
+                                </th>
+                                <th>
+                                    Total Cl
+                                </th>
+                                <th>
+                                    pH
+                                </th>
+                                <th>
+                                    Alk
+                                </th>
+                                <th>
+                                    CH
+                                </th>
+                                <th>
+                                    Pool(C)
+                                </th>
+                                <th>
+                                    Air(C)
+                                </th>
+                                <th>
+                                    Water Clarity
+                                </th>
+                                <th>
+                                    Backwash
+                                </th>
+                            }
+                            <th>
+
+                            </th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/datatables")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
+
+    <script type="text/javascript">
+
+        var rootURL = '@Url.Action("/")';
+        var t_columns = @Html.Raw(new JavaScriptSerializer().Serialize(columns));
+        t_columns.push({ "data": null });
+
+        //t_columns.push({ "data": null, "defaultContent": '<a class="btn btn-primary btn-sm" href="' + rootURL + 'View?id=' + 'data.UserName' + '" data-toggle="tooltip" data-placement="bottom" title="Edit" data-animation="true"><i class="dripicons-expand-2"></i></a>' });
+        var table = $('#dtTable').DataTable({
+            lengthChange: false,
+            "ajax": {
+                "url": rootURL + 'getJSON',
+                "data": function (d) {
+                    var dates = $('#Date').val().split(' - ');
+                    d.StartDate = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+                    d.EndDate = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+                    //d.StartDate = $('#StartDate').val();
+                    //d.EndDate = $('#EndDate').val();
+                }
+            },
+           "columns":  t_columns,
+            columnDefs: [
+                { "width": "100px", "targets": 0 }
+            ],
+            order: [0, 'desc'],
+            "rowCallback": function (row, data, index) {
+                 $('td:eq(' + (t_columns.length - 1) + ')', row).html(
+                    '<a class="btn btn-primary btn-sm" href="' + rootURL + 'View/' + data.Id + '" data-toggle="tooltip" data-placement="bottom" title="View" data-animation="true"><i class="dripicons-expand-2"></i></a>');
+            }
+        });
+
+        //initialize Constructor for Button Group
+        new $.fn.dataTable.Buttons(table, {
+            buttons: true,
+            "buttons": [
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible'],
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+            ],
+        });
+
+        //// Attach Buttons
+        table.buttons().container()
+                .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+
+        table.button().add(1, {
+            action: function (e, dt, button, config) {
+                window.location.href = rootURL + 'Create';
+            },
+            text: 'Create',
+            className: 'btn-info'
+        });
+
+        $('#Date').change(function () {
+            table.ajax.reload();
+        });
+
+
+    </script>
+}

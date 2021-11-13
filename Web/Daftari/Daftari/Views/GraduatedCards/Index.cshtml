@@ -1,0 +1,239 @@
+﻿@model IEnumerable<Daftari.AquaCards.Models.StudentCard>
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+
+}
+
+@{
+    ViewBag.Title = "Graduation Report";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Graduation Report</h5>
+                <div class="mb-3">
+                    @Html.Label("Date", htmlAttributes: new { @class = "form-label" })
+                    @Html.Editor("DateFilter", new { htmlAttributes = new { @class = "form-control date", data_toggle = "date-picker", data_time_Picker = "true" } })
+                </div>
+                <table id="dtTable" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CardNumber)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.StudentName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Level)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Status)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Age)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.StartDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.GraduationDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Plan)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Instructors)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AuditDetail.CreatedDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AuditDetail.CreatedEntryUser)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AuditDetail.LastModifiedDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AuditDetail.LastModifiedEntryUser)
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/datatables")
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
+
+    @*@Scripts.Render("~/bundles/pdfmake")
+    @Scripts.Render("~/bundles/certGenerator")*@
+
+    <script>
+        $('#DateFilter').change(function () {
+            table.ajax.reload(function () {
+
+            });
+        });
+
+        var rootURL = '@Url.Action("/")';
+        $.fn.dataTable.moment('YYYY-MM-DD hh:mm');
+        var table = $('#dtTable').DataTable({
+            lengthChange: false,
+            "ajax": {
+              "url": rootURL + 'getJSON',
+                "data": function (d) {
+                    var dates = $('#DateFilter').val().split(' - ');
+                    d.from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+                    d.to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+                    //if (typeof (personId) !== 'undefined') {
+                    //    d.staff_member_ids = personId;
+                    //}
+                }
+            },
+            "columns": [
+                { "data": "CardNumber" },
+                { "data": "StudentName" },
+                { "data": "Level" },
+                { "data": "Status" },
+                { "data": "Age" },
+                { "data": "StartDate" },
+                { "data": "GraduationDate" },
+                { "data": "Plan" },
+                { "data": "Instructors" },
+                { "data": "CreatedDate" },
+                { "data": "CreatedEntryUser" },
+                { "data": "LastModifiedDate" },
+                { "data": "LastModifiedEntryUser" },
+            ],
+            columnDefs: [],
+            order: [10, 'desc'],
+            "rowCallback": function (row, data, index) {
+                var html = '<a class="btn btn-primary btn-sm btn-raised" href="' + rootURL + 'Edit?id=' + data.StudentCardID + '" data-toggle="tooltip" data-placement="bottom" title="Open" data-animation="true"><span class="glyphicon glyphicon-eye-open"></span> <b>' + data.CardNumber + '</b ></a>';
+                //if (data.IsGraduated) {
+                html += '<a onclick="downloadCertPDF(' + data.StudentCardID + ')" class="btn btn-sm btn-info btn-raised" data-toggle="tooltip" data-placement="bottom" title="Download" data-animation="true">Certificate</a>';
+                //}
+                html +=  '<a class="btn btn-danger btn-sm btn-raised" href="' + rootURL + 'Delete?id=' + data.StudentCardID + '" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true">Delete</a>';
+
+                $('td:eq(0)', row).html(html);
+            }
+        });
+
+        //initialize Constructor for Button Group
+        new $.fn.dataTable.Buttons(table, {
+            buttons: true,
+            "buttons": [
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible'],
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+            ],
+        });
+
+        // Attach Buttons
+        table.buttons().container()
+            .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+
+        //table.button().add(1, {
+        //    action: function (e, dt, button, config) {
+        //        window.location.href = rootURL + 'Create';
+        //    },
+        //    text: 'Create',
+        //    className: 'btn-light'
+        //});
+
+        @*table.button().add(4, {
+            action: function (e, dt, button, config) {
+                table.ajax.url('@Url.Action("getJSON", new { filter = 0 })').load();
+                table.button(4).active(true);
+                table.button(5).active(false);
+                table.button(6).active(false);
+                table.button(7).active(false);
+            },
+            text: 'View On-Going',
+            className: 'btn-info'
+        });*@
+
+        @*table.button().add(5, {
+            action: function (e, dt, button, config) {
+                table.ajax.url('@Url.Action("getJSON", new { filter = 1 })').load();
+                table.button(4).active(false);
+                table.button(5).active(true);
+                table.button(6).active(false);
+                table.button(7).active(false);
+            },
+            text: 'View Graduated',
+            className: 'btn-success'
+        });*@
+
+        @*table.button().add(6, {
+            action: function (e, dt, button, config) {
+                table.ajax.url('@Url.Action("getJSON", new { filter = 2 })').load();
+                table.button(4).active(false);
+                table.button(5).active(false);
+                table.button(6).active(true);
+                table.button(7).active(false);
+            },
+            text: 'View Archived',
+            className: 'btn-warning'
+        });*@
+
+        @*table.button().add(7, {
+            action: function (e, dt, button, config) {
+                table.ajax.url('@Url.Action("getJSON", new { filter = 3 })').load();
+                table.button(4).active(false);
+                table.button(5).active(false);
+                table.button(6).active(false);
+                table.button(7).active(true);
+            },
+            text: 'View All',
+            className: 'btn-default'
+        });*@
+
+    //table.button().add(8, {
+    //    action: function (e, dt, button, config) {
+    //        window.location.href = rootURL + 'DeleteAllArchive';
+    //    },
+    //    text: 'Delete All Archived',
+    //    className: 'btn-danger'
+    //});
+
+    //table.button(4).active(true);
+    //table.button(5).active(false);
+    //table.button(6).active(false);
+    //table.button(7).active(false);
+    </script>
+}

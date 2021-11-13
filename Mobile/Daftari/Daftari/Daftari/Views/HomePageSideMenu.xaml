@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Daftari.Views.HomePageSideMenu"
+             Title="Master">
+  <StackLayout>
+    <ListView x:Name="MenuItemsListView"
+              SeparatorVisibility="None"
+              HasUnevenRows="true"
+              ItemsSource="{Binding MenuItems}">
+      <d:ListView.ItemsSource>
+          <x:Array Type="{x:Type x:String}">
+              <x:String>Page 1</x:String>
+              <x:String>Page 2</x:String>
+              <x:String>Page 3</x:String>
+              <x:String>Page 4</x:String>
+              <x:String>Page 5</x:String>
+          </x:Array>
+      </d:ListView.ItemsSource>
+      <ListView.Header>
+        <Grid Margin="11,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition/>
+            <RowDefinition Height="7"/>
+          </Grid.RowDefinitions>
+          <Image Grid.Row="1" Source="icon_avatar.png"
+                 HeightRequest="50" 
+                 WidthRequest="50"
+                 VerticalOptions="Center" />
+            
+          <Label Grid.Row="1"
+              Grid.Column="1"
+              Text="Sana's Daftari"
+              VerticalOptions="Center"
+              Margin="15,0"
+              TextColor="#1E3565"
+              FontSize="20"
+              Style="{DynamicResource SubtitleStyle}"/>
+          
+          <BoxView Grid.Row="2" Grid.ColumnSpan="2" BackgroundColor="#1892D5" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+        </Grid>
+      </ListView.Header>
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <StackLayout Padding="15,10" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+              <Image WidthRequest="40" HeightRequest="40" Source="{Binding Icon}"/>
+              <Label VerticalOptions="FillAndExpand" 
+                    VerticalTextAlignment="Center"
+                    Margin="10,0"
+                    Text="{Binding Title}" 
+                    d:Text="{Binding .}"
+                    FontSize="18"
+                    TextColor="#1E3565"/>
+            </StackLayout>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+
+    <BoxView BackgroundColor="#1892D5" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+
+    <Label VerticalOptions="FillAndExpand" 
+                VerticalTextAlignment="Center"
+                Margin="18,5,0,50"
+                Text="Log Out"
+                FontSize="18"
+                TextColor="#1E3565"/>
+
+    </StackLayout>
+</ContentPage>

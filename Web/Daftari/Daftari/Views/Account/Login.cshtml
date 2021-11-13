@@ -1,0 +1,62 @@
+﻿@using LukeApps.AspIdentity.ViewModel
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+
+<section id="loginForm">
+    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+        <div class="well">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.RememberMe)
+            <fieldset style="margin-left: 20px;margin-right: 20px;">
+                <legend>@ViewBag.Title.</legend>
+                <hr />
+                <h4>Use a local account to log in.</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.TimezoneOffset)
+
+                <div class="form-group label-static">
+                    @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group label-static">
+                    @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </div>
+                @*<div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(m => m.RememberMe) @Html.DisplayNameFor(m => m.RememberMe)
+                        </label>
+                    </div>
+                </div>*@
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Log in" class="btn btn-light" />
+                    </div>
+                </div>
+                <p>
+                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                </p>
+            </fieldset>
+        </div>
+    }
+</section>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $("form").on("submit", function () {
+            var offset = new Date().getTimezoneOffset();
+           $("#TimezoneOffset").val(offset);
+           return true;
+         })
+    </script>
+}
+

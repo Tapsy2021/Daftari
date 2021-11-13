@@ -1,0 +1,157 @@
+﻿@model Daftari.SMSHandling.SMSMessage
+@section CustomStyles {
+
+    <style>
+        body > #standalone-container {
+            margin: 50px auto;
+            max-width: 720px;
+        }
+
+        #editor-container {
+            height: 350px;
+        }
+    </style>
+}
+@{
+    ViewBag.Title = "Send SMS";
+}
+
+<h2>Send a Message</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-warning fade in">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong>Warning!</strong> @ViewBag.ErrorMessage
+    </div>
+}
+
+@using (Html.BeginForm("Send", "Communication", null, FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="well">
+        <fieldset style="margin-left: 20px;margin-right: 20px;">
+            <legend>Aqua-Tots Communications Console</legend>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.SMSAPI, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.SMSAPI, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.SMSAPI, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Message, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EditorFor(model => model.Message, new { htmlAttributes = new { @class = "form-control", data_toggle = "maxlength", maxlength = "480", data_threshold = "160" } })
+                @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-static">
+                @Html.LabelFor(model => model.Language, htmlAttributes: new { @class = "control-label" })
+                <br />
+                <div class="radio radio-primary">
+                    <label>
+                        @Html.RadioButton("Language", Daftari.SMSHandling.Enums.Language.English.GetDisplay(), new { id = Daftari.SMSHandling.Enums.Language.English })
+                        @Daftari.SMSHandling.Enums.Language.English.GetDisplay()
+                    </label>
+                    <label>
+                        @Html.RadioButton("Language", Daftari.SMSHandling.Enums.Language.Arabic.GetDisplay(), new { id = Daftari.SMSHandling.Enums.Language.Arabic })
+                        @Daftari.SMSHandling.Enums.Language.Arabic.GetDisplay()
+                    </label>
+                </div>
+                @Html.ValidationMessageFor(model => model.Language, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.MobilesCSV, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EditorFor(model => model.MobilesCSV, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MobilesCSV, "", new { @class = "text-danger" })
+            </div>
+
+            <br />
+            <div id="PhonesGroup">
+                <legend>Phone Number</legend>
+                <div id="new-Phone" class="set">
+                    @foreach (var mobile in Model.Mobiles)
+                    {
+                        Html.RenderPartial("_Mobile", mobile);
+                    }
+                </div>
+                <div>
+                    <br />
+                    <a id="addphone" name="addphone" class="btn btn-sm btn-light"><span class="glyphicon glyphicon-plus"></span> Add Mobile Phone</a>
+                    <br />
+                </div>
+                <br />
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Send" class="btn btn-light" />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @*@Scripts.Render("~/bundles/jqEasyCounter")*@
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+
+            //$('#Message').jqEasyCounter({
+            //    'maxChars': 480,
+            //    'maxCharsWarning': 160,
+            //    'msgFontSize': '10px',
+            //    'msgFontColor': 'black',
+            //    'msgFontFamily': 'Arial',
+            //    'msgTextAlign': 'right',
+            //    'msgWarningColor': 'red',
+            //    'msgAppendMethod': 'insertAfter',
+            //    'allocateSpace': false,
+            //    'showWarning': true
+            //});
+
+            $('input:submit').click(function () {
+                var $button = this;
+                var oldValue = $button.value;
+                setTimeout(function () {
+                    $button.disabled = true;
+                    $button.value = 'Sending...';
+                    setTimeout(function () {
+                        $button.disabled = false;
+                        $button.value = oldValue;
+                    }, 1500);
+                }, 0);
+            });
+
+
+            var rootURL = '@Url.Action("/")';
+
+            $('#addphone').on('click', function () {
+                $.ajax({
+                    async: false,
+                    url: rootURL + 'AddNewMobile'
+                }).done(function (partialView) {
+                    $('#new-Phone').append(partialView);
+                    $.validator.unobtrusive.parseDynamicContent('#new-Phone');
+                });
+            });
+
+            $('#PhonesGroup').on('click', '.deleteRow', function () {
+                $(this).closest('.contentRow').remove();
+                return false;
+            });
+        });
+
+    </script>
+}

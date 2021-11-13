@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Daftari.ViewModel.FormSettingsVM>
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+}
+
+@{
+    ViewBag.Title = "Custom Forms";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Custom Forms</h5>
+
+                <table id="dtTable" class="table table-bordered table-hover">
+                    <thead class="thead-default">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Title)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AccessLevel)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/datatables")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.21/api/processing().js"></script>
+    <script type="text/javascript">
+
+        var rootURL = '@Url.Action("/")';
+
+        var table = $('#dtTable').DataTable({
+            lengthChange: false,
+            "ajax": rootURL + 'getFormsJSON',
+           "columns":  [
+                { "data": "Title" },
+                { "data": "AccessLevel" },
+                { "data": "Description" },
+                { "data": null }
+                ],
+            columnDefs: [
+                ],
+            order: [0, 'desc'],
+             "rowCallback": function (row, data, index) {
+                 $('td:eq(3)', row).html(
+                    '<a class="btn btn-danger btn-sm" href="' + rootURL + 'DeleteCustomForm/' + data.Id + '" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>' +
+                    '<a class="btn btn-primary btn-sm" href="' + rootURL + 'EditCustomForm/' + data.Id + '" data-toggle="tooltip" data-placement="bottom" title="Edit" data-animation="true"><i class="dripicons-document-edit"></i></a>'
+                );
+             }
+        });
+
+        //initialize Constructor for Button Group
+        new $.fn.dataTable.Buttons(table, {
+            buttons: true,
+            "buttons": [
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible'],
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+            ],
+        });
+
+        // Attach Buttons
+        table.buttons().container()
+                .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+
+        table.button().add(1, {
+            action: function (e, dt, button, config) {
+                window.location.href = rootURL + 'CreateCustomForm';
+            },
+            text: 'Create',
+            className: 'btn-info'
+        });
+    </script>
+}

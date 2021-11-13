@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             BackgroundImageSource="onboarding_1.png"
+             x:Class="Daftari.Views.Intro.LandingPage">
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="Transparent">
+            <StackLayout HeightRequest="150"></StackLayout>
+            <StackLayout VerticalOptions="CenterAndExpand">
+                <Image VerticalOptions="Center" Margin="30,0"
+                    Source="intro_logo.png"/>
+            </StackLayout>
+            <StackLayout>
+                <Label Text="Welcome to DAFTARI, your personalized swim journal app where you go!"
+                       TextColor="White"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       Margin="50,20"/>
+            </StackLayout>
+            <StackLayout Padding="0,15">
+                <Button Text="Start"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        CornerRadius="30"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

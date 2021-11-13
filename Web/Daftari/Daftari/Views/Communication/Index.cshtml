@@ -1,0 +1,219 @@
+﻿@model IEnumerable<Daftari.SMSHandling.Models.SMSLog>
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+}
+@{
+    ViewBag.Title = "SMS Communications Console";
+}
+
+<h2>Aqua-Tots SMS Communications Console</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-warning fade in">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<div class="form-group label-static">
+
+    <label>Date Filter</label>
+    <input id="DateFilter" class="form-control date" data-toggle="date-picker" data-time-picker="true" />
+</div>
+
+<table id="dtTable" class="table table-striped table-bordered dt-responsive" width="100%">
+    <thead class="thead-default">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Recipients)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SMSAPI)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ScheddateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeSent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SMSStatus)
+            </th>
+            <th>
+                User Sent
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecipientType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.optValue)
+            </th>
+        </tr>
+    </thead>
+
+    <tfoot class="tfoot-default">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Recipients)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SMSAPI)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ScheddateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeSent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SMSStatus)
+            </th>
+            <th>
+                User Sent
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecipientType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.optValue)
+            </th>
+        </tr>
+    </tfoot>
+</table>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/datatables")
+
+<script type="text/javascript">
+        var rootURL = '@Url.Action("/")';
+        //Define Table
+        var table = $('#dtTable').DataTable({
+            deferRender: true,
+            "ajax": rootURL + 'getJSON',
+            "columns": [
+                { "data": "Recipients" },
+                { "data": "API" },
+                      { "data": "Message" },
+                      { "data": "Language" },
+                      { "data": "ScheddateTime" },
+                      { "data": "TimeSent" },
+                      { "data": "SMSPushResult" },
+                      { "data": "CreatedEntryUser" },
+                      { "data": "RecipientType" },
+                      { "data": "optValue" },
+            ],
+            lengthChange: false,
+            "processing": true,
+            lengthMenu: [
+                [10, 25, 50, -1],
+                ['10 rows', '25 rows', '50 rows', 'Show all']
+            ],
+            pageLength: 50,
+            /*stateSave: true,
+            "deferRender": true,*/
+            columnDefs: [
+                                {
+                                    "targets": [3],
+                                    "visible": false,
+                                    "searchable": false
+                                },
+                                {
+                                    "targets": [-1],
+                                    "visible": false,
+                                    "searchable": false
+                                },
+                {
+                    "targets": [-2],
+                    "visible": false,
+                    "searchable": false
+                },
+            ],
+            order: [4, 'desc'],
+        });
+
+        $('#DateFilter').change(function () {
+            var dates = $('#DateFilter').val().split(' - ');
+            var fromdate = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+            var todate = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+            table.ajax.url(rootURL + 'getJSON?from=' + fromdate + '&to=' + todate).load();
+        });
+
+        //initialize Constructor for Button Group
+        new $.fn.dataTable.Buttons(table, {
+            buttons: true,
+            "buttons": [
+                {
+                    text: 'SMS Customers',
+                    action: function (e, dt, node, config) {
+                        window.location.href = rootURL + 'SendCustomerSMS';
+                    },
+                    className: 'btn-primary btn-raised'
+                },
+                {
+                    text: 'Send an SMS',
+                    action: function (e, dt, node, config) {
+                        window.location.href = rootURL + 'Send';
+                    },
+                    className: 'btn-primary btn-raised'
+                },
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible'],
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+            ],
+        });
+
+        // Attach Buttons
+        table.buttons().container()
+            .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+</script>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <script>
+            var customerURL = '@Url.Action("/", "Customers")';
+        </script>
+        @Scripts.Render("~/bundles/buttonsSync")
+    }
+
+
+
+}

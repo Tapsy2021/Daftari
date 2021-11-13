@@ -1,0 +1,179 @@
+﻿@model IEnumerable<Daftari.AquaCards.Models.Customer>
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+}
+
+@{
+    ViewBag.Title = "Customers";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Customers</h5>
+
+                <table id="dtTable" class="table table-bordered table-hover">
+                    <thead class="thead-default">
+                        <tr>
+                            <th></th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FullName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.MotherName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FatherName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Address)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.City)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Region)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PrimaryPhone)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmailAddress)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Birthday)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IsMember)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IsSubToCommunications)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CustomerStatus)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AuditDetail)
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/datatables")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.21/api/processing().js"></script>
+    <script type="text/javascript">
+
+        var rootURL = '@Url.Action("/")';
+
+        var table = $('#dtTable').DataTable({
+            lengthChange: false,
+            "ajax": rootURL + 'getJSON',
+           "columns":  [
+                { "data": "CustomerID" },
+                { "data": "FullName" },
+                { "data": "MotherName" },
+                { "data": "FatherName" },
+                { "data": "Address" },
+                { "data": "City" },
+                { "data": "Region" },
+                { "data": "PrimaryPhone" },
+                { "data": "EmailAddress" },
+                { "data": "Birthday" },
+                { "data": "IsMember" },
+                { "data": "IsSubToCommunications" },
+                { "data": "CustomerStatus" },
+                { "data": "AuditDetail" },
+                ],
+            columnDefs: [
+                {
+                    "targets": [2],
+                    "visible": false,
+                    "searchable": true
+                },
+                {
+                    "targets": [3],
+                    "visible": false,
+                    "searchable": true
+                },
+                {
+                    "targets": [8],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [9],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [-1],
+                    "visible": false,
+                    "searchable": false
+                },
+            ],
+            "processing": true,
+            order: [1, 'desc'],
+             "rowCallback": function (row, data, index) {
+                 $('td:eq(0)', row).html(
+                     '<br /><a class="btn btn-primary btn-sm" href="' + rootURL + 'Edit?id=' + data.CustomerID + '" data-toggle="tooltip" data-placement="bottom" title="View" data-animation="true"><i class="dripicons-document-edit"></i></a>');
+            }
+        });
+
+        //initialize Constructor for Button Group
+        new $.fn.dataTable.Buttons(table, {
+            buttons: true,
+            "buttons": [
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible'],
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+            ],
+        });
+
+        // Attach Buttons
+        table.buttons().container()
+            .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+    </script>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <script>
+            var customerURL = rootURL;
+        </script>
+        @Scripts.Render("~/bundles/buttonsSync")
+    }
+}

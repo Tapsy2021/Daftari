@@ -1,0 +1,40 @@
+﻿@model Daftari.Forms.Models.Form
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete Completed Form</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Completed Form</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FormID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FormID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FormSettings.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FormSettings.Title)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger btn-raised" /> |
+            @Html.ActionLink("Back to Record", "ViewCompletedForm", new { id = Model.FormID })
+        </div>
+    }
+</div>

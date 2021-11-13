@@ -1,0 +1,8 @@
+﻿@model Daftari.Models.CheckBoxListItem
+
+<label>
+    @Html.HiddenFor(x => x.ID)
+    @Html.EditorFor(x => x.IsChecked, new { @class = "checkboxlist" })
+    @Html.LabelFor(x => x.IsChecked, Model.Display)
+</label>
+<text>&nbsp;&nbsp;&nbsp;&nbsp;</text>

@@ -1,0 +1,140 @@
+﻿@model LukeApps.AspIdentity.ViewModel.IndexViewModel
+@{
+    ViewBag.Title = "Manage";
+
+    var creds = TokenProvider.GetProvider().GetAccessDetails(User.Identity.Name);
+
+    string photo;
+    if (creds.Photo == null)
+    {
+        photo = "/assets/images/users/avatar-1.jpg";
+    }
+    else
+    {
+        photo = creds.Photo;
+    }
+}
+
+<h2>@ViewBag.Title.</h2>
+
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ol>
+            </div>
+            <h4 class="page-title">Profile</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <!-- Profile -->
+        <div class="card bg-primary">
+            <div class="card-body profile-user-box">
+
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="media">
+                            <span class="float-left m-2 mr-4"><img src="@photo" style="height: 100px;" alt="" class="rounded-circle img-thumbnail"></span>
+                            <div class="media-body">
+
+                                <h4 class="mt-1 mb-1 text-white">@creds.PersonName</h4>
+                                <p class="font-13 text-white-50"><text>@@</text>@User.Identity.Name</p>
+
+                                <ul class="mb-0 list text-light">
+                                    <li class="list-item mr-3">
+                                        <h5 class="mb-1">Password</h5>
+                                        <p class="mb-0 font-13 text-white-50">
+                                            @if (Model.HasPassword)
+                                            {
+                                                @Html.ActionLink("Change your password", "ChangePassword", null, new { @class = "btn btn-light" })
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Create", "SetPassword", null, new { @class = "btn btn-light" })
+                                            }
+                                        </p>
+                                    </li>
+                                    <li class="list-item">
+                                        <h5 class="mb-1">Phone Number</h5>
+                                        <p class="mb-0 font-13 text-white-50">
+                                            @(Model.PhoneNumber ?? "None")
+                                            @if (Model.PhoneNumber != null)
+                                            {
+                                                <br />
+                                                <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber", null, new { @class = "btn btn-light" })&nbsp;&nbsp;]</text>
+                                                using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <text>[<input type="submit" value="Remove" class="btn-light" />]</text>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber", null, new { @class= "btn btn-light" })&nbsp;&nbsp;]</text>
+                                            }
+                                        </p>
+                                    </li>
+                                    <li class="list-item">
+                                        <h5 class="mb-1">Two-Factor Authentication</h5>
+                                        <p class="mb-0 font-13 text-white-50">
+                                            @if (Model.TwoFactor)
+                                            {
+                                                using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <text>Enabled
+                                                        <input type="submit" value="Disable" class="btn btn-light" />
+                                                    </text>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <text>Disabled
+                                                        <input type="submit" value="Enable" class="btn btn-light" />
+                                                    </text>
+                                                }
+                                            }
+                                        </p>
+                                    </li>
+                                    <li class="list-item">
+                                        <h5 class="mb-1">Change Pike13 Business</h5>
+                                        <p class="mb-0 font-13 text-white-50">
+                                            <a href="@Url.Action("BusinessSelect", "Pike13Access")" class="btn btn-light">
+                                                <i class="uil-rss"></i>
+                                            </a>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div> <!-- end media-body-->
+                        </div>
+                    </div> <!-- end col-->
+
+                    <div class="col-sm-4">
+                        <div class="text-center mt-sm-0 mt-3 text-sm-right">
+                            <a href="@Url.Action("Authorize", "Pike13Access")" class="btn btn-light">
+                                <i class="mdi mdi-account-edit mr-1"></i> Link Pike13 with Daftari
+                            </a>
+                        </div>
+                    </div> <!-- end col-->
+                </div> <!-- end row -->
+
+            </div> <!-- end card-body/ profile-user-box-->
+        </div><!--end profile/ card -->
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+<p class="text-success">@ViewBag.StatusMessage</p>

@@ -1,0 +1,478 @@
+﻿@model Daftari.AquaCards.Models.StudentCard
+@section CustomStyles {
+
+    @Styles.Render("~/Content/mobilecss")
+
+    <style>
+        .star {
+            visibility: hidden;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+            .star:before {
+                content: "\2606";
+                position: absolute;
+                visibility: visible;
+                margin-top: -14px;
+            }
+
+            .star:checked:before {
+                content: "\2605";
+                position: absolute;
+            }
+
+        .star-label {
+            padding-left: 10px;
+        }
+
+        .list-group-item {
+            width: 100%;
+            border: solid;
+            border-width: 0.5px;
+            padding: 5px;
+            border-color: lightgray;
+        }
+
+        .title-row {
+            background: #102d5d;
+            color: white;
+        }
+
+        .BEGINNER-Title {
+            color: #ed1c24;
+        }
+
+        .INTERMEDIATE-Title {
+            color: #b3e7fb;
+        }
+
+        .ADVANCED-Title {
+            color: #80cc28;
+        }
+
+        .BEGINNER-Content {
+            color: #dc2b31;
+        }
+
+        .INTERMEDIATE-Content {
+            color: #0f7db8;
+        }
+
+        .ADVANCED-Content {
+            color: #109e53;
+        }
+
+        .Skill-Content {
+            background: #e9e9e9;
+            color: #102d5d;
+            font-weight: bold;
+        }
+
+        @@media (max-width: 767px) {
+            .profilePic {
+                display: block;
+                max-height: 200px;
+                max-width: 200px;
+                height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        .profilePic {
+            display: block;
+            max-height: 200px;
+            width: 100%;
+            height: auto;
+        }
+    </style>
+}
+@{
+    ViewBag.Title = "Card";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Card</h5>
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.StudentCardID)
+                    @Html.HiddenFor(model => model.CustomerID)
+                    @Html.HiddenFor(model => model.ExternalReferenceID)
+                    @Html.HiddenFor(model => model.Level)
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img class="img-responsive profilePic" src="@ViewBag.PhotoUrl" />
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Initial, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.Initial, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Initial, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    &nbsp;
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <h3 class="pull-right" style="text-decoration:underline"><b>@Model.Level.GetDisplay()</b></h3>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.StudentName, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.StudentName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.StudentName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Age, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Age, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control dp" } })
+                                        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Instructors, htmlAttributes: new { @class = "control-label" })<br />
+                                @Html.EditorFor(model => model.Instructors, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Instructors, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">First Visit</label><br />
+                                <input class="form-control" id="firstVisit" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Last Completed Visit</label><br />
+                                <input class="form-control" id="lastCompletedVisit" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Plan, htmlAttributes: new { @class = "control-label" })<br />
+                                @Html.EditorFor(model => model.Plan, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Plan, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="control-label">Completed Visits</label><br />
+                                <input class="form-control" id="completedVisits" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="control-label">Future Visits</label><br />
+                                <input class="form-control" id="futureVisits" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="control-label">UnPaid Visits</label><br />
+                                <input class="form-control" id="unpaidVisits" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-group">
+                        <div class="list-group-item" style="width:100%;border:solid;border-width:0.5px;padding:5px;border-color:lightgray;">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="checkAll" type="checkbox"> Select All
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="col-md-4">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input id="selectBeginner" type="checkbox"> Select Beginner
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>*@
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="title-row">
+                                <th class="title">SKILL SET</th>
+                                <th class="title BEGINNER-Title">BEGINNER SKILL</th>
+                                <th class="title INTERMEDIATE-Title">INTERMEDIATE SKILL</th>
+                                <th class="title ADVANCED-Title">ADVANCED SKILLS - FINAL SKILL MASTERED 3 TIMES</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model.StudentCardDetails.OrderBy(s => s.StudentCardDetailID).ThenBy(s => s.SkillID).GroupBy(s => s.Skill.SetName))
+                            {
+                                <tr class="card-content-row">
+                                    <td class="card-content Skill-Content">@item.Key</td>
+                                    <td class="card-content BEGINNER-Content">
+                                        @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.BEGINNER))
+                                        {
+                                            @Html.EditorFor(model => skillitem, "CardDetail")<br />
+                                        }
+                                    </td>
+                                    <td class="card-content INTERMEDIATE-Content">
+                                        @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.INTERMEDIATE))
+                                        {
+                                            @Html.EditorFor(model => skillitem, "CardDetail")<br />
+                                        }
+                                    </td>
+                                    <td class="card-content ADVANCED-Content">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED && !i.Skill.Name.Contains("Mastery")))
+                                                {
+                                                    @Html.EditorFor(model => skillitem, "CardDetail")<br />
+                                                }
+                                            </div>
+                                            @foreach (var skillitem in item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED && i.Skill.Name.Contains("Mastery")))
+                                            {
+                                                var htmlAttributesMastery = new Dictionary<string, object>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                {
+                                            { "class" , $"tick{(skillitem.IsComplete ? "" : " toSave")}" },
+                                            { "checked", skillitem.IsComplete },
+                                            { "data-detailID", skillitem.StudentCardDetailID },
+                                        };
+                                                if (skillitem.IsComplete)
+                                                {
+                                                    htmlAttributesMastery.Add("disabled", "disabled");
+                                                }
+
+                                                <div class="col-md-1">
+                                                    <div class="checkbox">
+                                                        <label>
+
+                                                            @Html.EditorFor(i => skillitem.IsComplete, new { htmlAttributes = htmlAttributesMastery })
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <div class="list-group">
+
+                        <div class="list-group-item" style="width:100%;border:solid;border-width:0.5px;padding:5px;border-color:lightgray;">
+                            <h3>Comments</h3>
+                            <div class="col-md-12">
+                                <div id="CommentDisplay" class="list-group">
+
+                                    @if (Model.Comments != null)
+                                    {
+                                        foreach (var item in Model.Comments)
+                                        {
+                                            <div class="list-group-item" style="width:100%;border:solid;border-width:0.5px;padding:5px;border-color:lightgray;">
+                                                @item.Item2 <span style="font-size: 12px;">by @item.Item1</span>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <div>
+                                    <textarea id="addComment" class="form-control" placeholder="add comment" style="width:100%"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div>
+                                    <a onclick="postNoteToPike()" class="btn btn-xs btn-light"><span class="glyphicon glyphicon-plus"></span></a>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div style=" position: relative;    display: block;    margin-top: 10px;    margin-bottom: 10px;">
+                                    <label>
+                                        <input id="isPinned" type="checkbox" class="star" style="color:black" /> <span class="star-label">&nbsp;Star this note</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="isPublic" type="checkbox" onchange="cTrig(this)" /><span class="star-label">Send to note to parent</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-3">
+                            <a onclick="publish(false)" class="btn btn-light">Publish</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a onclick="publish(true)" class="btn btn-light">Publish & Graduate</a>
+                        </div>
+                    </div><br /><br />
+                }
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('[data-toggle="tooltip"]').tooltip({ delay: { "hide": 100 } });
+
+            $("#checkAll").click(function(){
+                $('form input.toSave').not(this).prop('checked', this.checked);
+            });
+
+            postQueriesToPike();
+        });
+
+        function publish(isToGraduate) {
+            saveAllInput(isToGraduate);
+        }
+
+        function getTime() {
+            try {
+                return moment('@ViewBag.StartDate');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function saveAllInput(isToGraduate) {
+
+            var cardData = {
+                id: $('#StudentCardID').val(),
+                instructors : $('#Instructors').val(),
+                isToGraduate : isToGraduate,
+                data: []
+            }
+
+            $('form input.toSave:checked').each(function(index){
+                var input = $(this);
+                cardData.data.push(input.attr('data-detailID'));
+            });
+            console.log(cardData);
+
+            $.ajax({
+    	        method: "POST",
+                url: '@Url.Action("SaveProcess")',
+                data: JSON.stringify(cardData)
+    	        })
+                .done(function (msg) {
+
+                    $.NotificationApp.send("Status", msg.text, "bottom-right", "rgba(0,0,0,0.2)", "info")
+                    if (msg.isPublished) {
+                        redirectFromMain();
+                    }
+    	        });
+        }
+
+        function redirectFromMain() {
+            window.location.href = '@Url.Action("AquaCards", "Pike13Access")';
+        }
+
+    function postNoteToPike(){
+    	var id = '@Model.ExternalReferenceID';
+        var postUrl = 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/people/' + id + '/notes?access_token=@(ViewBag.AccessCode)';
+        var ttext = $('#addComment').val();
+
+        if (ttext !== null) {
+            	$.ajax({
+    	        method: "POST",
+    	        url: postUrl,
+    	        data: { note :{ note: $('#addComment').val(), public: $('#isPublic').is(":checked"), pinned: $('#isPinned').is(":checked")  }}
+    	        })
+                    .done(function (msg) {
+                        console.log(msg);
+                        $('#CommentDisplay').prepend('<div class="list-group-item" style="width:100%;border:solid;border-width:0.5px;padding:5px;border-color:lightgray;">'+msg.notes[0].note+"</div>");
+    	        });
+        }
+    }
+
+        function cTrig(box) {
+          if (box.checked) {
+            if (confirm("Are you sure you want to send the note to the parent?")) {
+                box.checked = true;
+            }
+          }
+        }
+
+    function postQueriesToPike() {
+    	var pid = '@Model.ExternalReferenceID';
+        var postUrl = 'https://@(ViewBag.Subdomain).pike13.com/desk/api/v3/reports/clients/queries?access_token=@(ViewBag.BorrowedAccessCode)';
+
+            	$.ajax({
+    	            method: 'POST',
+                    url: postUrl,
+                    contentType: 'application/vnd.api+json',
+                    data: JSON.stringify( {
+                        data: {
+                            type: 'queries',
+                            attributes: {
+                                fields: ['last_visit_date', 'last_visit_service', 'completed_visits', 'future_visits', 'unpaid_visits', 'first_visit_date', 'person_id'],
+                                filter: ['eq', 'person_id', pid]
+                            },
+                        }
+                    })
+                })
+                .done(function (json) {
+                        setInputValue('#lastCompletedVisit', json.data.attributes.rows[0][0] + ' (' + json.data.attributes.rows[0][1] + ')');
+                        setInputValue('#completedVisits', json.data.attributes.rows[0][2]);
+                        setInputValue('#futureVisits', json.data.attributes.rows[0][3]);
+                        setInputValue('#unpaidVisits', json.data.attributes.rows[0][4]);
+                        setInputValue('#firstVisit', json.data.attributes.rows[0][5]);
+                        //console.log(json);
+    	        });
+
+        }
+
+    function setInputValue(selector, value) {
+        $(selector).val(value);
+        $(selector).closest('div.form-group').removeClass('is-empty');
+    }
+    </script>
+}

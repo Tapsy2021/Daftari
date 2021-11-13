@@ -1,0 +1,1027 @@
+﻿@model Daftari.Areas.NewKiosk.ViewModel.KioskCardVM
+@section CustomStyles {
+
+    @Styles.Render("~/Content/mobilecss")
+
+    <style>
+        span.Water { color: #f58220 }
+        span.Boundaries { color: #ed1c24 }
+        span.Comfort { color: #8dc63f }
+        span.Control { color: #006f45 }
+        span.Independence { color: #004023 }
+        span.Tempo { color: #007db6 }
+        span.Technique { color: #002f67 }
+        span.Proficiency { color: #2e2d64 }
+
+        .star {
+            visibility: hidden;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .star:before {
+            content: "\2606";
+            position: absolute;
+            visibility: visible;
+            margin-top: -14px;
+        }
+
+        .star:checked:before {
+            content: "\2605";
+            position: absolute;
+        }
+
+        .star-label {
+            padding-left: 10px;
+        }
+
+        .list-group-item {
+            width: 100%;
+            border: solid;
+            border-width: 0.5px;
+            padding: 5px;
+            border-color: lightgray;
+        }
+
+        .title-row {
+            background: #102d5d;
+            color: white;
+        }
+
+        .BEGINNER-Title {
+            color: #ed1c24;
+        }
+
+        .INTERMEDIATE-Title {
+            color: #b3e7fb;
+        }
+
+        .ADVANCED-Title {
+            color: #80cc28;
+        }
+
+        .BEGINNER-Content {
+            color: #dc2b31;
+        }
+
+        .INTERMEDIATE-Content {
+            color: #0f7db8;
+        }
+
+        .ADVANCED-Content {
+            color: #109e53;
+        }
+
+        .Skill-Content {
+            background: #e9e9e9;
+            color: #102d5d;
+            font-weight: bold;
+        }
+
+        @@media (max-width: 767px) {
+            .profilePic {
+                display: block;
+                max-height: 200px;
+                max-width: 200px;
+                height: auto;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        .profilePic {
+            display: block;
+            max-height: 200px;
+            width: 100%;
+            height: auto;
+        }
+
+        /*.hero-section {
+            padding: 0px 0 120px 0 !important;
+        }*/
+
+        .MultiCarousel {
+            float: left;
+            overflow: hidden;
+            padding: 15px;
+            width: 100%;
+            position: relative;
+        }
+
+        .MultiCarousel .MultiCarousel-inner {
+            transition: 1s ease all;
+            /*float: left;*/
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .MultiCarousel .MultiCarousel-inner .item {
+            float: left;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        .MultiCarousel .MultiCarousel-inner .item > div {
+            text-align: center;
+            padding: 10px;
+            margin-left: 15px;
+            margin-right: 15px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            background: #f1f1f1;
+            color: #666;
+            border-radius: 200px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+
+        .MultiCarousel .leftLst, .MultiCarousel .rightLst {
+            position: absolute;
+            border-radius: 50%;
+            top: calc(50% - 7.5rem);
+        }
+
+        .MultiCarousel .leftLst {
+            left: 0;
+        }
+
+        .MultiCarousel .rightLst {
+            right: 0;
+        }
+
+        .MultiCarousel .leftLst.over, .MultiCarousel .rightLst.over {
+            pointer-events: none;
+            /*background: #ccc;*/
+        }
+
+        .caption div {
+            box-shadow: 0 0 5px #C8C8C8;
+            transition: all 0.3s ease 0s;
+        }
+
+        .img-circle {
+            border-radius: 50%;
+        }
+
+        .img-circle {
+            border-radius: 0;
+        }
+
+        .ratio {
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
+            width: 100%;
+        }
+
+        .img-circle {
+            border-radius: 50%;
+        }
+
+        .img-responsive {
+            display: block;
+            height: auto;
+            max-width: 100%;
+        }
+
+        .lead {
+            font-weight: 700;
+        }
+
+        .carousel-next, .carousel-prev {
+            height: 15rem;
+            background-color: transparent;
+            border-color: transparent;
+            padding: 0;
+            color: #02024d;
+        }
+
+        .pad-3 .level {
+            height: 2rem;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+
+        .pad-3 .item-nav-arrows {
+            background-color: transparent;
+        }
+
+        .progress {
+            width: 150px;
+            height: 150px;
+            float: left;
+            line-height: 150px;
+            background: none;
+            margin: 24px;
+            box-shadow: none;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress:after {
+            content: "";
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 12px solid #fff;
+            position: absolute;
+            top: 0;
+            left: 0
+        }
+
+        .progress>span {
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            z-index: 1
+        }
+
+        .progress .progress-left {
+            left: 0
+        }
+
+        .progress .progress-bar {
+            width: 100%;
+            height: 100%;
+            background: none;
+            border-width: 16px;
+            border-style: solid;
+            position: absolute;
+            top: 0
+        }
+
+        .progress .progress-left .progress-bar {
+            left: 100%;
+            border-top-right-radius: 80px;
+            border-bottom-right-radius: 80px;
+            border-left: 0;
+            -webkit-transform-origin: center left;
+            transform-origin: center left
+        }
+
+        .progress .progress-right {
+            right: 0
+        }
+
+        .progress .progress-right .progress-bar {
+            left: -100%;
+            border-top-left-radius: 80px;
+            border-bottom-left-radius: 80px;
+            border-right: 0;
+            -webkit-transform-origin: center right;
+            transform-origin: center right;
+        }
+
+        .progress .progress-value {
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            background: #000;
+            font-size: 24px;
+            color: #fff;
+            line-height: 135px;
+            text-align: center;
+            position: absolute;
+            top: 5%;
+            left: 5%
+        }
+
+        .progress.green .progress-bar {
+            border-color: #30a253;
+        }
+
+        .progress.blue .progress-bar {
+            border-color: #259dda;
+        }
+        .progress.red .progress-bar {
+            border-color: #f61c24;
+        }
+
+        .card-skill-content {
+            margin-left: 11px;
+            margin-right: 11px;
+        }
+
+        .card-header .mdi {
+          transition: .3s transform ease-in-out;
+        }
+        .card-header .collapsed .mdi {
+          transform: rotate(90deg);
+        }
+        .card-skill-content .mdi {
+          transition: .3s transform ease-in-out;
+        }
+        .card-skill-content .collapsed .mdi {
+            transform: rotate(-90deg);
+        }
+        .list .mdi {
+          transition: .3s transform ease-in-out;
+        }
+        .list .collapsed .mdi {
+            transform: rotate(90deg);
+        }
+
+        body {
+            background-image: url(@Url.Content("~/Areas/NewKiosk/Content/images/background-card.png"));
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+        }
+
+        .skills-slide {
+            display: none;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .container {
+            padding-right: 0px;
+            padding-left: 0px;
+            max-width: 90%;
+        }
+
+        .bottom-btn {
+            position: fixed; 
+            bottom: 0;
+            left: 0;
+            right: 0; 
+            width: 100%;
+        }
+
+        .bottom-btn > .row {
+            margin-left: auto; 
+            margin-right: auto; 
+            padding-bottom: 1rem;
+            width: 100%;
+        }
+        .bottom-icon {
+            height: 2.4rem;
+            width:2.4rem;
+        }
+        .bottom-icon-center {
+            margin-top: -1.5rem;
+            width: 4.9rem; 
+            height: 4.9rem; 
+            margin-left: auto; 
+            margin-right: auto; 
+            display: block;
+        }
+
+        @@media screen and (max-width: 540px) {
+            .carousel-next, .carousel-prev {
+                font-size: 3rem;
+            }
+            body {
+                background-image: url(@Url.Content("~/Areas/NewKiosk/Content/images/background-card-mobile.png"));
+                background-size: 100% 100%;
+                background-position: 50% 50%;
+            }
+            .bottom-btn > .row {
+                padding-bottom: 1rem;
+            }
+            .bottom-icon {
+                height: 2rem;
+                width:2rem;
+            }
+            .bottom-icon-center {
+                margin-top: -0.5rem;
+                width: 3.9rem; 
+                height: 3.9rem;
+            }
+            .MultiCarousel .MultiCarousel-inner .item {
+                padding-left: 1px;
+                padding-right: 1px;
+            }
+        }
+
+
+        /* For Mobile */
+        /*@@media screen and (max-width: 540px) {
+            .carousel-next, .carousel-prev {
+                font-size: 3rem;
+            }
+        }*/
+
+        /* For Tablets */
+        @@media screen and (min-width: 540px) and (max-width: 780px) {
+            .carousel-next, .carousel-prev {
+                font-size: 5rem;
+            }
+        }
+
+        /* For desktop: */
+        @@media only screen and (min-width: 768px) {
+            .carousel-next, .carousel-prev {
+                font-size: 7rem;
+            }
+        }
+
+        #a:hover + #b {
+            border-style: solid;
+        }
+    </style>
+}
+
+@foreach (var item in Model.Cards)
+{
+    var advanced = (decimal)item.StudentCardDetails.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED && i.IsComplete).Count() /
+              item.StudentCardDetails.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED).Count() * 100m;
+
+    var intermediate = (decimal)item.StudentCardDetails.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.INTERMEDIATE && i.IsComplete).Count() /
+              item.StudentCardDetails.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.INTERMEDIATE).Count() * 100m;
+
+    var beginner = (decimal)item.StudentCardDetails.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.BEGINNER && i.IsComplete).Count() /
+              item.StudentCardDetails.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.BEGINNER).Count() * 100m;  
+
+    var advanced_right = (advanced > 50 ? 50 : advanced) * 3.6m;
+    var advanced_left = (advanced > 50 ? advanced - 50 : 0) * 3.6m;
+    var intermediate_right = (intermediate > 50 ? 50 : intermediate) * 3.6m;
+    var intermediate_left = (intermediate > 50 ? intermediate - 50 : 0) * 3.6m;
+    var beginner_right = (beginner > 50 ? 50 : beginner) * 3.6m;
+    var beginner_left = (beginner > 50 ? beginner - 50 : 0) * 3.6m;
+
+    <style>
+        /*Green*/
+        #info_@(item.StudentCardID) > .progress:after {
+            border: 16px solid #30a25333;
+        }
+        .green .progress:after {
+            border: 14px solid #259dda33;
+        }
+        .blue .progress:after { 
+            border: 12px solid #f61c2433;
+        }
+
+        .progress.green.ct@(item.StudentCardID) .progress-right .progress-bar {
+            border-width: 16px;
+            animation: loading-green-right-@(item.StudentCardID) 1.2s linear forwards
+        }
+        @@keyframes loading-green-right-@(item.StudentCardID) {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg)
+            }
+
+            100% {
+                -webkit-transform: rotate(@(advanced_right)deg);
+                transform: rotate(@(advanced_right)deg)
+            }
+        }
+
+        .progress.green.ct@(item.StudentCardID) .progress-left .progress-bar {
+            border-width: 16px;
+            animation: loading-green-left-@(item.StudentCardID) 1.0s linear forwards 1.2s
+        }
+        @@keyframes loading-green-left-@(item.StudentCardID) 
+        {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg)
+            }
+
+            100% {
+                -webkit-transform: rotate(@(advanced_left)deg);
+                transform: rotate(@(advanced_left)deg)
+            }
+        }
+        /*Blue*/
+        .progress.blue.ct@(item.StudentCardID) .progress-right .progress-bar {
+            border-width: 14px;
+            animation: loading-blue-right-@(item.StudentCardID) 1.2s linear forwards
+        }
+        @@keyframes loading-blue-right-@(item.StudentCardID) 
+        {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg)
+            }
+
+            100% {
+                -webkit-transform: rotate(@(intermediate_right)deg);
+                transform: rotate(@(intermediate_right)deg)
+            }
+        }
+
+        .progress.blue.ct@(item.StudentCardID) .progress-left .progress-bar {
+            border-width: 14px;
+            animation: loading-blue-left-@(item.StudentCardID) 1.0s linear forwards 1.2s
+        }
+        @@keyframes loading-blue-left-@(item.StudentCardID)
+        {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg)
+            }
+
+            100% {
+                -webkit-transform: rotate(@(intermediate_left)deg);
+                transform: rotate(@(intermediate_left)deg)
+            }
+        }
+        /*Red*/
+        .progress.red.ct@(item.StudentCardID) .progress-right .progress-bar {
+            border-width: 12px;
+            animation: loading-red-right-@(item.StudentCardID) 1.2s linear forwards
+        }
+        @@keyframes loading-red-right-@(item.StudentCardID)
+        {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg)
+            }
+
+            100% {
+                -webkit-transform: rotate(@(beginner_right)deg);
+                transform: rotate(@(beginner_right)deg)
+            }
+        }
+
+        .progress.red.ct@(item.StudentCardID) .progress-left .progress-bar {
+            border-width: 12px;
+            animation: loading-red-left-@(item.StudentCardID) 1.0s linear forwards 1.2s
+        }
+        @@keyframes loading-red-left-@(item.StudentCardID)
+        {
+            0% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg)
+            }
+
+            100% {
+                -webkit-transform: rotate(@(beginner_left)deg);
+                transform: rotate(@(beginner_left)deg)
+            }
+        }
+    </style>
+}
+
+@{
+    ViewBag.Title = "Card";
+}
+
+@if (Model.Cards == null || !Model.Cards.Any())
+{
+    <div class="container">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">No Card Found</div>
+                    @Html.ActionLink("Back", "Search", null, new { @class = "btn btn-primary" })
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="MultiCarousel" data-items="1,2,3,3" data-slide="1" id="MultiCarousel" data-interval="1000">
+                <div class="MultiCarousel-inner">
+                    @foreach (var card in Model.Cards)
+                    {                        
+                        <div class="item">
+                            @Html.HiddenFor(model => card.CustomerID)
+                            <div id="outer_card_@(card.StudentCardID)" class="pad-3">
+                                <div id="info_@(card.StudentCardID)" class="row collapse show" style="margin-bottom: -40px;margin-right: -6px;margin-left: -6px;">
+                                    <div class="progress green ct@(card.StudentCardID)" onclick="jumpSlides(4, '@(card.StudentCardID)')">
+                                        <span class="progress-left"> <span class="progress-bar"></span> </span> <span class="progress-right"> <span class="progress-bar"></span> </span>
+                                        <div class="progress blue ct@(card.StudentCardID)" onclick="jumpSlides(3, '@(card.StudentCardID)')">
+                                            <span class="progress-left"> <span class="progress-bar"></span> </span> <span class="progress-right"> <span class="progress-bar"></span> </span>
+                                            <div class="progress red ct@(card.StudentCardID)" onclick="jumpSlides(2, '@(card.StudentCardID)')">
+                                                <span class="progress-left"> <span class="progress-bar"></span> </span> <span class="progress-right"> <span class="progress-bar"></span> </span>
+                                                <div style="width: 100%; height: 100%; padding: 20px;">
+                                                    <div class="ratio img-responsive img-circle" style="z-index: 1;background-image: url(@Url.Content(card.Customer.PhotoLG ?? Url.Action("ProfileImage", "Cards", new { FirstName = card.StudentName, LastName = card.LastName }))), url( @Url.Action("ProfileImage", "Cards", new { FirstName = card.StudentName, LastName = card.LastName }));" title="@(card.StudentName)"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="padding-top: 40px;">
+                                    <div class="col align-self-center">
+                                        <img class="level" src="~/Areas/NewKiosk/Content/images/levels/@(card.Level.GetDisplay()).png" />
+                                        @if (card.IsGraduated)
+                                        {
+                                            <img onclick="downloadCertPDF(@card.StudentCardID)" style="height: 2rem;width: 2rem;cursor:pointer;" src="~/Areas/NewKiosk/Content/images/certificate-trophy.png" />
+                                        }
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 10px;">
+                                    <div class="col-1 align-self-start">
+                                        <span class="mdi mdi-chevron-left" style="cursor: pointer;font-size: 28px;color: #53aedf;float: left;margin-left: 0.6rem;" onclick="plusSlides(-1, '@(card.StudentCardID)')"></span>
+                                    </div>
+                                    <div class="col" style="font-weight: bold;text-align: center;vertical-align: middle;line-height: 40px;color: black;white-space: nowrap;">
+                                        <label class="title-@(card.StudentCardID)" style="margin: 0px;display:block;">SKILL SET</label>
+                                        <label class="BEGINNER-Content title-@(card.StudentCardID)" style="margin: 0px;display:none;">BEGINNER SKILLS</label>
+                                        <label class="INTERMEDIATE-Content title-@(card.StudentCardID)" style="margin: 0px;display:none;">INTERMEDIATE SKILLS</label>
+                                        <label class="ADVANCED-Content title-@(card.StudentCardID)" style="margin: 0px;display:none;">ADVANCED SKILLS</label>
+                                    </div>
+                                    <div class="col-1 align-self-end">
+                                        <span class="mdi mdi-chevron-right" style="cursor: pointer;font-size: 28px;color:#53aedf;float: right;margin-right: 0.6rem;" onclick="plusSlides(1, '@(card.StudentCardID)')"></span>
+                                    </div>
+                                </div>
+
+                                <div id="info_@(card.StudentCardID)" class="row collapse show">
+                                    <div class="col align-self-center" style="margin-top: 0px;margin-left: 20px;margin-right: 20px;">
+                                        <span style="font-weight: 500;color: black;">The focus of level @((1 + (int)card.Level).ToString().PadLeft(2, '0')) is </span><br />
+                                        <span class="@(card.Level.GetDescription())" style="font-weight: bold;">@(card.Level.GetDescription().ToUpper())</span>
+                                    </div>
+                                </div>
+
+                                <div class="card-skill-content">
+                                    <a data-toggle="collapse" href="#info_@(card.StudentCardID)" aria-expanded="true" class="collapsed">
+                                        <i class="mdi mdi-chevron-down" style="cursor: pointer;font-size: 40px;height:40px; width: 70px;color:#53aedf;"></i>
+                                    </a>
+                                    <div id="info_@(card.StudentCardID)" class="collapse" style="margin-top: -1.5rem;">
+                                        <div class="row" style="padding-right: 2px;">
+                                            <div class="skills-slide card-@(card.StudentCardID)" style="display:block;">
+                                                <div class="col align-self-center FOCUS-Content">
+                                                    <div class="row">
+                                                        <div class="col align-self-center" style="margin-top: 0px;margin-left: 20px;margin-right: 20px;">
+                                                            <span style="font-weight: 500;color: black;">The focus of level @((1 + (int)card.Level).ToString().PadLeft(2, '0')) is </span><br />
+                                                            <span class="@(card.Level.GetDescription())" style="font-weight: bold;">@(card.Level.GetDescription().ToUpper())</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="skills-slide card-@(card.StudentCardID)" style="display:none;">
+                                                <div class="col align-self-center BEGINNER-Content">
+                                                    @foreach (var item in card.StudentCardDetails.OrderBy(s => s.StudentCardDetailID).ThenBy(s => s.SkillID).GroupBy(s => s.Skill.SetName))
+                                                    {
+                                                        var IsComplete = item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.BEGINNER).All(x => x.IsComplete);
+                                                        var htmlAttributes = new Dictionary<string, object>
+                                                        {
+                                                            { "class" , $"star{(IsComplete ? "" : " toSave")} BEGINNER-Content"},
+                                                            { "checked", IsComplete }
+                                                        };
+                                                        //if (IsComplete)
+                                                        {
+                                                            htmlAttributes.Add("disabled", "disabled");
+                                                        }
+                                                        <div class="row" style="border-bottom: 1px dotted #dedede;">
+                                                            <div class="col-10">
+                                                                <p style="font-weight: 500;font-size: small;margin-bottom: 0px;">@item.Key</p>
+                                                            </div>
+                                                            <div class="col-1">
+                                                                @Html.EditorFor(i => IsComplete, new { htmlAttributes = htmlAttributes })
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div class="skills-slide card-@(card.StudentCardID)" style="display:none;">
+                                                <div class="col align-self-center INTERMEDIATE-Content">
+                                                    @foreach (var item in card.StudentCardDetails.OrderBy(s => s.StudentCardDetailID).ThenBy(s => s.SkillID).GroupBy(s => s.Skill.SetName))
+                                                    {
+                                                        var IsComplete = item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.INTERMEDIATE).All(x => x.IsComplete);
+                                                        var htmlAttributes = new Dictionary<string, object>
+                                                        {
+                                                            { "class" , $"star{(IsComplete ? "" : " toSave")} INTERMEDIATE-Content"},
+                                                            { "checked", IsComplete }
+                                                        };
+                                                        //if (IsComplete)
+                                                        {
+                                                            htmlAttributes.Add("disabled", "disabled");
+                                                        }
+                                                        <div class="row" style="border-bottom: 1px dotted #dedede;">
+                                                            <div class="col-10">
+                                                                <p style="font-weight: 500;font-size: small;margin-bottom: 0px;">@item.Key</p>
+                                                            </div>
+                                                            <div class="col-1">
+                                                                @Html.EditorFor(i => IsComplete, new { htmlAttributes = htmlAttributes })
+                                                            </div>                                                            
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div class="skills-slide card-@(card.StudentCardID)" style="display:none;">
+                                                <div class="col align-self-center ADVANCED-Content">
+                                                    @foreach (var item in card.StudentCardDetails.OrderBy(s => s.StudentCardDetailID).ThenBy(s => s.SkillID).GroupBy(s => s.Skill.SetName))
+                                                    {
+                                                        var IsComplete = item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED && !i.Skill.Name.Contains("Mastery")).All(x => x.IsComplete);
+                                                        var htmlAttributes = new Dictionary<string, object>
+                                                        {
+                                                            { "class" , $"star{(IsComplete ? "" : " toSave")} ADVANCED-Content"},
+                                                            { "checked", IsComplete }
+                                                        };
+                                                        //if (IsComplete)
+                                                        {
+                                                            htmlAttributes.Add("disabled", "disabled");
+                                                        }
+
+                                                        var MasteryIsComplete = item.Where(i => i.Skill.SkillDifficulty == Daftari.AquaCards.Enum.SkillDifficulty.ADVANCED && i.Skill.Name.Contains("Mastery")).All(x => x.IsComplete);
+
+                                                        var MasteryhtmlAttributes = new Dictionary<string, object>
+                                                        {                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                            { "class" , $"tick{(MasteryIsComplete ? "" : " toSave")}" },
+                                                            { "checked", MasteryIsComplete }
+                                                        };
+
+                                                        //if (MasteryIsComplete)
+                                                        {
+                                                            MasteryhtmlAttributes.Add("disabled", "disabled");
+                                                        }
+
+                                                        <div class="row" style="border-bottom: 1px dotted #dedede;">                                                            
+                                                            <div class="col-9">
+                                                                <p style="font-weight: 500;font-size: small;margin-bottom: 0px;">@item.Key</p>
+                                                            </div>
+                                                            <div class="col-1">
+                                                                @Html.EditorFor(i => IsComplete, new { htmlAttributes = htmlAttributes })
+                                                            </div>
+                                                            <div class="col-1">
+                                                                @Html.EditorFor(i => MasteryIsComplete, new { htmlAttributes = MasteryhtmlAttributes })
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-prev leftLst">❮</button>
+                <button class="carousel-next rightLst">❯</button>
+            </div>
+        </div>
+        @*<div class="row">
+                <div class="col-md-12 text-center">
+                    <br /><br /><br />
+                    <hr />
+                    <p>Settings</p>
+                    <p>Change data items for xs,sm,md and lg display items respectively. Ex:data-items="1,3,5,6"</p>
+                    <p>Change data slide for slides per click Ex:data-slide="1"</p>
+                </div>
+            </div>*@
+    </div>
+}
+
+<div class="bottom-btn">
+    <div class="row">
+        <div class="col-5 align-self-end" style="margin-top: auto;">
+            <img class="bottom-icon" style="float:right;" src="~/Areas/NewKiosk/Content/images/finder.png" />
+        </div>
+        <div class="col-2" style="padding:0;">
+            <div style="width:100%; height:100%">
+                <img class="bottom-icon-center" src="~/Areas/NewKiosk/Content/images/buoy.png" />
+            </div>
+        </div>
+        <div class="col-5 align-self-start" style="margin-top: auto;">
+            <img class="bottom-icon" style="float:left;" src="~/Areas/NewKiosk/Content/images/aqua-ards.png" />
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <script>
+        var rootURL = '@Url.Action("../Cards/")';
+        $(".progress-bar").hover(
+            function () {                
+                $parent = $(this).parent().parent();
+
+                $(this).parent().parent().children('span').each(function () {
+                    var $pb = $(this).find('span').first();
+                    if ($parent.hasClass('green')) {
+                        $pb.css("border-color", "#30a253BB");
+                    } else if ($parent.hasClass('blue')) {
+                        $pb.css("border-color", "#259ddaBB");
+                    } else if ($parent.hasClass('red')) {
+                        $pb.css("border-color", "#f61c24BB");
+                    }
+                });
+            }, function () {
+                $(this).parent().parent().children('span').each(function () {
+                    $(this).find('span').first().css("border-color", "");
+                });
+            }
+        );
+
+        $("div.progress.green,div.progress.blue,div.progress.red").click(function(e)
+        {
+            e.stopPropagation();
+        });
+
+        $(".card-skill-content > a").click(function (e)
+        {
+            if ($(this).hasClass("collapsed")) {
+                $(this).closest('.pad-3').css("border", "solid #30a253");
+            } else {
+                $(this).closest('.pad-3').css("border", "");
+            }
+        });
+
+        $("div.img-circle").click(function (e)
+        {
+            e.stopPropagation();
+            console.log("yoh");
+        });        
+
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({ delay: { "hide": 100 } });
+            $("#checkAll").click(function(){
+                $('form input.toSave').not(this).prop('checked', this.checked);
+            });
+        });
+
+        function getTime() {
+            try {
+                return moment('@ViewBag.StartDate');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setInputValue(selector, value) {
+            $(selector).val(value);
+            $(selector).closest('div.form-group').removeClass('is-empty');
+        }
+
+        $(document).ready(function () {
+            var itemsMainDiv = ('.MultiCarousel');
+            var itemsDiv = ('.MultiCarousel-inner');
+            var itemWidth = "";
+
+            $('.leftLst, .rightLst').click(function () {
+                var condition = $(this).hasClass("leftLst");
+                if (condition)
+                    click(0, this);
+                else
+                    click(1, this)
+            });
+
+            ResCarouselSize();
+
+            $(window).resize(function () {
+                ResCarouselSize();
+            });
+
+            //this function define the size of the items
+            function ResCarouselSize() {
+                var incno = 0;
+                var dataItems = ("data-items");
+                var itemClass = ('.item');
+                var id = 0;
+                var btnParentSb = '';
+                var itemsSplit = '';
+                var sampwidth = $(itemsMainDiv).width();
+                var bodyWidth = $('body').width();
+                $(itemsDiv).each(function () {
+                    id = id + 1;
+                    var itemNumbers = $(this).find(itemClass).length;
+                    btnParentSb = $(this).parent().attr(dataItems);
+                    itemsSplit = btnParentSb.split(',');
+                    $(this).parent().attr("id", "MultiCarousel" + id);
+
+
+                    if (bodyWidth >= 1200) {
+                        incno = itemsSplit[3];
+                        itemWidth = sampwidth / incno;
+                    }
+                    else if (bodyWidth >= 992) {
+                        incno = itemsSplit[2];
+                        itemWidth = sampwidth / incno;
+                    }
+                    else if (bodyWidth >= 768) {
+                        incno = itemsSplit[1];
+                        itemWidth = sampwidth / incno;
+                    }
+                    else {
+                        incno = itemsSplit[0];
+                        itemWidth = sampwidth / incno;
+                    }
+
+                    $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
+                    $(this).find(itemClass).each(function () {
+
+                        $(this).outerWidth(itemWidth);
+                        var outer_width = itemWidth - (incno === '1' ? 90 : 145);
+                        //console.log(incno, typeof(incno));
+                        //$(this).find(".green").css("height", outer_width + "px");
+
+                        $(this).find(".green").css("height", outer_width + "px");
+                        $(this).find(".green").css("width", outer_width + "px");
+                        $(this).find(".green > .progress-left > .progress-bar").css("border-top-right-radius", (outer_width / 2) + "px");
+                        $(this).find(".green > .progress-left > .progress-bar").css("border-bottom-right-radius", (outer_width / 2) + "px");
+
+                        $(this).find(".green > .progress-right > .progress-bar").css("border-top-left-radius", (outer_width / 2) + "px");
+                        $(this).find(".green > .progress-right > .progress-bar").css("border-bottom-left-radius", (outer_width / 2) + "px");
+
+                        outer_width = outer_width - 50;
+                        $(this).find(".blue").css("height", outer_width + "px");
+                        $(this).find(".blue").css("width", outer_width + "px");
+                        $(this).find(".blue > .progress-left > .progress-bar").css("border-top-right-radius", (outer_width / 2) + "px");
+                        $(this).find(".blue > .progress-left > .progress-bar").css("border-bottom-right-radius", (outer_width / 2) + "px");
+
+                        $(this).find(".blue > .progress-right > .progress-bar").css("border-top-left-radius", (outer_width / 2) + "px");
+                        $(this).find(".blue > .progress-right > .progress-bar").css("border-bottom-left-radius", (outer_width / 2) + "px");
+
+                        outer_width = outer_width - 50;
+                        $(this).find(".red").css("height", outer_width + "px");
+                        $(this).find(".red").css("width", outer_width + "px");
+                        $(this).find(".red > .progress-left > .progress-bar").css("border-top-right-radius", (outer_width / 2) + "px");
+                        $(this).find(".red > .progress-left > .progress-bar").css("border-bottom-right-radius", (outer_width / 2) + "px");
+
+                        $(this).find(".red > .progress-right > .progress-bar").css("border-top-left-radius", (outer_width / 2) + "px");
+                        $(this).find(".red > .progress-right > .progress-bar").css("border-bottom-left-radius", (outer_width / 2) + "px");
+
+                        $(this).css("height", $(this).css('height'));
+                        $(this).find(".pad-3").css('height', $(this).css('height'));
+                    });
+
+                    $(".leftLst").addClass("over");
+                    $(".rightLst").removeClass("over");
+
+                });
+            }
+
+
+            //this function used to move the items
+            function ResCarousel(e, el, s) {
+                var leftBtn = ('.leftLst');
+                var rightBtn = ('.rightLst');
+                var translateXval = '';
+                var divStyle = $(el + ' ' + itemsDiv).css('transform');
+                var values = divStyle.match(/-?[\d\.]+/g);
+                var xds = Math.abs(values[4]);
+                if (e == 0) {
+                    translateXval = parseInt(xds) - parseInt(itemWidth * s);
+                    $(el + ' ' + rightBtn).removeClass("over");
+
+                    if (translateXval <= itemWidth / 2) {
+                        translateXval = 0;
+                        $(el + ' ' + leftBtn).addClass("over");
+                    }
+                }
+                else if (e == 1) {
+                    var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
+                    translateXval = parseInt(xds) + parseInt(itemWidth * s);
+                    $(el + ' ' + leftBtn).removeClass("over");
+
+                    if (translateXval >= itemsCondition - itemWidth / 2) {
+                        translateXval = itemsCondition;
+                        $(el + ' ' + rightBtn).addClass("over");
+                    }
+                }
+                $(el + ' ' + itemsDiv).css('transform', 'translateX(' + -translateXval + 'px)');
+            }
+
+            //It is used to get some elements from btn
+            function click(ell, ee) {
+                var Parent = "#" + $(ee).parent().attr("id");
+                var slide = $(Parent).attr("data-slide");
+                ResCarousel(ell, Parent, slide);
+            }
+
+        });
+
+    var slideIndex = 1;
+    //showSlides(slideIndex, 'skills-slide');
+
+    function plusSlides(n, id) {
+      showSlides(slideIndex += n, id);
+    }
+
+    function jumpSlides(n, id) {
+        showSlides(slideIndex = n, id);
+        $('.card-skill-content > a[href$="info_' + id + '"]').click();
+    }
+
+    function showSlides(n, id) {        
+        var i;
+        var slides = document.getElementsByClassName('card-' + id);
+        var titles = document.getElementsByClassName('title-' + id);
+
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+            titles[i].style.display = "none";
+        }
+
+        slides[slideIndex - 1].style.display = "block";
+        titles[slideIndex - 1].style.display = "block";
+        console.log(slideIndex, n);
+    }
+
+    </script>
+}

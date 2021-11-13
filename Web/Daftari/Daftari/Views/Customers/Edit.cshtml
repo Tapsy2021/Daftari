@@ -1,0 +1,112 @@
+﻿@model Daftari.ViewModel.RegistrationFormVM
+
+@section CustomStyles {
+}
+
+@{
+    ViewBag.Title = "Edit Registeration Form";
+}
+
+@using (Html.BeginForm("Edit", "Customers", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="well">
+        <fieldset style="margin-left: 20px;margin-right: 20px;">
+            <legend>Edit Registeration Form</legend>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.CustomerID)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FullName, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control disabled" } })
+                @Html.HiddenFor(model => model.FullName)
+                @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MotherName, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.MotherName, new { htmlAttributes = new { @class = "form-control disabled" } })
+                @Html.HiddenFor(model => model.MotherName)
+                @Html.ValidationMessageFor(model => model.MotherName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FatherName, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.FatherName, new { htmlAttributes = new { @class = "form-control disabled" } })
+                @Html.HiddenFor(model => model.FatherName)
+                @Html.ValidationMessageFor(model => model.FatherName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control disabled" } })
+                @Html.HiddenFor(model => model.Address)
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control disabled" } })
+                @Html.HiddenFor(model => model.City)
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Region, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Region, new { htmlAttributes = new { @class = "form-control disabled" } })
+                @Html.HiddenFor(model => model.Region)
+                @Html.ValidationMessageFor(model => model.Region, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Birthday, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Birthday, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Birthday, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PrimaryPhone, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.PrimaryPhone, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PrimaryPhone, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group custom-control custom-checkbox">
+                @Html.EditorFor(model => model.IsMember, new { htmlAttributes = new { @class = "custom-control-input disabled" } })
+                @Html.LabelFor(model => model.IsMember, htmlAttributes: new { @class = "custom-control-label" })
+                @Html.HiddenFor(model => model.IsMember)
+                @Html.ValidationMessageFor(model => model.IsMember, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group custom-control custom-checkbox">
+                @Html.LabelFor(model => model.IsSubToCommunications, htmlAttributes: new { @class = "custom-control-input" })
+                @Html.EditorFor(model => model.IsSubToCommunications, new { htmlAttributes = new { @class = "custom-control-label" } })
+                @Html.ValidationMessageFor(model => model.IsSubToCommunications, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-light" />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Home", "Index", null, new { @class = "btn btn-light" })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    @Scripts.Render("~/bundles/editRegisterForm")
+}

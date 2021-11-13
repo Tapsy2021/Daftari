@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://tamimahsms.com/User/bulkpush.asmx?wsdl" docRef="https://tamimahsms.com/User/bulkpush.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://tamimahsms.com/User/bulkpush.asmx" xmlns:q1="https://www.tamimahsms.com/" binding="q1:BulkPushSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://tamimahsms.com/User/bulkpush.asmx" xmlns:q2="https://www.tamimahsms.com/" binding="q2:BulkPushSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

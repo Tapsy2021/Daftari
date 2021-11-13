@@ -1,0 +1,346 @@
+﻿@using System.Web.Script.Serialization
+@model Daftari.ViewModel.FormSettingsVM
+
+@section CustomStyles {
+<style>
+    .hidden{
+        display:none;
+    }
+
+    legend.title {
+        font-weight: bold;
+        padding-top: 5rem;
+    } 
+    fieldset {
+        padding: 1rem;
+        padding-top: 0;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+    @@media only screen and (min-width: 768px) {
+        fieldset {
+            margin-left: 150px;
+            margin-right: 150px;
+            padding: 3rem;
+        }
+        legend.title {
+            font-size: 1.7rem;
+        }
+        .delete {
+            margin-top: 2rem;
+        }
+    }
+
+    .row > .form-group {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+</style>
+}
+
+@{
+    ViewBag.Title = "Edit Custom Form";
+}
+
+@using (Html.BeginForm("EditCustomForm", "Forms", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="well">
+        <fieldset>
+            <legend class="title">Edit Custom Form</legend>
+            <legend>@ViewBag.BusinessName</legend>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.FormSettingsID)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.AccessLevel, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.DropDownListFor(model => model.AccessLevel, (SelectList)ViewBag.Groups, "Select...", htmlAttributes: new { @class = "form-control select2", data_toggle = "select2" })
+                @Html.ValidationMessageFor(model => model.AccessLevel, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+
+            <text style="font-size: 20px;font-weight: 600;">Fields</text>
+
+            <table class="table table-bordered" id="form_fields">
+                <tbody>
+                    @for (var i = 0; i < Model.FormCustomFields.Count; i++)
+                    {
+                        var has_required = Model.FormCustomFields[i].InputType != Daftari.Forms.Enum.InputType.Section;
+                        var options_class = Model.FormCustomFields[i].InputType == Daftari.Forms.Enum.InputType.Select ||
+                                            Model.FormCustomFields[i].InputType == Daftari.Forms.Enum.InputType.RadioButton ? "" : "hidden";
+
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div>
+                                        @Html.HiddenFor(model => model.FormCustomFields[i].FormCustomFieldID)
+                                    </div>
+                                    <div class="col-md-@(has_required ? "5" : "8") form-group" id="FormCustomFields_@(i)__Label">
+                                        @Html.LabelFor(model => model.FormCustomFields[i].Label, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.FormCustomFields[i].Label, new { htmlAttributes = new { @class = "form-control disabled", @required = "required" } })
+                                        @Html.ValidationMessageFor(model => model.FormCustomFields[i].Label, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-3 form-group label-floating">
+                                        @Html.LabelFor(model => model.FormCustomFields[i].InputType, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EnumDropDownListFor(model => model.FormCustomFields[i].InputType, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(model => model.FormCustomFields[i].InputType, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-3 form-group label-floating @(has_required? "": "hidden")" id="FormCustomFields_@(i)__Required">
+                                        @Html.LabelFor(model => model.FormCustomFields[i].Required, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EnumDropDownListFor(model => model.FormCustomFields[i].Required, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(model => model.FormCustomFields[i].Required, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.HiddenFor(model => model.FormCustomFields[i].IsDeleted)
+                                        <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>
+                                    </div>
+                                </div>
+
+                                <div class="row @(options_class)" id="FormCustomFields_@(i)__InputType">
+                                    <div class="form-group col-md-12">
+                                        @Html.LabelFor(model => model.FormCustomFields[i].SelectOptions, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.FormCustomFields[i].SelectOptions, new { htmlAttributes = new { @class = "form-control disabled" } })
+                                        @Html.ValidationMessageFor(model => model.FormCustomFields[i].SelectOptions, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-3">
+                    <button type="button" class="btn btn-info add-field"><i class="fa fa-plus"></i> Add Field</button>
+                </div>
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.IsAttachmentEnabled, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.CheckBoxSimpleFor(model => model.IsAttachmentEnabled, new { data_switch = "success" })
+                @Html.LabelFor(model => model.IsAttachmentEnabled, " ", htmlAttributes: new { data_on_label = "Yes", data_off_label = "No" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.IsPublic, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.CheckBoxSimpleFor(model => model.IsPublic, new { data_switch = "success" })
+                @Html.LabelFor(model => model.IsPublic, " ", htmlAttributes: new { data_on_label = "Yes", data_off_label = "No" })
+            </div>
+
+            <text style="font-size: 20px;font-weight: 600;">Signatures</text>
+
+            <table class="table table-bordered" id="form_signature">
+                <tbody>
+                    @for (var i = 0; i < Model.FormSignatureFields.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div>
+                                        @Html.HiddenFor(model => model.FormSignatureFields[i].FormSignatureFieldID)
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.LabelFor(model => model.FormSignatureFields[i].Name, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.FormSignatureFields[i].Name, new { htmlAttributes = new { @class = "form-control disabled", @required = "required" } })
+                                        @Html.ValidationMessageFor(model => model.FormSignatureFields[i].Name, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-5 form-group label-floating">
+                                        @Html.LabelFor(model => model.FormSignatureFields[i].Required, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EnumDropDownListFor(model => model.FormSignatureFields[i].Required, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(model => model.FormSignatureFields[i].Required, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.HiddenFor(model => model.FormSignatureFields[i].IsDeleted)
+                                        <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-3">
+                    <button type="button" class="btn btn-info add-signature"><i class="fa fa-plus"></i> Add Signature</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.SendNotificationsTo, htmlAttributes: new { @class = "control-label" })
+                @Html.ListBoxFor(model => model.SendNotificationsTo, (MultiSelectList)ViewBag.Users, htmlAttributes: new { @class = "select2 form-control select2-multiple", data_toggle = "select2", @required = "required" })
+                @Html.ValidationMessageFor(model => model.SendNotificationsTo, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AprrovalProcess, htmlAttributes: new { @class = "control-label" })
+                @Html.ListBoxFor(model => model.AprrovalProcess, (MultiSelectList)ViewBag.Users, htmlAttributes: new { @class = "select2 form-control select2-multiple", data_toggle = "select2" })
+                @Html.ValidationMessageFor(model => model.AprrovalProcess, "", new { @class = "text-danger" })
+            </div>
+            <br />
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Update" class="btn btn-light" />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    @*@Scripts.Render("~/bundles/editRegisterForm")*@
+
+    <script>
+        $(document).ready(function () {
+            var inputTypes = @Html.Raw(new JavaScriptSerializer().Serialize(ViewBag.InputTypes));
+            var yesNoOpt = @Html.Raw(new JavaScriptSerializer().Serialize(ViewBag.YesNo));
+            $(".add-field").click(function(){
+                var index = $("#form_fields tbody tr:last-child").index();
+                var row = '<tr><td>' +
+                        '<div class="row">' +
+                            //'<div class="col-1"></div>' +
+                            '<div class="col-md-5 form-group" id="FormCustomFields_' + (index+1) + '__Label">' +
+                                '<label class="control-label" for="FormCustomFields_' + (index+1) + '__Label">Label</label>' +
+                                '<input class="form-control disabled text-box single-line" data-val-required="\'Label\' must not be empty." id="FormCustomFields_' + (index+1) + '__Label" name="FormCustomFields[' + (index+1) + '].Label" required="required" type="text" value="">' +
+                                '<span class="field-validation-valid text-danger" data-valmsg-for="FormCustomFields[' + (index+1) + '].Label" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-md-3 form-group label-floating">' +
+                                '<label class="control-label" for="FormCustomFields_' + (index+1) + '__InputType">Type</label>' +
+                                '<select class="form-control valid" id="FormCustomFields_' + (index+1) + '__InputType" name="FormCustomFields[' + (index+1) + '].InputType" required="required" aria-invalid="false">' +
+                                '<option value="">Select...</option>' +
+                                (function (){
+                                    var opt = "";
+                                    $.each(inputTypes, function( index, obj ) {
+                                        opt += '<option value="' + obj.key + '">' + obj.value + '</option>'
+                                    });
+                                    return opt;
+                                }()) +
+                                '</select><span class="field-validation-valid text-danger" data-valmsg-for="FormCustomFields[' + (index+1) + '].InputType" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-md-3 form-group label-floating" id="FormCustomFields_' + (index+1) + '__Required">' +
+                                '<label class="control-label" for="FormCustomFields_' + (index+1) + '__Required">Required</label>' +
+                                '<select class="form-control valid" id="FormCustomFields_'+ (index+1) + '__Required" name="FormCustomFields[' + (index+1) + '].Required" required="required" aria-invalid="false">' +
+                                '<option value="">Select...</option>' +
+                                (function (){
+                                    var opt = "";
+                                    $.each(yesNoOpt, function( index, obj ) {
+                                        opt += '<option value="' + obj.key + '">' + obj.value + '</option>'
+                                    });
+                                    return opt;
+                                }()) +
+                                '</select><span class="field-validation-valid text-danger" data-valmsg-for="FormCustomFields[' + (index+1) + '].Required" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-md-1">' +
+                                '<input id="FormCustomFields_' + (index+1) + '__IsDeleted" name="FormCustomFields[' + (index+1) + '].IsDeleted" type="hidden" value="False">' +
+                                '<a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="row hidden" id="FormCustomFields_' + (index+1) + '__InputType">' +
+                            '<div class="col-12 form-group">' +
+                                '<label class="control-label" for="FormCustomFields_' + (index+1) + '__SelectOptions">Options (comma separated)</label>' +
+                                '<input class="form-control disabled text-box single-line" id="FormCustomFields_' + (index+1) + '__SelectOptions" name="FormCustomFields[' + (index+1) + '].SelectOptions" type="text" value="">' +
+                                '<span class="field-validation-valid text-danger" data-valmsg-for="FormCustomFields[' + (index+1) + '].SelectOptions" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                        '</div>' +
+                '</td></tr>';
+                $("#form_fields").append(row);
+            });
+
+            $(".add-signature").click(function () {
+                var index = $("#form_signature tbody tr:last-child").index();
+                var row = '<tr><td>' +
+                        '<div class="row">' +
+                            //'<div class="col-1"></div>' +
+                            '<div class="col-md-6 form-group">' +
+                                '<label class="control-label" for="FormSignatureFields_' + (index+1) + '__Name">Name</label>' +
+                                '<input class="form-control disabled text-box single-line" data-val-required="\'Name\' must not be empty." id="FormSignatureFields_' + (index+1) + '__Name" name="FormSignatureFields[' + (index+1) + '].Name" required="required" type="text" value="">' +
+                                '<span class="field-validation-valid text-danger" data-valmsg-for="FormSignatureFields[' + (index+1) + '].Name" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-md-5 form-group label-floating">' +
+                                '<label class="control-label" for="FormSignatureFields_' + (index+1) + '__Required">Required</label>' +
+                                '<select class="form-control valid" id="FormSignatureFields_'+ (index+1) + '__Required" name="FormSignatureFields[' + (index+1) + '].Required" required="required" aria-invalid="false">' +
+                                '<option value="">Select...</option>' +
+                                (function (){
+                                    var opt = "";
+                                    $.each(yesNoOpt, function( index, obj ) {
+                                        opt += '<option value="' + obj.key + '">' + obj.value + '</option>'
+                                    });
+                                    return opt;
+                                }()) +
+                                '</select><span class="field-validation-valid text-danger" data-valmsg-for="FormSignatureFields[' + (index+1) + '].Required" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-md-1">' +
+                                '<input id="FormSignatureFields_' + (index+1) + '__IsDeleted" name="FormSignatureFields[' + (index+1) + '].IsDeleted" type="hidden" value="False">' +
+                                '<a class="btn btn-danger btn-sm delete" style="position: absolute;bottom: 0; margin-bottom: 19px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>' +
+                            '</div>' +
+                        '</div>' +
+                '</td></tr>';
+                $("#form_signature").append(row);
+            });
+
+	        //// Delete row on delete button click
+	        $(document).on("click", ".delete", function(){
+                var element = $(this).parents("tr");
+                element.find("input[name$='IsDeleted']").val("true");
+                element.css({ "display": "none" });
+            });
+
+            $(document).on("change", 'select[id^=FormCustomFields]', function () {
+                var id = $(this).attr('id');
+                if (id.endsWith("InputType")) {
+                    //Comma separated dropdown option field
+                    if($(this).find('option:selected').text() != "Select" && $(this).find('option:selected').text() != "RadioButton"){
+				        $("div[id=" + id + "]").addClass("hidden");
+				        //empty = true;
+			        } else{
+                        $("div[id=" + id + "]").removeClass("hidden");
+                    }
+                    //Is Required field - not applicable for section
+                    var id_r = id.replace("InputType", "Required");
+                    var id_l = id.replace("InputType", "Label");
+                    if ($(this).find('option:selected').text() == "Section") {
+                        $("div[id=" + id_r + "]").addClass("hidden");
+                        $("div[id=" + id_l + "]").addClass("col-md-8");
+                        $("div[id=" + id_l + "]").removeClass("col-md-5");
+				        //empty = true;
+			        } else{
+                        $("div[id=" + id_r + "]").removeClass("hidden");
+                        $("div[id=" + id_l + "]").addClass("col-md-5");
+                        $("div[id=" + id_l + "]").removeClass("col-md-8");
+                    }
+                }
+            });
+
+            $("select").on("select2:select", function (evt) {
+                var element = evt.params.data.element;
+                var $element = $(element);
+  
+                $element.detach();
+                $(this).append($element);
+                $(this).trigger("change");
+            });
+
+            //$("select").on("select2:unselect", function (evt) {
+            //    var element = evt.params.data.element;
+            //    var $element = $(element);
+            //    $element.remove();
+            //});
+        });
+    </script>
+}

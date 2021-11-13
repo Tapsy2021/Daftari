@@ -1,0 +1,532 @@
+﻿@model Daftari.ViewModel.AquaCardReportVM
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+
+    <style type="text/css">
+
+        #reportrange {
+            width: 300px;
+        }
+
+        td h2 {
+            font-size: 14px;
+        }
+
+        .NotOpen {
+            background: rgb(255, 216, 216) !IMPORTANT;
+        }
+
+        .NotOpen.selected {
+            background: rgb(255, 181, 181) !IMPORTANT;
+        }
+        .btn-info {
+            padding: 0.0rem 0.4rem !important;
+            margin-right: 0.5rem;
+        }
+        .img-circle{
+            width: 33px;
+            height: 33px;
+            margin: 2px;
+            border-radius: 50%;
+        }
+        .g-label{
+            height: 15px;
+            padding-top: 6px;
+            cursor: pointer;
+        }
+    </style>
+}
+@{
+    ViewBag.Title = "Aqua Card Report";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Aqua Card Report</h5>
+
+                @if (ViewBag.CanView == true)
+                {
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.StaffFilter, htmlAttributes: new { @class = "control-label" })
+                        <select id="StaffFilter" class="form-control"></select>
+                    </div>
+
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.DateFilter, htmlAttributes: new { @class = "form-label" })
+                        @Html.EditorFor(model => model.DateFilter, new { htmlAttributes = new { @class = "form-control date", data_toggle = "date-picker", data_time_Picker = "true" } })
+                    </div>
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.DateFilter, new { htmlAttributes = new { @class = "form-control date", style = "display:none", data_toggle = "date-picker", data_time_Picker = "true" } })
+                }
+
+                <table id="dtTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.start_at) Date
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.start_at) Time
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.staff_members)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.people)
+                            </th>
+                            <th>
+                                Current Card Level
+                            </th>
+                            <th>
+                                Last Card Open Date
+                            </th>
+                            <th>
+                                Last Card Open Time
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/datatables")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.js" integrity="sha512-nwFvp27oDSOkJAXZdkqJDB2FkkI3dXJKSapfBmm+R9YW/4KvT8SAGhyTxmt6Uxfa49rTYODHdjjVjOLSJELfJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @if (ViewBag.CanView == false)
+    {
+        <script type="text/javascript">
+            var personId = '@ViewBag.PersonID';
+        </script>
+    }
+
+    <script type="text/javascript">
+         var rootURL = '@Url.Action("/")';
+        var cardURL = '@Url.Action("Open", "StudentCards")';
+
+        function getLevelParam(lvl) {
+            var levels = ['1 - Tadpoles',
+                '2 - Minnows',
+                '3 - Younger Leapfrog',
+                '4 - Seahorses',
+                '5 - Starfish',
+                '6 - Seals',
+                '7 - Sharks',
+                '8 - Stingrays'];
+
+            var lvlIndex = levels.indexOf(lvl);
+            var lvlParam = '';
+            if (lvlIndex !== -1)
+                lvlParam = '&lvl=' + lvlIndex;
+
+            if (lvl === '3 - Older Leapfrog')
+                lvlParam = '&lvl=2';
+
+            return lvlParam;
+        }
+
+        $.fn.dataTable.moment('h:mm:ss a');
+
+        var table = $('#dtTable').DataTable({
+        scrollY: 550,
+        scrollX: true,
+        deferRender: false,
+        scroller: {
+            loadingIndicator: true,
+            displayBuffer: 150
+        },
+        select: true,
+       "ajax": {
+          "url": rootURL + 'getJSON',
+            "data": function (d) {
+                var dates = $('#DateFilter').val().split(' - ');
+                d.from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+                d.to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+                if (typeof (personId) !== 'undefined') {
+                    d.staff_member_ids = personId;
+                }
+            },
+            dataSrc: 'event_occurrences'
+        },
+        lengthChange: false,
+        //"processing": true,
+        stateSave: true,
+        "columns": [
+            {
+                "data": "start_at", render: function (data, type, row) {
+                    return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('YYYY-MM-DD');
+                    //return moment(data).format('YYYY-MM-DD');
+                },
+                orderData: [0, 1]
+            },
+            {
+                "data": "start_at", render: function (data, type, row) {
+                    return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('h:mm:ss a');
+                    //return moment(data).format('h:mm:ss a');
+                },
+                orderData: [1, 0]
+            },
+            { "data": "name" },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    var msg = '';
+                    if (row.staff_members.length > 0) {
+                        for (var i = 0; i < row.staff_members.length; i++) {
+                            if (msg === '') {
+                                msg = row.staff_members[i].name;
+                            } else {
+                                msg += '<br/>' + row.staff_members[i].name;
+                            }
+                        }
+                        msg = '<a class="btn btn-info btn-raised btn-xs"  OnClick="openCards(' + row.id + ')" data-toggle="tooltip" data-placement="bottom" title="Open Cards" data-animation="true"><i class="dripicons-expand-2"></i></a>' + msg;
+                    }
+                    return msg;
+                }
+            },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    var msg = '';
+                    if (row.visits.length > 0) {
+                        for (var i = 0; i < row.visits.length; i++) {
+                            var visit = row.visits[i];
+                            msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + (visit.person.name + ' (' + visit.status + ')') + '<br />';
+                        }
+                    } else {
+                        msg = 'NA';
+                    }
+                    return msg;
+                }
+            },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    var msg = '';
+                    if (row.visits.length > 0) {
+                        for (var i = 0; i < row.visits.length; i++) {
+                            var visit = row.visits[i];       
+                            var d = moment.duration(new moment().diff(visit.person.lastOpenDateTime));
+                            var isNotOpen = false;
+                            if (d.as('days') > 1) {
+                                row.isNotOpen = true;
+                                isNotOpen = true;
+                            }
+                            
+                            msg = msg + '<div class="g-label"><a OnClick="openCard(' + visit.person.id + ',\'' + data.name + '\')">' + (visit.person.id === 0 ? "-" :  (visit.person.level != null ? visit.person.level : "(No Card)")) + (isNotOpen ? " (Not Opened)" : "") + '</a></div><br />';
+                        }
+                    } else {
+                        msg = 'NA';
+                    }
+                    return msg;
+                }
+            },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    var msg = '';
+                    if (row.visits.length > 0) {
+                        for (var i = 0; i < row.visits.length; i++) {
+                            var visit = row.visits[i];
+                            var lastOpenDateTime = visit.person.lastOpenDateTime;
+                            if (lastOpenDateTime != null) {
+                                var lastOpenDateTime = convertUTCToLocal(visit.person.lastOpenDateTime, "YYYY-MM-DD hh:mm:ss A");
+                                msg = msg + '<div class="g-label">' + lastOpenDateTime.format('YYYY-MM-DD') + '</div><br />';
+                            } else {
+                                msg = msg + '<div class="g-label">____________</div><br />';
+                            }                            
+                            //msg = msg + '<div class="g-label">' + (visit.person.id === 0 ? "-" : (lastOpenDateTime != null ? moment(lastOpenDateTime).format('YYYY-MM-DD') : "____________")) + '</div><br />';
+                        }
+                    } else {
+                        msg = 'NA';
+                    }
+                    return msg;
+                }
+            },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    var msg = '';
+                    if (row.visits.length > 0) {
+                        for (var i = 0; i < row.visits.length; i++) {
+                            var visit = row.visits[i];
+                            var lastOpenDateTime = visit.person.lastOpenDateTime;
+                            if (lastOpenDateTime != null) {
+                                var lastOpenDateTime = convertUTCToLocal(visit.person.lastOpenDateTime, "YYYY-MM-DD hh:mm:ss A");
+                                msg = msg + '<div class="g-label">' + lastOpenDateTime.format('h:mm:ss a') + '</div><br />';
+                            } else {
+                                msg = msg + '<div class="g-label">____________</div><br />';
+                            }  
+                            //console.log(lastOpenDateTime);
+                            //msg = msg + '<div class="g-label">' + (visit.person.id === 0 ? "-" : (lastOpenDateTime != null ? moment(lastOpenDateTime).format('h:mm:ss a') : "____________")) + '</div><br />';
+                        }
+                    } else {
+                        msg = 'NA';
+                    }
+                    return msg;
+                }
+            },
+        ],
+        rowCallback: function (row, data) {
+            if (data.isNotOpen) {
+                $(row).addClass('NotOpen');
+            }
+        },
+        columnDefs: [
+
+        ],
+        order: [0, "asc"],
+        "initComplete": function (settings, json) {
+            //makeRequest();
+
+            userPermExec(json);
+        }
+    });
+
+    new $.fn.dataTable.Buttons(table, {
+        buttons: true,
+        "buttons": [
+            {
+                extend: 'colvis',
+                postfixButtons: ['colvisRestore'],
+            },
+            'selectAll',
+            'selectNone',
+            {
+                extend: 'print',
+                exportOptions: {
+                    columns: ':visible',
+                    stripNewlines: false,
+                    stripHtml: false
+                },
+                footer: true
+            },
+            {
+                text: 'Reset Filter',
+                action: function (e, dt, node, config) {
+                    table.state.clear();
+                    window.location.reload();
+                }
+            },
+            {
+                text: 'Reload',
+                action: function (e, dt, node, config) {
+                    dt.ajax.reload(function () {
+                        //makeRequest();
+                        userPermExec(table.ajax.json());
+                    });
+                }
+            },
+            {
+                text: 'Sync',
+                action: function (e, dt, node, config) {
+                    $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info")
+
+                    var dates = $('#DateFilter').val().split(' - ');
+                    var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+                    var to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+
+                    $.ajax({
+                        async: true,
+                        url: rootURL + "SyncEventOccurrences?from=" + from + "&to=" + to + "&business_id=null&type=9&all=true",
+                        cache: false
+                    }).done(function (data) {                       
+
+                        $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger")
+
+                        table.ajax.reload();
+                    }).fail(function (msg) {
+                        $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
+
+                        table.ajax.reload();
+                    });
+                },
+                className: 'btn-danger'
+            }
+        ],
+    });
+
+    // Attach Buttons
+    table.buttons().container()
+        .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+    </script>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <form id="sendMail" style="display: none;
+" action="@Url.Action("SendMailsToCustomer", "Communication")" method="post">
+            <input name="extIDs" id="mailExtIDs" />
+        </form>
+        <script>
+            table.button().add(3, {
+                action: function (e, dt, node, config) {
+                    var data = table.rows({ selected: true }).data();
+                    var dataLength = data.length;
+                    var ids = [];
+                    console.log(data);
+                    for (var i = 0; i < dataLength; i++) {
+                        var people = data[i].staff_members;
+                        for (var j in people) {
+                            ids.push(people[j].id);
+                        }
+                    }
+
+                    $('#mailExtIDs').val(ids.join(','));
+                    document.getElementById('sendMail').submit();
+                },
+                text: 'Send Email',
+                className: 'btn-secondary'
+            });
+        </script>
+
+        if (ViewBag.Subdomain == "atss-muscat")
+        {
+            <form id="sendSMS" style="display: none;" action="@Url.Action("SendSMSToCustomer", "Communication")" method="post">
+                <input name="extIDs" id="smsExtIDs" />
+            </form>
+            <script>
+                table.button().add(4, {
+                    action: function (e, dt, node, config) {
+                        var data = table.rows({ selected: true }).data();
+                        var dataLength = data.length;
+                        var ids = [];
+                        //console.log(data);
+                        for (var i = 0; i < dataLength; i++) {
+                            var people = data[i].staff_members;
+                            for (var j in people) {
+                                ids.push(people[j].id);
+                            }
+                        }
+
+                        $('#smsExtIDs').val(ids.join(','));
+                        document.getElementById('sendSMS').submit();
+                    },
+                    text: 'Send SMS',
+                    className: 'btn-secondary'
+                });
+            </script>
+        }
+    }
+
+    @if (ViewBag.CanView == true)
+    {
+        <script type="text/javascript">
+            $('#DateFilter').change(function () {
+                table.ajax.reload(function () {
+                    //makeRequest();
+                    userPermExec(table.ajax.json());
+                });
+            });
+
+            function userPermExec(json) {
+                var instructorArr = [];
+                instructorArr.push('All');
+                for (var i in json.event_occurrences) {
+                    var row = json.event_occurrences[i];
+                    for (var j in row.staff_members) {
+                        var member = row.staff_members[j];
+                        if (instructorArr.indexOf(member.name) === -1)
+                            instructorArr.push(member.name);
+                    }
+                }
+
+                $.each(instructorArr, function (key, value) {
+                    $('#StaffFilter')
+                        .append($("<option></option>")
+                            .attr("value", value)
+                            .text(value));
+                });
+
+                $("#StaffFilter").change(function () {
+                    var txt = $("#StaffFilter option:selected").text();
+                    if (txt === 'All') {
+                        table
+                            .columns(3)
+                            .search('')
+                            .draw();
+                    }
+                    else {
+                        table
+                            .columns(3)
+                            .search(txt)
+                            .draw();
+                    }
+
+                });
+            }
+        </script>
+    }
+    else
+    {
+        <script>
+        function userPermExec() {
+             @*table
+                    .columns(2)
+                    .search('@ViewBag.UserFullName')
+                    .draw();*@
+        }
+        </script>
+    }
+
+    <script type="text/javascript">
+
+        function openCards(id) {
+            var cardsLink = '@Url.Action("Cards", "NewKiosk")' + '?id=' + id;
+            window.open(cardsLink, '_blank').focus();
+        }
+
+        function openCard(pid, lvl) {
+            var lvlParam = getLevelParam(lvl);
+            var checkLocalCardUrl = '@Url.Action("GetCardValidity", "StudentCards")?sid=' + pid + lvlParam;
+            //console.log(lvlParam, checkLocalCardUrl);
+                        $.NotificationApp.send("Status", "Searching Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
+
+            $.ajax({
+                    method: "GET",
+                    url: checkLocalCardUrl
+                })
+                .done(function (msg) {
+
+                    var cardURL = '@Url.Action("Open", "StudentCards")' + '?sid=' + pid;// + '&instructors=' + instructors + lvlParam + '&eid=' + eid + '&plan=' + plan + '&startdate=' + stDate;
+                    
+                    if (msg.Status === 0) {
+                        $.NotificationApp.send("Status", "Opening Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
+                        window.location.href = cardURL;
+                        //window.open(cardURL, '_blank').focus();
+                    } else if (msg.Status === 1) {
+                        $.NotificationApp.send("Status", "No Existing Card Found. Creating New Now..", "bottom-right", "rgba(0,0,0,0.2)", "info");
+                        window.location.href = cardURL;
+                        //window.open(cardURL, '_blank').focus();
+                    } else {
+                        $.NotificationApp.send("Status", msg.StatusMsg, "bottom-right", "rgba(0,0,0,0.2)", "warning");
+                        $(cntrl).removeClass('disabled');
+                    }
+
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+
+                    if (typeof (jqXHR.responseText) === 'undefined') {
+                        var errorMsg = jqXHR.statusText;
+                        $.NotificationApp.send("Status", errorMsg, "bottom-right", "rgba(0,0,0,0.2)", "danger");
+                        $(cntrl).removeClass('disabled');
+                    }
+                    else {
+                        var errorMsg = JSON.parse(jqXHR.responseText);
+                        $.NotificationApp.send("Status", errorMsg.errors.state_event, "bottom-right", "rgba(0,0,0,0.2)", "danger");
+                        $(cntrl).removeClass('disabled');
+                    }
+                });
+        }
+
+        // convert utc time to local time
+        function convertUTCToLocal(utcDt, utcDtFormat) {
+            var toDt = moment.utc(utcDt, utcDtFormat).toDate();
+            return moment(toDt);
+        }
+    </script>
+}

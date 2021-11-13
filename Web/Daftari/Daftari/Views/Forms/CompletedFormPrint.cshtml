@@ -1,0 +1,189 @@
+﻿@model Daftari.ViewModel.CompletedFormVM
+
+<style>
+    .detail-container {
+        height: auto;
+        min-height: 35px;
+    }
+    .detail-container > label {
+        margin-bottom: 0;
+    }
+    .form-text, .ideal-dose, .value-text {
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .form-text {
+        
+    }
+    .ideal-dose {
+        font-weight: 400;
+    }
+    .value-text {
+        margin-right: 10px;
+        font-weight: 400;
+    }
+    .value-text.hidden {
+        display: none;
+    }
+
+    table, th, td {
+        border: 1px solid #d1d1d1;
+        border-collapse: collapse;
+    }
+
+    .table th, .table td {
+        padding: 14px;
+    }
+    .container {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+    .signature-box {
+        height: 130px;
+    }
+    .att-box {
+        height: 140px;
+        border: 1px solid #f2f2f2;
+    }
+    h1 {
+        text-align: center;
+    }
+    h2 {
+        text-align: center;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container">
+    <h1>@Model.FormSettings.Title</h1>
+    <h2>@TempData["BusinessName"]</h2>
+    <table class="table" style="width:100%;">
+        <thead>
+            <tr>
+                <th style="width:30%;"></th>
+                <th style="width:70%;"></th>
+            </tr>
+        </thead>
+        <tr>
+            <td>
+                <div class="form-group">
+                    <label class="form-text">@(Model.GetPropertyDisplay(i => i.FormID))</label>
+                </div>
+            </td>
+            <td>
+                <div class="form-control detail-container">
+                    <label class="value-text">@(Model.FormID)</label>
+                </div>
+            </td>
+        </tr>
+
+        @foreach (var field in Model.FormCustomValues)
+        {
+            <tr>
+                @if (field.FormCustomField.InputType == Daftari.Forms.Enum.InputType.Section)
+                {
+                    <td colspan="2">
+                        <div class="form-group">
+                            <label class="form-text">@(field.FormCustomField.Label)</label>
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <div class="form-group">
+                            <label class="form-text">@(field.FormCustomField.Label)</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            <label class="value-text">@(field.CustomValue)</label>
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+
+        @if (Model.FormSettings.IsAttachmentEnabled)
+        {
+            foreach (var att in Model.FormAttachments)
+            {
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label class="form-text">Attachments</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            @if (!string.IsNullOrEmpty(att.Base64))
+                            {
+                                <a style="color:transparent;" href="@($"{TempData["AbsolutePath"]}Forms/GetFormAttachment/{att.FormAttachmentID}")">
+                                    <img class="att-box" alt="@(!string.IsNullOrEmpty(att.Base64) ? att.FileName : "")" src="@att.Base64" />
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@($"{TempData["AbsolutePath"]}Forms/GetFormAttachment/{att.FormAttachmentID}")">@att.FileName</a>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+
+        @foreach (var sign in Model.FormSignatureValues)
+        {
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label class="form-text">@sign.FormSignatureField.Name Signature</label>
+                    </div>
+                </td>
+                <td style="padding-top:2px;padding-bottom:2px;">
+                    <img class="signature-box" alt="signature" src="@(sign.SignatureContent)" />
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <td>
+                <div class="form-group">
+                    <label class="form-text">Submitted By</label>
+                </div>
+            </td>
+            <td>
+                <div class="form-control detail-container">
+                    <label class="value-text">@(Model.Submitted_By)</label>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="form-group">
+                    <label class="form-text">Submitted On</label>
+                </div>
+            </td>
+            <td>
+                <div class="form-control detail-container">
+                    <label class="value-text">@(Model.Submitted_At.Value.ToString("yyyy/MM/dd HH:mm:ss"))</label>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="form-group">
+                    <label class="form-text">URL</label>
+                </div>
+            </td>
+            <td>
+                <div class="form-control detail-container">
+                    <a href="@($"{TempData["AbsolutePath"]}Forms/ViewCompletedForm/{Model.FormID}")">@($"{TempData["AbsolutePath"]}Forms/ViewCompletedForm/{Model.FormID}")</a>
+                </div>
+            </td>
+        </tr>
+        }
+    </table>
+</div>

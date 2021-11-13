@@ -1,0 +1,229 @@
+﻿@section CustomStyles {
+
+    <style type="text/css">
+        .material-icons {
+            font-size: 45px !important;
+        }
+
+        .hoverDiv {
+            background-color: transparent;
+            -o-transition: .5s;
+            -ms-transition: .5s;
+            -moz-transition: .5s;
+            -webkit-transition: .5s;
+            /* ...and now for the proper property */
+            transition: .5s;
+            cursor: pointer;
+        }
+
+        .hoverDiv:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+}
+
+@{
+    ViewBag.Title = "Dashboard";
+    var creds = TokenProvider.GetProvider().GetAccessDetails(User.Identity.Name);
+}
+
+<h2>Daftari (3.0)</h2>
+<br />
+<div class="row">
+
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Customers"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Customers</h5>
+                    <p class="card-text">
+                        View Registration forms filled by Customers.
+                    </p>
+                    <a href="@Url.Action("/", "Customers")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (creds.Subdomain == "atss-muscat" && (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Commmunication")))
+    {
+        <div class="col-md-4">
+            <div class="card bg-secondary-lighten">
+                <div class="card-body">
+                    <h5 class="card-title">SMS Marketing/Communications</h5>
+                    <p class="card-text">
+                        Send SMS Messages via Aqua-Tots Official Handle to Customers in Oman.
+                    </p>
+                    <a href="@Url.Action("/", "Communication")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Commmunication"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-secondary-lighten">
+                <div class="card-body">
+                    <h5 class="card-title">Email Marketing/Communications</h5>
+                    <p class="card-text">
+                        Send Email via Aqua-Tots Official Handle to Customers.
+                    </p>
+                    <a href="@Url.Action("SendCustomerMails", "Communication")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("AquaCards") || User.IsInRole("RosterSchedule"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Roster &amp; Aqua Card</h5>
+                    <p class="card-text">
+                        Access Roster &amp; Aqua Card as per roster.
+                    </p>
+                    <a href="@Url.Action("AquaCardRoster", "Pike13Access")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Attendance"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance</h5>
+                    <p class="card-text">
+                        Register Attendance as per roster.
+                    </p>
+                    <a href="@Url.Action("Attendance", "Pike13Access")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("RosterSchedule"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Roster Schedule</h5>
+                    <p class="card-text">
+                        View Roster Schedule
+                    </p>
+                    <a href="@Url.Action("RosterSchedule", "Pike13Access")" class="btn btn-secondary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("AquaCards"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Aqua Cards</h5>
+                    <p class="card-text">
+                        Access Aqua Cards as per roster.
+                    </p>
+                    <a href="@Url.Action("AquaCards", "Pike13Access")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-primary-lighten">
+                <div class="card-body">
+                    <h5 class="card-title">Card Roster Report</h5>
+                    <p class="card-text">
+                        View Card Roster Report
+                    </p>
+                    <a href="@Url.Action("CardRosterReport", "Pike13Access")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Student Cards</h5>
+                    <p class="card-text">
+                        Manage and View All Cards
+                    </p>
+                    <a href="@Url.Action("Index", "StudentCards")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    <div class="col-md-4">
+        <div class="card bg-success-lighten">
+            <div class="card-body">
+                <h5 class="card-title">Kiosk - AquaCards</h5>
+                <p class="card-text">
+                    Search Card by Phone Number
+                </p>
+                <a href="@Url.Action("Search", "Cards", new { area = "Kiosk"})" class="btn btn-primary btn-sm">Go</a>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+
+    <div class="col-md-4">
+        <div class="card bg-success-lighten">
+            <div class="card-body">
+                <h5 class="card-title">Kiosk V2</h5>
+                <p class="card-text">
+                    Search Card by Phone Number
+                </p>
+                <a href="@Url.Action("Search", "Cards", new { area = "NewKiosk"})" class="btn btn-primary btn-sm">Go</a>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+
+    @if (User.IsInRole("Admin") || User.IsInRole("ChemicalRecords"))
+    {
+        <div class="col-md-4">
+            <div class="card bg-primary-lighten">
+                <div class="card-body">
+                    <h5 class="card-title">Chemical Records</h5>
+                    <p class="card-text">
+                        Manage and View All Chemical Records.
+                    </p>
+                    <a href="@Url.Action("Index", "ChemicalRecords")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+    @*@if (User.IsInRole("Admin") || User.IsInRole("Forms"))*@
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="col-md-4">
+            <div class="card bg-secondary-lighten">
+                <div class="card-body">
+                    <h5 class="card-title">Forms</h5>
+                    <p class="card-text">
+                        Manage and View All Custom Forms.
+                    </p>
+                    <a href="@Url.Action("Index", "Forms")" class="btn btn-primary btn-sm">Go</a>
+                </div> <!-- end card-body-->
+            </div> <!-- end card-->
+        </div> <!-- end col-->
+    }
+
+</div>
+
+@section Scripts {
+
+}

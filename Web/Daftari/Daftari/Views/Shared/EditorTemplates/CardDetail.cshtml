@@ -1,0 +1,34 @@
+﻿@model Daftari.AquaCards.Models.StudentCardDetail
+
+@{
+    var htmlAttributes = new Dictionary<string, object>
+    {
+        { "class" , $"star{(Model.IsComplete ? "" : " toSave")} {Model.Skill.SkillDifficulty}-Content"},
+        { "checked", Model.IsComplete },
+        { "data-detailID", Model.StudentCardDetailID },
+    };
+    if (Model.IsComplete)
+    {
+        htmlAttributes.Add("disabled", "disabled");
+    }
+}
+<div class="row">
+    <div class="col-xs-9">
+            <label>
+                @Html.EditorFor(i => Model.IsComplete, new { htmlAttributes = htmlAttributes })  <span class="star-label @Model.Skill.SkillDifficulty-Content">@Model.Skill.Name</span>
+            </label>
+       
+        @*<input type="checkbox" class="star-input" id="1" checked=@Model.IsComplete />
+            <label class="star-input-label" for="1">
+                1
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star orange"></i>
+            </label>*@
+    </div>
+    <div class="col-xs-3">        
+        @if (Model.IsComplete)
+        {
+            <span class="dripicons-information" data-toggle="@(Model.IsComplete ? "tooltip" : "")" data-placement="top" title="@(Model.IsComplete ? $"Done By {Model.CompletedBy} ({Model.CompleteDate?.ToShortDateString()})" : "")"></span>
+        }
+    </div>
+</div>

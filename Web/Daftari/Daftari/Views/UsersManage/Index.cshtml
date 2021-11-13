@@ -1,0 +1,162 @@
+﻿@model IEnumerable<LukeApps.AspIdentity.ApplicationUser>
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+    @Styles.Render("~/Content/loader")
+    @Styles.Render("~/Content/notification")
+    <style>
+
+        #tableContainer {
+            overflow: auto;
+            min-height: 300px;
+        }
+
+        .loader {
+            display: none;
+            overflow: hidden;
+        }
+    </style>
+}
+
+@{
+    ViewBag.Title = "Users Admin";
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Users Admin</h5>
+
+                <table id="dtTable" class="table table-bordered table-hover">
+                    <thead class="thead-default">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.UserName)
+                            </th>
+                            <th>
+                                Roles
+                            </th>
+                            <th>
+                                Groups
+                            </th>
+                            <th>
+                                Pike13 Roles
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Email)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.EmailConfirmed)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PhoneNumber)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TwoFactorEnabled)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CreatedBy)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CreatedOn)
+                            </th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/datatables")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
+
+    <script type="text/javascript">
+
+        var rootURL = '@Url.Action("/")';
+
+        var table = $('#dtTable').DataTable({
+            lengthChange: false,
+            "ajax": rootURL + 'getJSON',
+           "columns":  [
+               { "data": "UserName" },
+               { "data": "Roles" },
+               { "data": "Groups" },
+               { "data": "Branches" },
+               { "data": "Email" },
+               { "data": "EmailConfirmed" },
+               { "data": "PhoneNumber" },
+               { "data": "PhoneNumberConfirmed" },
+               { "data": "TwoFactorEnabled" },
+               { "data": "CreatedBy" },
+               { "data": "CreatedOn" },
+                ],
+            columnDefs: [
+            ],
+            order: [8, 'desc'],
+             "rowCallback": function (row, data, index) {
+                 $('td:eq(0)', row).html(
+                     data.UserName + '<br />'
+                     + '<a class="btn btn-primary btn-sm" href="' + rootURL + 'Edit?id=' + data.UserName + '" data-toggle="tooltip" data-placement="bottom" title="Edit" data-animation="true"><i class="dripicons-document-edit"></i></a>'
+                     + '<a class="btn btn-danger btn-sm" href="' + rootURL + 'ResetPassword?id=' + data.UserName + '" data-toggle="tooltip" data-placement="bottom" title="Reset" data-animation="true"><i class="dripicons-clockwise"></i></a>'
+                     + '<a class="btn btn-danger btn-sm" href="' + rootURL + 'Delete?id=' + data.UserName + '" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>');
+            }
+        });
+
+        //initialize Constructor for Button Group
+        new $.fn.dataTable.Buttons(table, {
+            buttons: true,
+            "buttons": [
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible'],
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-raised'
+                },
+            ],
+        });
+
+        // Attach Buttons
+        table.buttons().container()
+                .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+
+            table.button().add(1, {
+                action: function (e, dt, button, config) {
+                    window.location.href = rootURL + 'Register';
+                },
+                text: 'Register',
+                className: 'btn-info'
+            });
+    </script>
+}

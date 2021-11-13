@@ -1,0 +1,165 @@
+﻿@model Daftari.ViewModel.ProgressCardRequestVM
+@section CustomStyles {
+ 
+
+}
+@{
+    ViewBag.Title = "Add Student Card";
+}
+
+<h2>Add Student Card</h2>
+
+
+@using (Html.BeginForm())
+{
+
+    <div class="well">
+        <fieldset style="margin-left: 20px;margin-right: 20px;">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.CardType)
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.CustomerID, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.DropDownListFor(model => model.CustomerID, null, "-Select Customer-", htmlAttributes: new { @class = "form-control select2", data_toggle = "select2" })
+                @Html.ValidationMessageFor(model => model.CustomerID, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Level, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.Level, "-Select Level-", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Birthday, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EditorFor(model => model.Birthday, new { htmlAttributes = new { @class = "form-control dp" } })
+                @Html.ValidationMessageFor(model => model.Birthday, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Instructors, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.ListBoxFor(model => model.Instructors, new SelectList(new List<SelectListItem>()), htmlAttributes: new { id = "InstructorsSelect", @class = "form-control select2", data_toggle = "select2" })
+                @Html.ValidationMessageFor(model => model.Instructors, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Plan, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EditorFor(model => model.Plan, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Plan, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control date", data_toggle = "date-picker", data_single_date_picker = "true" } })
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Add" class="btn btn-light" />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var rootURL = '@Url.Action("/")';
+        $(document).ready(function () {
+
+            $('input:submit').click(function () {
+                var $button = this;
+                var oldValue = $button.value;
+                setTimeout(function () {
+                    $button.disabled = true;
+                    $button.value = 'Saving...';
+                    $($button).removeClass("btn-light");
+                    $($button).addClass("btn-primary");
+                    setTimeout(function () {
+                        $button.disabled = false;
+                        $button.value = oldValue;
+                    }, 3000);
+                }, 0);
+            });
+
+
+            $.get(getDataUrl(), function (data, status) {
+
+                var inst = data.staff_members.map(a => a.name);
+
+                for (var i in inst) {
+                    $('#InstructorsSelect').append($('<option>', {
+                        value: inst[i],
+                        text: inst[i],
+                    }));
+                }
+
+            });
+
+
+            $("#CustomerID").on('change', function () {
+                    $.ajax({
+                       async: true,
+                       type: "GET",
+                       cache: false,
+                       url: rootURL + "GetCustomerInfo",
+                       data: { id : this.value }
+                   }).done(
+                       function (data, textStatus, jqXHR) {
+                           setInputValue('#FirstName',data.fname);
+                           setInputValue('#LastName', data.lname);
+                           setInputValue('#Birthday', data.birthday);
+                       }
+                   );
+            });
+
+            $('.dp').bootstrapMaterialDatePicker({
+                weekStart: 0,
+                time: false,
+                format: 'YYYY-MM-DD',
+                clearButton: true
+            });
+
+        });
+
+    function showField(selector) {
+        $(selector).closest('div.form-group').removeClass('hidden');
+    }
+
+    function hideField(selector) {
+        $(selector).closest('div.form-group').addClass('hidden');
+    }
+
+    function setInputValue(selector, value) {
+        $(selector).val(value);
+        $(selector).closest('div.form-group').removeClass('is-empty');
+        }
+
+        function getDataUrl() {
+
+            return 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/staff_members?access_token=@(ViewBag.AccessCode)';
+        }
+    </script>
+
+}

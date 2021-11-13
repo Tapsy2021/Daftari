@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Daftari.Views.Intro.IntroPage">
+  <!--Pages can be added as references or inline-->
+  <ContentPage Title="Tab 1" BackgroundImageSource="onboarding_1.png">
+        <StackLayout BackgroundColor="Transparent">
+            <StackLayout HeightRequest="150"></StackLayout>
+            <StackLayout VerticalOptions="CenterAndExpand">
+                <Image VerticalOptions="Center" Margin="30,0"
+                    Source="intro_logo.png"/>
+            </StackLayout>
+            <StackLayout>
+                <Label Text="Welcome to DAFTARI, your personalized swim journal app where you go!"
+                       TextColor="White"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       Margin="50,20"/>
+            </StackLayout>
+            <StackLayout Padding="0,15">
+                <Button Text="Start"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        Clicked="NextPage_Clicked"
+                        CornerRadius="30"/>
+            </StackLayout>
+        </StackLayout>
+  </ContentPage>
+  <ContentPage Title="Tab 2" BackgroundImageSource="onboarding_2.png">
+        <StackLayout BackgroundColor="Transparent">
+            <StackLayout >
+                <Label Text="Welcome!"
+                       TextColor="Black"
+                       FontSize="24"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       Margin="50,0"
+                       HeightRequest="100"/>
+            </StackLayout>
+            <StackLayout>
+                <Image HeightRequest="250"
+                    Source="ollietheotter_swim_stand.png"/>
+            </StackLayout>
+            <StackLayout VerticalOptions="EndAndExpand">
+                <Label Text="Take 2 minutes to tell us your swim-tastic story"
+                       TextColor="White"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="End"
+                       Margin="50,20"/>
+            </StackLayout>
+            <StackLayout Padding="0,15">
+                <Button Text="Next"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        Clicked="NextPage_Clicked"
+                        CornerRadius="30"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage>
+  <ContentPage Title="Tab 3" BackgroundImageSource="onboarding_3.png">
+        <StackLayout BackgroundColor="Transparent">
+            <StackLayout >
+                <Label Text="Fill in your details and you are good to go!"
+                       TextColor="Black"
+                       FontSize="24"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       Margin="50,0"
+                       HeightRequest="100"/>
+            </StackLayout>
+            <StackLayout>
+                <Image HeightRequest="250"
+                    Source="ollietheotter_swim_walk.png"/>
+            </StackLayout>
+            <StackLayout VerticalOptions="EndAndExpand">
+                <Label Text="Are you ready to become a super-swimmer?"
+                       TextColor="White"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="End"
+                       Margin="50,20"/>
+            </StackLayout>
+            <StackLayout Padding="0,15">
+                <Button Text="Login"
+                        BackgroundColor="White"                        
+                        TextColor="Black"
+                        Margin="30,7"
+                        Clicked="OnLogin_Clicked"
+                        CornerRadius="30"/>
+                <Button Text="Sign Up"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        Clicked="OnSignUp_Clicked"
+                        CornerRadius="30"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage>
+</TabbedPage>

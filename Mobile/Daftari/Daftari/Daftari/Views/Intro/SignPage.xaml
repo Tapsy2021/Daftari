@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             BackgroundImageSource="onboarding_3.png"
+             x:Class="Daftari.Views.Intro.SignPage">
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="Transparent">
+            <StackLayout >
+                <Label Text="Fill in your details and you are good to go!"
+                       TextColor="Black"
+                       FontSize="24"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="End"
+                       Margin="50,0"
+                       HeightRequest="100"/>
+            </StackLayout>
+            <StackLayout>
+                <Image HeightRequest="250"
+                    Source="ollietheotter_swim_stand.png"/>
+            </StackLayout>
+            <StackLayout VerticalOptions="EndAndExpand">
+                <Label Text="Are you ready to become a super-swimmer?"
+                       TextColor="White"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="End"
+                       Margin="50,20"/>
+            </StackLayout>
+            <StackLayout Padding="0,15">
+                <Button Text="Login"
+                        BackgroundColor="White"                        
+                        TextColor="Black"
+                        Margin="30,7"
+                        CornerRadius="30"/>
+                <Button Text="Sign Up"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        CornerRadius="30"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

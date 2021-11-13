@@ -1,0 +1,163 @@
+﻿@model IEnumerable<Daftari.ViewModel.CompletedFormVM>
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+}
+
+@{
+    ViewBag.Title = "Completed Forms";
+}
+
+<!-- Modal -->
+<div class="modal fade" id="addFormModal" tabindex="-1" role="dialog" aria-labelledby="addFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addFormModalLabel">Add Form (Custom Forms)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Completed Forms</h5>
+
+                <table id="dtTable" class="table table-bordered table-hover">
+                    <thead class="thead-default">
+                        <tr>
+                            <th>
+                                Form
+                            </th>
+                            <th>
+                                Submitted By
+                            </th>
+                            <th>
+                                Submitted At
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/datatables")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.21/api/processing().js"></script>
+    <script type="text/javascript">
+
+        var rootURL = '@Url.Action("/")';
+
+        var table = $('#dtTable').DataTable({
+            lengthChange: false,
+            "ajax": rootURL + 'getJSON',
+           "columns":  [
+                { "data": "Title" },
+                { "data": "Submitted_By" },
+                { "data": "Submitted_At" },
+                { "data": "Status" },
+                { "data": null }
+                ],
+            columnDefs: [
+                ],
+            order: [0, 'desc'],
+             "rowCallback": function (row, data, index) {
+                 $('td:eq(4)', row).html(
+                    '<a class="btn btn-primary btn-sm" href="' + rootURL + 'ViewCompletedForm/' + data.Id + '" data-toggle="tooltip" data-placement="bottom" title="View" data-animation="true"><i class="dripicons-expand-2"></i></a>'
+                );
+             }
+        });
+
+        //$('#dtTable').on('init.dt', function() {
+        //   $('.data-new_custom-form')
+        //     .attr('data-toggle', 'modal')
+        //     .attr('data-target', '#exampleModal');
+        //});
+
+        //initialize Constructor for Button Group
+        new $.fn.dataTable.Buttons(table, {
+            buttons: true,
+            "buttons": [
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, ':visible'],
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, ':visible']
+                    },
+                    footer: true,
+                    className: 'btn-secondary'
+                },
+            ],
+        });
+
+        // Attach Buttons
+        table.buttons().container()
+                .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+
+        table.button().add(1, {
+            action: function (e, dt, button, config) {
+                openAddFormModal();
+                //window.location.href = rootURL + 'Create';
+            },
+            text: 'Create',
+            className: 'btn-info data-new_custom-form'
+        });
+
+        function openAddFormModal() {
+            $('.modal-body').html('<div class="d-flex justify-content-center"><div class="spinner-grow" role="status"><span class="sr-only">Loading...</span></div></div>'); 
+            $('#addFormModal').modal('show');
+           $.ajax({
+                async: true,
+                type: "GET",
+                cache: true,
+                url: rootURL + "/" + 'getFormsJSON'
+           }).done(function (data) {
+                $('.modal-body').html(''); 
+                for (var i = 0; i < data.aaData.length; i++) {
+                    $('.modal-body').append('<a class="btn btn-primary" style="width:100%;margin:5px;" href="' + rootURL + 'CreateCompletedForm?CustomFormId=' + data.aaData[i].Id + '">' + data.aaData[i].Title + '</a><br/>')
+                }
+            });
+        }
+
+    </script>
+}

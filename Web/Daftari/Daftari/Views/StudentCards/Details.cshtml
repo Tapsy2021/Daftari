@@ -1,0 +1,83 @@
+﻿@model Daftari.AquaCards.Models.StudentCard
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>StudentCard</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Initial)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Initial)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Age)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Age)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Plan)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Plan)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Instructors)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Instructors)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AuditDetail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuditDetail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDeleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsDeleted)
+        </dd>
+
+    </dl>
+</div>
+<p>
+
+    @Html.ActionLink("Back to List", "Index")
+</p>

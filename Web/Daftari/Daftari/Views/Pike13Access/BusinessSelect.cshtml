@@ -1,0 +1,62 @@
+﻿@model Daftari.Pike13Api.Models.Token
+
+
+    <div class="well">
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <h4>Token</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.TokenID)
+
+                <div class="form-group label-static">
+                    @Html.LabelFor(model => Model.People.First().BusinessName, htmlAttributes: new { @class = "control-label" })
+                    <br />
+                    <div class="radio radio-primary">
+                        @foreach (var item in Model.People)
+                        {
+                            <label>
+                                @Html.RadioButton("BusinessOptions", @item.AccountPeopleID, item.IsActive, new { id = @item.AccountPeopleID })
+                                @item.BusinessName
+                            </label><br />
+                        }
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="button" value="Save" class="btn btn-light" onclick="SaveChange();" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div>
+            @Html.ActionLink("Back to List", "Index","Dashboard",null,null)
+        </div>
+    </div>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        <script>
+                function SaveChange() {
+                    var id = $('input[name="BusinessOptions"]:checked').val();
+                 
+                     $.ajax({
+                        method: "POST",
+                        url: '@Url.Action("SaveActiveBusiness")?id=' +id,
+                        data: { "id": id }
+                    })
+                    .done(function (data) {
+                       
+                        $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", "info")
+                            // window.location.href = data.redirecturl;
+                    });
+                }
+
+        </script>
+    }

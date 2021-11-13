@@ -1,0 +1,78 @@
+﻿@model LukeApps.AspIdentity.ViewModel.EditUserViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="well">
+    <fieldset style="margin-left: 20px;margin-right: 20px;">
+        <legend>Application User: @Model.UserName</legend>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.UserName)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group custom-control custom-checkbox">
+            @Html.EditorFor(model => model.EmailConfirmed, new { htmlAttributes = new { @class = "custom-control-input" } })
+            @Html.LabelFor(model => model.EmailConfirmed, htmlAttributes: new { @class = "custom-control-label" })
+            @Html.ValidationMessageFor(model => model.EmailConfirmed, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label" })
+            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group custom-control custom-checkbox">
+            @Html.EditorFor(model => model.PhoneNumberConfirmed, new { htmlAttributes = new { @class = "custom-control-input" } })
+            @Html.LabelFor(model => model.PhoneNumberConfirmed, htmlAttributes: new { @class = "custom-control-label" })
+            @Html.ValidationMessageFor(model => model.PhoneNumberConfirmed, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group custom-control custom-checkbox">
+            @Html.EditorFor(model => model.TwoFactorEnabled, new { htmlAttributes = new { @class = "custom-control-input" } })
+            @Html.LabelFor(model => model.TwoFactorEnabled, htmlAttributes: new { @class = "custom-control-label" })
+            @Html.ValidationMessageFor(model => model.TwoFactorEnabled, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UserRoles, htmlAttributes: new { @class = "control-label" })
+            @Html.ListBoxFor(model => model.UserRoles, (MultiSelectList)ViewBag.Roles, htmlAttributes: new { @class = "select2 form-control select2-multiple", data_toggle = "select2" })
+            @Html.ValidationMessageFor(model => model.UserRoles, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UserGroups, htmlAttributes: new { @class = "control-label" })
+            @Html.ListBoxFor(model => model.UserGroups, (MultiSelectList)ViewBag.Groups, htmlAttributes: new { @class = "select2 form-control select2-multiple", data_toggle = "select2" })
+            @Html.ValidationMessageFor(model => model.UserGroups, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-light" />
+            </div>
+        </div>
+    </fieldset>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

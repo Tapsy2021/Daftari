@@ -1,0 +1,57 @@
+﻿@model Daftari.ViewModel.RegistrationFormSummaryVM
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CustomerID }, new { @class = "btn btn-sm btn-secondary" }) <text>|</text>
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-sm btn-secondary" })
+</p>
+
+<hr />
+<div class="well">
+    <h4>Customer</h4>
+    <hr />
+    <ul class="list-group">
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.Reference) :</b> @Model.Reference.ToString()
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.MotherName) :</b> @Model.MotherName
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.FatherName) :</b> @Model.FatherName
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.Address) :</b> @Model.Address
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.City) :</b> @Model.City
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.Region) :</b> @Model.Region
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.PrimaryPhone) :</b> @Model.PrimaryPhone
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.AlternatePhone) :</b> @Model.AlternatePhone
+        </li>
+        <li class="list-group-item">
+            <b>@Daftari.AquaCards.Enum.CustomerStatus.New.GetDisplay() Customer</b>
+        </li>
+        <li class="list-group-item">
+            <b>@Html.DisplayNameFor(model => model.EmailAddress) :</b> @Model.EmailAddress
+        </li>
+    </ul>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/moment")
+    @Scripts.Render("~/bundles/pdfmake")
+    @Scripts.Render("~/bundles/registrationForm")
+}

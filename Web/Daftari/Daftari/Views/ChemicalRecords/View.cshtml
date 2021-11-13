@@ -1,0 +1,460 @@
+﻿@model Daftari.ViewModel.ChemicalRecordFormVM
+
+@section CustomStyles {
+
+}
+@{
+    ViewBag.Title = "Chemical Record";
+}
+
+<h2>Chemical Record</h2>
+
+<style>
+    #Notes {
+        width: 100%;
+    }
+    .detail-container {
+        background-color: #e9ecef;
+        height: auto;
+        min-height: 35px;
+        display: inline-flex;
+    }
+    .detail-container > label {
+        margin-bottom: 0;
+    }
+    .chemical-text, .ideal-dose, .value-text {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    .chemical-text {
+        
+    }
+    .ideal-dose {
+        font-weight: 400;
+    }
+    .value-text {
+        margin-right: 10px;        
+    }
+    .comment-value {
+        font-size: 0.8rem;
+        font-weight: 400;
+    }
+    .comment-btn {
+        font-size: 0.7rem;
+    }
+    .value-text.hidden {
+        display: none;
+    }
+    td > .form-group {
+         margin-bottom: 0;
+         margin-left: 0.15rem;
+    }
+    .table-bordered {
+        /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+    }
+
+    .table th, .table td {
+        padding: 0.44rem;
+    }
+    @@media only screen and (min-width: 768px) {
+        fieldset {
+            margin-left: 150px;
+            margin-right: 150px;
+        }
+        legend.title {
+            font-size: 1.7rem;
+        }
+    }
+</style>
+
+
+    <div class="well">
+        <fieldset style="margin-left: 20px;
+        margin-right: 20px;">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.ChemicalRecordID)
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:25%;"></th>
+                        <th style="width:75%;">
+                            <a class="btn btn-danger btn-sm" style="float:right;" href="../Delete/@(Model.ChemicalRecordID)" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>
+                            <a class="btn btn-primary btn-sm" style="float:right;" href="../Edit/@(Model.ChemicalRecordID)" data-toggle="tooltip" data-placement="bottom" title="Edit" data-animation="true"><i class="dripicons-document-edit"></i></a>
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.ChemicalSettings.Volume) + " " + Model.VolumeUnits)</label><br />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            <label class="value-text">@(Model.ChemicalSettings.Volume)</label>
+                        </div>
+                    </td>
+                </tr>
+                @if (Model.ChemicalSettings.FreeChlorine == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.FreeChlorine))</label><br />
+                                <label class="ideal-dose">Ideal @(Model.ChemicalSettings.FreeChlorineLowAlert) - @(Model.ChemicalSettings.FreeChlorineHighAlert) ppm</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.FreeChlorine)</label>
+                                <label class="text-danger value-text @(Model.FreeChlorineError == null ? "hidden" : "")"><i class="dripicons-warning"></i>@Model.FreeChlorineError</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.FreeChlorine == Daftari.Chemicals.Enum.Visibility.Visible && Model.ChemicalSettings.TotalChlorine == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">Combined Chlorine (ppm)</label><br />
+                                <label class="ideal-dose">Ideal 0 ppm</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@((Model.TotalChlorine - Model.FreeChlorine)?.ToString("N2"))</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.TotalChlorine == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.TotalChlorine))</label><br />
+                                <label class="ideal-dose">Ideal @(Model.ChemicalSettings.TotalChlorineLowAlert) - @(Model.ChemicalSettings.TotalChlorineHighAlert) ppm</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.TotalChlorine)</label>
+                                <label style="display:none;" class="text-danger value-text"><i class="dripicons-warning"></i>To decrease total alkalinity by 10 ppm add 13.65 lbs of Sodium Bisulfate</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.TotalBromine == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.TotalBromine))</label><br />
+                                <label class="ideal-dose">Ideal @(Model.ChemicalSettings.TotalBromineLowAlert) - @(Model.ChemicalSettings.TotalBromineHighAlert) ppm</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.TotalBromine)</label>
+                                <label style="display:none;" class="text-danger value-text"><i class="dripicons-warning"></i>To decrease total alkalinity by 10 ppm add 13.65 lbs of Sodium Bisulfate</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.pH == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.pH))</label><br />
+                                <label class="ideal-dose">Ideal @(Model.ChemicalSettings.pHLowAlert) - @(Model.ChemicalSettings.pHHighAlert)</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.pH)</label>
+                                <label class="text-danger value-text @(Model.pHError == null ? "hidden" : "")"><i class="dripicons-warning"></i>@Model.pHError</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.PoolTemp == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.PoolTemp) + " " + Model.ChemicalSettings.TempUnits)</label><br />
+                                <label class="ideal-dose">Ideal @(Model.ChemicalSettings.IdealPoolTemp + " " + Model.ChemicalSettings.TempUnits) </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.PoolTemp?.ToString("N0"))</label>
+                                <label style="display:none;" class="text-danger value-text"><i class="dripicons-warning"></i>To decrease total alkalinity by 10 ppm add 13.65 lbs of Sodium Bisulfate</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.AirTemp == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.AirTemp) + " " + Model.ChemicalSettings.TempUnits)</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.AirTemp?.ToString("N0"))</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.WaterClarity == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.WaterClarity))</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.WaterClarity)</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.Alkalinity == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.Alkalinity))</label><br />
+                                <label class="ideal-dose">Ideal @(Model.ChemicalSettings.AlkalinityLowAlert) - @(Model.ChemicalSettings.AlkalinityHighAlert) ppm</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.Alkalinity)</label>
+                                <label class="text-danger value-text @(Model.AlkalinityError == null ? "hidden" : "")"><i class="dripicons-warning"></i>@Model.AlkalinityError</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.CalciumHardness == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.CalciumHardness))</label><br />
+                                <label class="ideal-dose">Ideal @(Model.ChemicalSettings.CalciumHardnessLowAlert) - @(Model.ChemicalSettings.CalciumHardnessHighAlert) ppm</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.CalciumHardness)</label>
+                                <label class="text-danger value-text @(Model.CalciumHardnessError == null ? "hidden" : "")"><i class="dripicons-warning"></i>@Model.CalciumHardnessError</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.Backwash == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.Backwash))</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.Backwash)</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.HRR_ORP == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.HRR_ORP))</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.HRR_ORP)</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @for (var i = 0; i < Model.ChemicalCustomValues.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.ChemicalCustomValues[i].ChemicalCustomField.Label)</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.ChemicalCustomValues[i].CustomValue)</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ChemicalSettings.Notes == Daftari.Chemicals.Enum.Visibility.Visible)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="chemical-text">@(Model.GetPropertyDisplay(i => i.Notes))</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.Notes)</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label class="chemical-text">Submitted By</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            <label class="value-text">@(Model.SubmittedBy)</label>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label class="chemical-text">Submitted On</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            <label class="value-text">@(Model.Date.Value.ToString("yyyy/MM/dd @ HH:mm tt"))</label>
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+        
+            <table id="commentsTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form-group row">
+                                <div class="col-md-9">
+                                    @Html.Editor("addComment", new { htmlAttributes = new { @class = "form-control", placeholder = "Add comment...(Press enter to submit)", id = "addComment" } })
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" value="Comment" class="btn btn-primary form-control" >Comment</button>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var comment in Model.ChemicalRecordComments)
+                    {
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="form-group col-10" style="margin-bottom: 0rem;">
+                                        <label class="value-text">@(comment.Comment)</label><br />
+                                        <label class="comment-value">@(comment.SubmittedBy)</label>
+                                        <label class="comment-value" style="color:gray;"> at @(comment.Date.ToString("yyyy/MM/dd HH:mm:ss"))</label>
+                                    </div>
+                                    <div class="form-group col-2" style="margin-bottom: 0rem;">
+                                        <a class="btn btn-danger btn-sm comment-btn delete" style="float:right;" href="DeleteComment?id=@(comment.ChemicalRecordCommentID)" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>
+                                        @*<a class="btn btn-primary btn-sm comment-btn" style="float:right;" href="CommentEdit?id=@(comment.ChemicalRecordCommentID)" data-toggle="tooltip" data-placement="bottom" title="Edit" data-animation="true"><i class="dripicons-document-edit"></i></a>*@
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var rootURL = '@Url.Action("/")';
+
+        $('#addComment').keyup(function(e) {
+            // Enter pressed?
+            if (e.which == 10 || e.which == 13) {
+                newComment();
+            }
+        });
+
+        $('button:submit').click(function () {
+            newComment();
+        });
+
+        $(document).on("click", "a.delete", function(e){
+            e.preventDefault();
+            $tr = $(this).closest("tr");
+            $.ajax({
+                async: true,
+                type: "GET",
+                cache: false,
+                url: rootURL + "/" + $(this).attr("href")
+            }).done(function (data) {
+                $tr.remove();
+            });
+        });
+
+        function newComment() {
+            if ($('#addComment').val() === "") {
+                return;
+            }
+            var $button = this;
+            var oldValue = $button.value;
+            $button.disabled = true;
+            $button.value = 'Saving...';
+            $($button).removeClass("btn-light");
+            $($button).addClass("btn-primary");
+
+            $.ajax({
+    	        method: "POST",
+    	        url: rootURL + '/AddComment',
+                data: { Comment: $('#addComment').val(), ChemicalRecordID: $('#ChemicalRecordID').val() }
+    	    })
+            .done(function (obj) {
+                $button.disabled = false;
+                $button.value = oldValue;
+                $('#addComment').val("");
+                    $('#commentsTable tr:last').after('<tr><td><div class="row"><div class="form-group col-10" style="margin-bottom: 0rem;">' +
+                    '<label class="value-text">' + obj.Comment + '</label><br /><label class="comment-value">' + obj.SubmittedBy + '</label> ' +
+                    '<label class="comment-value" style="color:gray;"> at ' + obj.Date + '</label></div>' +
+                    '<div class="form-group col-2" style="margin-bottom: 0rem;">' +
+                    '<a class="btn btn-danger btn-sm comment-btn delete" style="float:right;" href="DeleteComment?id=' + obj.ChemicalRecordCommentID + '" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>' +
+                    //'<a class="btn btn-primary btn-sm comment-btn edit" style="float:right;" href="CommentEdit?id=' + obj.ChemicalRecordCommentID + '" data-toggle="tooltip" data-placement="bottom" title="Edit" data-animation="true"><i class="dripicons-document-edit"></i></a>' +
+                    '</div></div></td></tr>');
+            });
+        }
+
+    </script>
+
+}

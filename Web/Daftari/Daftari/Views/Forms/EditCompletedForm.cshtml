@@ -1,0 +1,563 @@
+﻿@model Daftari.ViewModel.CompletedFormVM
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datetimepicker")
+}
+@{
+    ViewBag.Title = "Edit Completed Form";
+}
+
+<style>
+    .dropzone .dz-message {
+        margin: 0;
+    }
+    .dropzone {
+        min-height: 0px;
+        padding: 10px;
+    }
+    .modal-body {
+        min-height: 200px;
+    }
+    .modal-dialog {
+        max-width: 368px;
+    }
+    .signature-box {
+        cursor: pointer;
+        margin-bottom: 25px;
+        border: 1px solid;
+    }
+    .add-new-signature {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    .dropzone-previews {
+        margin-bottom: 25px;
+    }
+    .signature-canvas {
+        margin: 0 auto;
+        border: 2px solid;
+    }
+    hr {
+        margin-top: 0;
+        border-top: 2px solid #eef2f7;
+    }
+    legend.title {
+        font-weight: bold;
+        padding-top: 5rem;
+    }
+    fieldset {
+        padding: 1rem;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    /* For Mobile (portrait and landscape) ----------- */
+    @@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+        .signature-box {
+            width: 100%;
+        }
+    }
+
+    /* For Tablets */
+    @@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+        fieldset {
+            margin-left: 20px;
+            margin-right: 20px;
+            padding: 2rem;
+        }
+
+        .signature-box {
+            width: 100%;
+        }
+    }
+
+    /* For Desktop: */
+    @@media only screen and (min-device-width: 1024px) {
+        fieldset {
+            margin-left: 150px;
+            margin-right: 150px;
+            padding: 3rem;
+        }
+
+        legend.title {
+            font-size: 1.7rem;
+        }
+
+        .signature-box {
+            width: 330px;
+        }
+    }
+
+    .row > .form-group {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+
+<div class="modal fade" id="addSignatureModal" tabindex="-1" role="dialog" aria-labelledby="addSignatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSignatureModalLabel">Add Signature</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <canvas class="signature-canvas" id="can" ></canvas>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-primary" value="save" id="btn" size="30" onclick="save()">
+                <input type="button" class="btn btn-secondary" value="clear" id="clr" size="23" onclick="erase()">
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<h2>@Model.FormSettings.Title</h2>*@
+<div class="well">
+    <fieldset>
+        <legend class="title">
+            @(Model.FormSettings.Title)  
+            <label style="font-size:13px;float: right;">
+            @{ 
+                string message = "";
+                if (Model.ApprovalProcess.Any(x => x.UserName == User.Identity.Name))
+                {
+                    message = $"{Model.ApprovalProcess.First(x => x.UserName == User.Identity.Name).Status.ToString()}";
+                }
+                if (Model.ApprovalProcess.Any(x => x.Status == Daftari.Forms.Enum.ApprovalStatus.Rejected && x.UserName != User.Identity.Name))
+                {
+                    message += Model.ApprovalProcess.Where(x => x.Status == Daftari.Forms.Enum.ApprovalStatus.Rejected && x.UserName != User.Identity.Name).Select(x => $" ({x.UserName} rejected this form)").First();
+                }
+                else if (Model.ApprovalProcess.Any(x => x.Status == Daftari.Forms.Enum.ApprovalStatus.Pending && x.UserName != User.Identity.Name))
+                {
+                    message += $" ({Model.ApprovalProcess.Where(x => x.Status == Daftari.Forms.Enum.ApprovalStatus.Pending).Count()} Pending)";
+                }                
+            }
+            @message
+            </label></legend>
+        @using (Html.BeginForm("EditCompletedForm", "Forms", FormMethod.Post, new { id = "mainForm", enctype = "multipart/form-data" }))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.FormSettings.FormSettingsID)
+            @Html.HiddenFor(model => model.FormID)
+            @Html.HiddenFor(model => model.FormGuidID)
+
+            for (var i = 0; i < Model.FormCustomValues.Count; i++)
+            {
+                @Html.HiddenFor(model => model.FormCustomValues[i].FormCustomValueID)
+                var dic = new Dictionary<string, object>();
+                if (Model.FormCustomValues[i].FormCustomField.Required == Daftari.Forms.Enum.YesNo.Yes)
+                {
+                    dic.Add("required", "required");
+                }
+                <div class="form-group label-floating">
+                    @Html.HiddenFor(model => model.FormCustomValues[i].FormCustomField.FormCustomFieldID)
+
+                    @Html.Label(Model.FormCustomValues[i].FormCustomField.Label, $"{Model.FormCustomValues[i].FormCustomField.Label}{(dic.Any(x => x.Key == "required") ? " *" : "")}", htmlAttributes: new { @class = "control-label" })
+                    @switch (Model.FormCustomValues[i].FormCustomField.InputType)
+                    {
+                        case Daftari.Forms.Enum.InputType.Text:
+                            @Html.EditorFor(model => model.FormCustomValues[i].CustomValue, new { htmlAttributes = Model.GetHtmlAttributes(new { @class = "form-control" }, dic) })
+                            break;
+                        case Daftari.Forms.Enum.InputType.Number:
+                            @Html.EditorFor(model => model.FormCustomValues[i].CustomValue, new { htmlAttributes = Model.GetHtmlAttributes(new { @class = "form-control", @type = "number" }, dic) })
+                            break;
+                        case Daftari.Forms.Enum.InputType.Checkbox:
+                            @Html.CheckBox("FormCustomValues[" + i + "].CustomValue", (Model.FormCustomValues[i].CustomValue == "true"))
+                            break;
+                        case Daftari.Forms.Enum.InputType.RadioButton:
+                            foreach (var opt in Model.FormCustomValues[i].FormCustomField.SelectOptions?.Split(',') ?? new string[0])
+                            {
+                                @Html.RadioButtonFor(model => model.FormCustomValues[i].CustomValue, opt, dic) @Html.Label(opt, htmlAttributes: new { @class = "control-label", style = "margin-right:30px;margin-left:5px;" })
+                            }
+                            break;
+                        case Daftari.Forms.Enum.InputType.Text_Area:
+                            @Html.TextAreaFor(model => model.FormCustomValues[i].CustomValue, Model.GetHtmlAttributes(new { @class = "form-control" }, dic))
+                            break;
+                        case Daftari.Forms.Enum.InputType.Select:
+                            @Html.DropDownListFor(model => model.FormCustomValues[i].CustomValue, new SelectList(Model.FormCustomValues[i].FormCustomField.SelectOptions?.Split(',').Select(x => x?.Trim()), Model.FormCustomValues[i].CustomValue), "Select...", htmlAttributes: new { @class = "form-control select2", data_toggle = "select2" })
+                            break;
+                        case Daftari.Forms.Enum.InputType.Date:
+                            @Html.EditorFor(model => model.FormCustomValues[i].CustomValue, new { htmlAttributes = new { @class = "form-control new-datepicker" } })
+                            break;
+                        case Daftari.Forms.Enum.InputType.Time:
+                            @Html.EditorFor(model => model.FormCustomValues[i].CustomValue, new { htmlAttributes = Model.GetHtmlAttributes(new { @class = "form-control", data_provide = "timepicker" }, dic) })
+                            break;
+                        case Daftari.Forms.Enum.InputType.Select_Employees:
+                            @Html.DropDownListFor(model => model.FormCustomValues[i].CustomValue, new SelectList(ViewBag.Users, "UserName", "UserName", Model.FormCustomValues[i].CustomValue), "Select...", htmlAttributes: new { @class = "form-control select2", data_toggle = "select2" })
+                            break;
+                        case Daftari.Forms.Enum.InputType.Select_Positions:
+                            @Html.DropDownListFor(model => model.FormCustomValues[i].CustomValue, new SelectList(ViewBag.Groups, "Name", "Name", Model.FormCustomValues[i].CustomValue), "Select...", htmlAttributes: new { @class = "form-control select2", data_toggle = "select2" })
+                            break;
+                        case Daftari.Forms.Enum.InputType.Section:
+                            <hr>
+                            break;
+                    }
+                    @Html.ValidationMessageFor(model => model.FormCustomValues[i].CustomValue, "", new { @class = "text-danger" })
+                </div>
+            }
+
+            <div class="row">
+                @for (var i = 0; i < Model.FormSignatureValues.Count; i++)
+                {
+                    <div class="col-md-6 signature-section">
+                        @Html.HiddenFor(model => model.FormSignatureValues[i].FormSignatureValueID)
+                        @Html.HiddenFor(model => model.FormSignatureValues[i].SignatureContent)
+                        <button type="button" class="btn btn-info add-new-signature" style="display:@(string.IsNullOrEmpty(Model.FormSignatureValues[i].SignatureContent) ? "block" : "none")"><i class="fa fa-plus"></i>@("Add " + Model.FormSignatureValues[i].FormSignatureField.Name + " Signature" + (Model.FormSignatureValues[i].FormSignatureField.Required == Daftari.Forms.Enum.YesNo.Yes ? " *" : ""))</button>
+                        <label style="display:@(string.IsNullOrEmpty(Model.FormSignatureValues[i].SignatureContent) ? "none" : "block")">Click to edit signature of @(Model.FormSignatureValues[i].FormSignatureField.Name)</label>
+                        <img class="signature-box" src="@(Model.FormSignatureValues[i].SignatureContent)">
+                    </div>
+                }
+            </div>
+        }
+
+        @if (Model.FormSettings.IsAttachmentEnabled)
+        {
+            <div>
+                @using (Html.BeginForm("StageImage", "Forms", FormMethod.Post, new { @class = "dropzone", id = "formAttachmentDropzone", data_plugin = "dropzone", data_previews_container = "#file-previews", data_upload_preview_template = "#uploadPreviewTemplate" }))
+                {
+                    <div class="fallback">
+                        <input name="Files" type="file" multiple />
+                    </div>
+                    @Html.HiddenFor(model => model.FormGuidID)
+
+                    <div class="dz-message needsclick">
+                        <i class="h1 text-muted dripicons-cloud-upload"></i>
+                        <h3>Drop files here or click to upload.</h3>
+                    </div>
+                }
+                <!-- Preview -->
+                <div class="dropzone-previews mt-3" id="file-previews">
+                    @foreach (var att in Model.FormAttachments)
+                    {
+                        <div class="card mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete">
+                            <div class="p-2">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <img data-dz-thumbnail="" src="@att.Base64" class="avatar-sm rounded bg-light" alt="@(!string.IsNullOrEmpty(att.Base64) ? att.FileName : "")">
+                                    </div>
+                                    <div class="col ps-0">
+                                        <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name="">@att.FileName</a>
+                                        <p class="mb-0" data-dz-size=""><strong>@att.FileSize</strong></p>
+                                    </div>
+                                    <div class="col-auto">
+                                        <!-- Button -->
+                                        <a href="../DeleteAttachment/@(att.FormAttachmentID)" class="btn btn-link btn-lg text-muted existing">
+                                            <i class="dripicons-cross"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- file preview template -->
+                <div class="d-none" id="uploadPreviewTemplate">
+                    <div class="card mt-1 mb-0 shadow-none border">
+                        <div class="p-2">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                                </div>
+                                <div class="col ps-0">
+                                    <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
+                                    <p class="mb-0" data-dz-size></p>
+                                </div>
+                                <div class="col-auto">
+                                    <!-- Button -->
+                                    <a href="" class="btn btn-link btn-lg text-muted new">
+                                        <i class="dripicons-cross"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+        <br />
+        <div class="form-group row">
+            <div class="col-md-10">
+                <input type="submit" value="Update" class="btn btn-light" />
+            </div>
+            @if (Model.ApprovalProcess.Any(x => x.UserName?.ToLower() == User.Identity.Name?.ToLower()))
+            {
+                <div class="col-md-1">
+                    <button value="Approve" class="btn btn-success" style="float: right;" onclick="ChangeStatus(1)">Approve</button>
+                </div>
+                <div class="col-md-1">
+                    <button value="Reject" class="btn btn-danger" style="float: right;" onclick="ChangeStatus(2)">Reject</button>
+                </div>
+            }
+        </div>
+    </fieldset>
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/datetimepicker")
+
+    <script>
+        $(document).on("click", "a.text-muted.existing", function(e){
+            e.preventDefault();
+            $card = $(this).closest("div.card");
+            $.ajax({
+                async: true,
+                type: "GET",
+                cache: false,
+                url: rootURL + "/" + $(this).attr("href")
+            }).done(function (data) {
+                $card.remove();
+            });
+        });
+
+        $(document).on("click", "a.text-muted.new", function(e){
+            e.preventDefault();
+            $card = $(this).closest("div.card");
+            var flname = $card.find('a.text-muted.fw-bold').html();
+            $.ajax({
+                async: true,
+                type: "GET",
+                cache: false,
+                url: rootURL + "RemoveAttachment?fname=" + $("#FormGuidID").val() + '_' + flname
+            }).done(function (data) {
+                $card.remove();
+            });
+        });
+
+        $("input[type=submit]").click(function() {
+            $("#mainForm").submit();
+        });
+
+        $.fn.datetimepicker.defaults.icons = {
+                time: 'dripicons-clock',
+                date: 'dripicons-calendar',
+                up: 'dripicons-chevron-up',
+                down: 'dripicons-chevron-down',
+                previous: 'dripicons-chevron-left',
+                next: 'dripicons-chevron-right',
+                today: 'dripicons-crosshair',
+                clear: 'dripicons-trash'
+        };
+
+        $.fn.datetimepicker.defaults.showTodayButton = true;
+
+        var rootURL = '@Url.Action("/")';
+
+        $(document).ready(function () {
+            $(".new-datepicker").datetimepicker({
+                format: 'YYYY/MM/DD'
+            });
+
+            $( "#formAttachmentDropzone" ).submit(function() {
+                return true;
+            });
+            init();
+        });
+
+        $(".add-new-signature").click(function (e) {
+            $signature_section = $(this).parent('div');
+            set_image = false;
+            openAddSignatureModal();
+        });
+
+        $(".signature-box").click(function (e) {
+            $signature_section = $(this).parent('div');
+            set_image = true;
+            openAddSignatureModal();
+        });
+
+        function openAddSignatureModal() {
+            $("#can").addClass("hidden");
+            $('#addSignatureModal').modal('show');
+        }
+        
+        $('#addSignatureModal').on('shown.bs.modal', function () {
+
+            var can_width = $(".modal-body").innerWidth() - 16 * 2 - 5;
+            ctx.canvas.width = can_width;
+            ctx.canvas.height = 0.5 * can_width;
+            w = ctx.canvas.width;
+            h = ctx.canvas.height;
+            if (set_image) {
+                ctx.clearRect(0, 0, w, h);
+                var image = new Image();
+                image.onload = function () {
+                    ctx.drawImage(image, 0, 0);
+                };
+                image.src = $signature_section.find('img').attr('src');
+            } else {
+                erase();
+            }
+            $("#can").removeClass("hidden");
+        });
+
+        /////////////////////////////////////////////////////////
+
+        var canvas, ctx, flag = false,
+            prevX = 0,
+            currX = 0,
+            prevY = 0,
+            currY = 0,
+            dot_flag = false,
+            $signature_section = null,
+            set_image = false;
+
+
+        var x = "black",
+            y = 2;
+    
+        function init() {
+            canvas = document.getElementById('can');
+            ctx = canvas.getContext("2d");
+            w = canvas.width;
+            h = canvas.height;
+
+            // Set up touch events for mobile, etc
+            canvas.addEventListener("touchstart", function (e) {
+                e.preventDefault();
+                //mousePos = getTouchPos(canvas, e);
+              var touch = e.touches[0];
+              var mouseEvent = new MouseEvent("mousedown", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+              });
+              canvas.dispatchEvent(mouseEvent);
+            }, false);
+
+            canvas.addEventListener("touchend", function (e) {
+                e.preventDefault();
+              var mouseEvent = new MouseEvent("mouseup", {});
+              canvas.dispatchEvent(mouseEvent);
+            }, false);
+
+            canvas.addEventListener("touchmove", function (e) {
+                e.preventDefault();
+              var touch = e.touches[0];
+              var mouseEvent = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+              });
+              canvas.dispatchEvent(mouseEvent);
+            }, false);
+
+            canvas.addEventListener("mousemove", function (e) {
+                findxy('move', e)
+            }, false);
+            canvas.addEventListener("mousedown", function (e) {
+                findxy('down', e)
+            }, false);
+            canvas.addEventListener("mouseup", function (e) {
+                findxy('up', e)
+            }, false);
+            canvas.addEventListener("mouseout", function (e) {
+                findxy('out', e)
+            }, false);
+        }
+    
+        function draw() {
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(currX, currY);
+            ctx.strokeStyle = x;
+            ctx.lineWidth = y;
+            ctx.stroke();
+            ctx.closePath();
+        }
+    
+        function erase() {
+            ctx.clearRect(0, 0, w, h);
+            $signature_section.find('img').css("display", "none");
+            $signature_section.find('button').css("display", "block");
+            $lbl = $signature_section.find('label').css("display", "none");
+            $signature_section.find('input[id$="SignatureContent"]').val("");
+        }
+    
+        function save() {
+            $img_box = $signature_section.find('img');
+            $btn = $signature_section.find('button');
+            $lbl = $signature_section.find('label');
+            $val = $signature_section.find('input[id$="SignatureContent"]');
+            //button
+            $btn.css("display", "none");
+            //image
+            var dataURL = canvas.toDataURL();
+            $val.val(dataURL);
+            $img_box.attr("src", dataURL);
+            $img_box.css("display", "block");
+            //label
+            $lbl.css("display", "block");
+            $('#addSignatureModal').modal('hide');
+        }
+    
+        function findxy(res, e) {
+            var rect = $(".modal-body").offset();
+            //scroll correction
+            var cor = $(".modal").offset();
+            rect.left -= cor.left;
+            rect.top -= cor.top;
+            if (res == 'down') {
+                prevX = currX;
+                prevY = currY;
+
+                currX = (e.clientX - rect.left) - canvas.offsetLeft;
+                currY = (e.clientY - rect.top) - canvas.offsetTop;
+    
+                flag = true;
+                dot_flag = true;
+                if (dot_flag) {
+                    ctx.beginPath();
+                    ctx.fillStyle = x;
+                    ctx.fillRect(currX, currY, 2, 2);
+                    ctx.closePath();
+                    dot_flag = false;
+                }
+            }
+            if (res == 'up' || res == "out") {
+                flag = false;
+            }
+            if (res == 'move') {
+                if (flag) {
+                    prevX = currX;
+                    prevY = currY;
+                    currX = (e.clientX - rect.left ) - canvas.offsetLeft;
+                    currY = (e.clientY - rect.top) - canvas.offsetTop;
+                    draw();
+                }
+            }
+        }
+
+        function ChangeStatus(status) {
+            $.ajax({
+                async: true,
+                type: "GET",
+                cache: false,
+                url: rootURL + "StatusChange?FormID=@(Model.FormID)&status=" + status 
+            }).done(function (data) {
+                location.reload();
+            });
+        }
+
+    </script>
+
+    @if (Model.FormSettings.IsAttachmentEnabled)
+    {
+        <!-- plugin js -->
+        <script src="~/Scripts/vendor/dropzone.min.js"></script>
+        <!-- init js -->
+        <script src="~/Scripts/ui/component.fileupload.js"></script>
+    }
+}

@@ -1,0 +1,446 @@
+﻿@using System.Web.Script.Serialization
+@model Daftari.ViewModel.ChemicalSettingsVM
+
+@section CustomStyles {
+<style>
+    .hidden{
+        display:none;
+    }
+
+    legend.title {
+        font-weight: bold;
+    font-size: 1.7rem;
+    } 
+</style>
+}
+
+@{
+    ViewBag.Title = "Edit Chemical Record Settings";
+}
+
+@using (Html.BeginForm("Settings", "ChemicalRecords", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="well">
+        <fieldset style="margin-left: 20px; margin-right: 20px; ">
+            <legend class="title">Edit Chemical Record Settings</legend>
+            <legend>@ViewBag.BusinessName</legend>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.ChemicalRecordSettingsID)
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.UnitOfMeasurement, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.DropDownListFor(model => model.UnitOfMeasurement, (MultiSelectList)ViewBag.UnitOfMeasures, htmlAttributes: new { @class = "form-control select2", data_toggle = "select2", @required = "required" })
+                @Html.ValidationMessageFor(model => model.UnitOfMeasurement, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Volume, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Volume, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01" } })
+                <label style="font-weight: 300;font-size: 0.8rem;color: #2fa34e;">Imperial = gal, Metric = litre</label>
+                @Html.ValidationMessageFor(model => model.Volume, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PoolDailyCapacity, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.PoolDailyCapacity, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "1", @value = "0" } })
+                @*<label style="font-weight: 300;font-size: 0.8rem;color: #2fa34e;">The Total Capacity this pool</label>*@
+                @Html.ValidationMessageFor(model => model.PoolDailyCapacity, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.IncreaseChlorine, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.IncreaseChlorine, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.IncreaseChlorine, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.NeutralizeChlorine, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.NeutralizeChlorine, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.NeutralizeChlorine, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.IncreaseAlkalinity, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.IncreaseAlkalinity, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.IncreaseAlkalinity, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.DecreaseAlkalinity, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.DecreaseAlkalinity, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.DecreaseAlkalinity, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.IncreaseCalciumHardness, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.IncreaseCalciumHardness, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.IncreaseCalciumHardness, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.IncreaseStabilizer, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.IncreaseStabilizer, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.IncreaseStabilizer, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.IncreasepH, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.IncreasepH, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.IncreasepH, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.DecreasepH, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.DecreasepH, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.DecreasepH, "", new { @class = "text-danger" })
+            </div>
+
+            <text style="font-size: 20px;font-weight: 600;">Default Fields</text>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.FreeChlorine, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.FreeChlorine, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.FreeChlorine, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.FreeChlorineLowAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.FreeChlorineLowAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.FreeChlorineLowAlert, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.FreeChlorineHighAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.FreeChlorineHighAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.FreeChlorineHighAlert, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.TotalChlorine, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.TotalChlorine, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.TotalChlorine, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TotalChlorineLowAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.TotalChlorineLowAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.TotalChlorineLowAlert, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TotalChlorineHighAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.TotalChlorineHighAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.TotalChlorineHighAlert, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.TotalBromine, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.TotalBromine, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.TotalBromine, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TotalBromineLowAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.TotalBromineLowAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.TotalBromineLowAlert, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TotalBromineHighAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.TotalBromineHighAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.TotalBromineHighAlert, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.pH, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.pH, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.pH, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.pHLowAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.pHLowAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.pHLowAlert, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.pHHighAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.pHHighAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.pHHighAlert, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.PoolTemp, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.PoolTemp, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.PoolTemp, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.IdealPoolTemp, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.IdealPoolTemp, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.IdealPoolTemp, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.PoolTempLowAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.PoolTempLowAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.PoolTempLowAlert, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.PoolTempHighAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.PoolTempHighAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.PoolTempHighAlert, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.AirTemp, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.AirTemp, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.AirTemp, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.WaterClarity, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.WaterClarity, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.WaterClarity, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Alkalinity, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.Alkalinity, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.Alkalinity, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.AlkalinityLowAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.AlkalinityLowAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.AlkalinityLowAlert, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.AlkalinityHighAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.AlkalinityHighAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.AlkalinityHighAlert, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.CalciumHardness, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.CalciumHardness, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.CalciumHardness, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.CalciumHardnessLowAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.CalciumHardnessLowAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.CalciumHardnessLowAlert, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.CalciumHardnessHighAlert, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.CalciumHardnessHighAlert, new { htmlAttributes = new { @class = "form-control disabled", @type = "number", @min = "0", @step = "0.01", @value = "0" } })
+                @Html.ValidationMessageFor(model => model.CalciumHardnessHighAlert, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.HRR_ORP, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.HRR_ORP, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.HRR_ORP, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Backwash, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.Backwash, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                @Html.ValidationMessageFor(model => model.Backwash, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group label-floating">
+                @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label" })<br />
+                @Html.EnumDropDownListFor(model => model.Notes, "Select...", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+            </div>
+
+            <text style="font-size: 20px;font-weight: 600;">Custom Fields</text>
+
+            <table class="table table-bordered">
+                <tbody>
+                    @for (var i = 0; i < Model.ChemicalCustomFields.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-1">
+                                        @Html.HiddenFor(model => model.ChemicalCustomFields[i].ChemicalCustomFieldID)
+                                    </div>
+                                    <div class="col-3 form-group">
+                                        @Html.LabelFor(model => model.ChemicalCustomFields[i].Label, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ChemicalCustomFields[i].Label, new { htmlAttributes = new { @class = "form-control disabled", @required = "required" } })
+                                        @Html.ValidationMessageFor(model => model.ChemicalCustomFields[i].Label, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-3 form-group label-floating">
+                                        @Html.LabelFor(model => model.ChemicalCustomFields[i].InputType, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EnumDropDownListFor(model => model.ChemicalCustomFields[i].InputType, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(model => model.ChemicalCustomFields[i].InputType, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-3 form-group label-floating">
+                                        @Html.LabelFor(model => model.ChemicalCustomFields[i].Required, htmlAttributes: new { @class = "control-label" })<br />
+                                        @Html.EnumDropDownListFor(model => model.ChemicalCustomFields[i].Required, "Select...", htmlAttributes: new { @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(model => model.ChemicalCustomFields[i].Required, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-2">
+                                        @Html.HiddenFor(model => model.ChemicalCustomFields[i].IsDeleted)
+                                        <a class="btn btn-danger btn-sm delete" style="position: absolute;bottom: 0; margin-bottom: 19px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>
+                                    </div>
+                                </div>
+                                @{
+                                    var options_class = Model.ChemicalCustomFields[i].InputType == Daftari.Chemicals.Enum.InputType.Select ||
+                                                        Model.ChemicalCustomFields[i].InputType == Daftari.Chemicals.Enum.InputType.RadioButton ?
+                                                        "" : "hidden";
+                                }
+                                <div class="row @(options_class)" id="ChemicalCustomFields_@(i)__InputType">
+                                    <div class="form-group col-12">
+                                        @Html.LabelFor(model => model.ChemicalCustomFields[i].SelectOptions, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.ChemicalCustomFields[i].SelectOptions, new { htmlAttributes = new { @class = "form-control disabled" } })
+                                        @Html.ValidationMessageFor(model => model.ChemicalCustomFields[i].SelectOptions, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-3">
+                    <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add Field</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-light" />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    @*@Scripts.Render("~/bundles/editRegisterForm")*@
+
+    <script>
+        $(document).ready(function () {
+            var inputTypes = @Html.Raw(new JavaScriptSerializer().Serialize(ViewBag.InputTypes));
+            var yesNoOpt = @Html.Raw(new JavaScriptSerializer().Serialize(ViewBag.YesNo));
+        //ViewBag.InputTypes
+	        ////$('[data-toggle="tooltip"]').tooltip();
+	        ////var actions = $("table td:last-child").html();
+	        //// Append table with add row form on add new button click
+            $(".add-new").click(function(){
+		        //$(this).attr("disabled", "disabled");
+                var index = $("table tbody tr:last-child").index();
+                console.log(index);
+                var row = '<tr><td>' +
+                        '<div class="row">' +
+                            '<div class="col-1"></div>' +
+                            '<div class="col-3 form-group">' +
+                                '<label class="control-label" for="ChemicalCustomFields_' + (index+1) + '__Label">Label</label>' +
+                                '<input class="form-control disabled text-box single-line" data-val-required="\'Label\' must not be empty." id="ChemicalCustomFields_' + (index+1) + '__Label" name="ChemicalCustomFields[' + (index+1) + '].Label" required="required" type="text" value="">' +
+                                '<span class="field-validation-valid text-danger" data-valmsg-for="ChemicalCustomFields[' + (index+1) + '].Label" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-3 form-group label-floating">' +
+                                '<label class="control-label" for="ChemicalCustomFields_' + (index+1) + '__InputType">Type</label>' +
+                                '<select class="form-control valid" id="ChemicalCustomFields_' + (index+1) + '__InputType" name="ChemicalCustomFields[' + (index+1) + '].InputType" required="required" aria-invalid="false">' +
+                                '<option value="">Select...</option>' +
+                                (function (){
+                                    var opt = "";
+                                    $.each(inputTypes, function( index, obj ) {
+                                        opt += '<option value="' + obj.key + '">' + obj.value + '</option>'
+                                    });
+                                    return opt;
+                                }()) +
+                                '</select><span class="field-validation-valid text-danger" data-valmsg-for="ChemicalCustomFields[' + (index+1) + '].InputType" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-3 form-group label-floating">' +
+                                '<label class="control-label" for="ChemicalCustomFields_' + (index+1) + '__Required">Required</label>' +
+                                '<select class="form-control valid" id="ChemicalCustomFields_'+ (index+1) + '__Required" name="ChemicalCustomFields[' + (index+1) + '].Required" required="required" aria-invalid="false">' +
+                                '<option value="">Select...</option>' +
+                                (function (){
+                                    var opt = "";
+                                    $.each(yesNoOpt, function( index, obj ) {
+                                        opt += '<option value="' + obj.key + '">' + obj.value + '</option>'
+                                    });
+                                    return opt;
+                                }()) +
+                                '</select><span class="field-validation-valid text-danger" data-valmsg-for="ChemicalCustomFields[' + (index+1) + '].Required" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                            '<div class="col-2">' +
+                                '<input id="ChemicalCustomFields_' + (index+1) + '__IsDeleted" name="ChemicalCustomFields[' + (index+1) + '].IsDeleted" type="hidden" value="False">' +
+                                '<a class="btn btn-danger btn-sm delete" style="position: absolute;bottom: 0; margin-bottom: 19px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="row hidden" id="ChemicalCustomFields_' + (index+1) + '__InputType">' +
+                            '<div class="col-12 form-group">' +
+                                '<label class="control-label" for="ChemicalCustomFields_' + (index+1) + '__SelectOptions">Options (comma separated)</label>' +
+                                '<input class="form-control disabled text-box single-line" id="ChemicalCustomFields_' + (index+1) + '__SelectOptions" name="ChemicalCustomFields[' + (index+1) + '].SelectOptions" type="text" value="">' +
+                                '<span class="field-validation-valid text-danger" data-valmsg-for="ChemicalCustomFields[' + (index+1) + '].SelectOptions" data-valmsg-replace="true"></span>' +
+                            '</div>' +
+                        '</div>' +
+                '</td></tr>';
+                $("table").append(row);
+
+                //var $el = $('#Custom_Fields_' + index + '__Label');
+                //$el.append($('<option value="0">RadioButton</option>'));
+                //console.log($el);
+                //$.each(inputTypes, function( index, obj ) {
+                //   $el.append($("<option></option>")
+                //       .attr("value", "" + obj.value).text(obj.key));
+                //    console.log(obj);
+                //});
+                //$el.empty(); // remove old options
+                //$.each(inputTypes, function(key,value) {
+                //  $el.append($("<option></option>")
+                //     .attr("value", value).text(key));
+                //});
+                //console.log(row);
+		        //$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+                //$('[data-toggle="tooltip"]').tooltip();
+            });
+	        //// Add row on add button click
+	        //$(document).on("click", ".add", function(){
+		       // var empty = false;
+		       // var input = $(this).parents("tr").find('input[type="text"]');
+         //       input.each(function(){
+			      //  if(!$(this).val()){
+				     //   $(this).addClass("error");
+				     //   empty = true;
+			      //  } else{
+         //               $(this).removeClass("error");
+         //           }
+		       // });
+		       // $(this).parents("tr").find(".error").first().focus();
+		       // if(!empty){
+			      //  input.each(function(){
+				     //   $(this).parent("td").html($(this).val());
+			      //  });
+			      //  $(this).parents("tr").find(".add, .edit").toggle();
+			      //  $(".add-new").removeAttr("disabled");
+		       // }
+         //   });
+	        //// Edit row on edit button click
+	        //$(document).on("click", ".edit", function(){
+         //       $(this).parents("tr").find("td:not(:last-child)").each(function(){
+			      //  $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+		       // });
+		       // $(this).parents("tr").find(".add, .edit").toggle();
+		       // $(".add-new").attr("disabled", "disabled");
+         //   });
+	        //// Delete row on delete button click
+	        $(document).on("click", ".delete", function(){
+                var element = $(this).parents("tr");
+                element.find("input[name$='IsDeleted']").val("true");
+                element.css({ "display": "none" });
+            });
+
+            $(document).on("change", 'select[id^=ChemicalCustomFields]', function () {
+                var id = $(this).attr('id');
+                if($(this).find('option:selected').text() != "Select" && $(this).find('option:selected').text() != "RadioButton"){
+				    $("div[id=" + id + "]").addClass("hidden");
+				    empty = true;
+			    } else{
+                    $("div[id=" + id + "]").removeClass("hidden");
+                }
+            });
+        });
+    </script>
+}

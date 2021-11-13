@@ -1,0 +1,257 @@
+﻿@model Daftari.ViewModel.CompletedFormVM
+
+@section CustomStyles {
+
+}
+@{
+    ViewBag.Title = "Custom Form";
+}
+
+<style>
+    #Notes {
+        width: 100%;
+    }
+    .detail-container {
+        background-color: #e9ecef;
+        height: auto;
+        min-height: 35px;
+    }
+    .detail-container > label {
+        margin-bottom: 0;
+    }
+    .form-text, .ideal-dose, .value-text {
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+    .form-text {
+        
+    }
+    .ideal-dose {
+        font-weight: 400;
+    }
+    .value-text {
+        margin-right: 10px;
+        font-weight: 600;
+    }
+    .value-text.hidden {
+        display: none;
+    }
+    td > .form-group {
+         margin-bottom: 0;
+         margin-left: 0.15rem;
+    }
+    .table-bordered {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .table th, .table td {
+        padding: 0.44rem;
+    }
+    
+    /* For Mobile (portrait and landscape) ----------- */
+    @@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+        .signature-box {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    /* For Tablets */
+    @@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+        fieldset {
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 2rem;
+        }
+
+        .signature-box {
+            max-width: 100%;
+            max-height: 130px;
+        }
+    }
+
+    @@media only screen and (min-device-width: 1024px) {
+        fieldset {
+            margin-left: 150px;
+            margin-right: 150px;
+            padding: 3rem;
+        }
+
+        legend.title {
+            font-size: 1.7rem;
+        }
+
+        .signature-box {
+            max-height: 130px;
+        }
+    }
+</style>
+    <div class="well">
+        <fieldset>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.FormID)
+
+            <h2>@Model.FormSettings.Title</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:30%;"></th>
+                        <th style="width:70%;">
+                            <a class="btn btn-primary btn-sm" style="float:right;" href="../PrintPDF/@(Model.FormID)" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print" data-animation="true"><i class="dripicons-print"></i></a>
+                            <a class="btn btn-danger btn-sm" style="float:right;" href="../DeleteCompletedForm/@(Model.FormID)" data-toggle="tooltip" data-placement="bottom" title="Delete" data-animation="true"><i class="dripicons-cross"></i></a>
+                            <a class="btn btn-info btn-sm" style="float:right;" href="../EditCompletedForm/@(Model.FormID)" data-toggle="tooltip" data-placement="bottom" title="Edit" data-animation="true"><i class="dripicons-document-edit"></i></a>
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label class="form-text">@(Model.GetPropertyDisplay(i => i.FormID))</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            <label class="value-text">@(Model.FormID)</label>
+                        </div>
+                    </td>
+                </tr>
+
+                @foreach (var field in Model.FormCustomValues)
+                {
+                    <tr>
+                        @if (field.FormCustomField.InputType == Daftari.Forms.Enum.InputType.Section)
+                        {
+                            <td colspan="2">
+                                <div class="form-group">
+                                    <label class="form-text">@(field.FormCustomField.Label)</label>
+                                </div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <div class="form-group">
+                                    <label class="form-text">@(field.FormCustomField.Label)</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-control detail-container">
+                                    <label class="value-text">@(field.CustomValue)</label>
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+
+                @if (Model.FormSettings.IsAttachmentEnabled)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="form-text">Attachment(s)</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+
+                                @foreach (var att in Model.FormAttachments)
+                                {
+                                    @Html.ActionLink(att.FileName, "GetFormAttachment", "Forms", new { id = att.FormAttachmentID }, new { @style = "margin-left:10px;" })<br />
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                @foreach (var sign in Model.FormSignatureValues)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="form-text">@sign.FormSignatureField.Name Signature</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <img class="signature-box" src="@(sign.SignatureContent)">
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label class="form-text">Submitted By</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            <label class="value-text">@(Model.Submitted_By)</label>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label class="form-text">Submitted On</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-control detail-container">
+                            <label class="value-text">@(Model.Submitted_At.Value.ToString("yyyy/MM/dd @ HH:mm tt"))</label>
+                        </div>
+                    </td>
+                </tr>
+                @if (Model.ApprovalProcess.Any())
+                {
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                <label class="form-text">Status</label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-control detail-container">
+                                <label class="value-text">@(Model.ApprovalStatus.Value.ToString())</label>
+                            </div>
+                        </td>
+                    </tr>
+                    if (Model.ApprovalStatus == Daftari.Forms.Enum.ApprovalStatus.Approved)
+                    {
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label class="form-text">Approved On</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-control detail-container">
+                                    <label class="value-text">@(Model.ApprovalProcess.Max(x => x.LastModifiedDate).Value.ToString("yyyy/MM/dd HH:mm:ss"))</label>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+
+
+        </fieldset>
+    </div>
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var rootURL = '@Url.Action("/")';
+
+    </script>
+
+}

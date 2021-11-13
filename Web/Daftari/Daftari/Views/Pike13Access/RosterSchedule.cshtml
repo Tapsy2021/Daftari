@@ -1,0 +1,616 @@
+﻿@model Daftari.ViewModel.RosterScheduleVM
+
+@section CustomStyles {
+    @Styles.Render("~/Content/datatables")
+
+    <style type="text/css">
+
+        #reportrange {
+            width: 300px;
+        }
+
+        td h2 {
+            font-size: 14px;
+        }
+    </style>
+}
+@{
+    ViewBag.Title = "Roster Schedule";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Roster Schedule</h5>
+
+                @if (ViewBag.CanView == true)
+                {
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.StaffFilter, htmlAttributes: new { @class = "control-label" })
+                        <select id="StaffFilter" class="form-control"></select>
+                    </div>
+
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.DateFilter, htmlAttributes: new { @class = "form-label" })
+                        @Html.EditorFor(model => model.DateFilter, new { htmlAttributes = new { @class = "form-control date", data_toggle = "date-picker", data_time_Picker = "true" } })
+                    </div>
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.DateFilter, new { htmlAttributes = new { @class = "form-control date", style = "display:none", data_toggle = "date-picker", data_time_Picker = "true" } })
+                }
+
+                <table id="dtTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.start_at) Date
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.start_at) Time
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.staff_members)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.people)
+                            </th>
+                            <th>
+                                Guardian
+                            </th>
+                            <th>
+                                Notes
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.attendance_complete)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.state)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.e.full)
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div> <!-- end card-body-->
+        </div>
+    </div>
+</div>
+
+<form id="sendMail" style="display: none;" action="@Url.Action("SendMailsToCustomer", "Communication")" method="post">
+    <input name="extIDs" id="mailExtIDs" />
+</form>
+<form id="sendSMS" style="display: none;" action="@Url.Action("SendSMSToCustomer", "Communication")" method="post">
+    <input name="extIDs" id="smsExtIDs" />
+</form>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/datatables")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
+
+    @if (ViewBag.CanView == false)
+    {
+        <script type="text/javascript">
+            var personId = '@ViewBag.PersonID';
+        </script>
+    }
+<script type="text/javascript">
+            var rootURL = '@Url.Action("/")';
+        var cardURL = '@Url.Action("Open", "StudentCards")';
+
+        function getDataUrl(datestr) {
+            var dates = datestr.split(' - ');
+            var fromdate = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+            var todate = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+            var pid = '';
+            if (typeof (personId) !== 'undefined') {
+                pid = '&staff_member_ids=' + personId;
+            }
+            return 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/event_occurrences?access_token=@(ViewBag.AccessCode)&from=' + fromdate + '&to=' + todate + pid;
+        }
+
+        var levels = ['1 - Tadpoles',
+            '2 - Minnows',
+            '3 - Younger Leapfrog',
+            '4 - Seahorses',
+            '5 - Starfish',
+            '6 - Seals',
+            '7 - Sharks',
+            '8 - Stingrays'];
+
+    var tableConfig = {
+        scrollY: 550,
+        scrollX: true,
+        deferRender: false,
+        scroller: {
+            loadingIndicator: true,
+            displayBuffer: 150
+        },
+        select: true,
+        "ajax": { url: getDataUrl($('#DateFilter').val()), dataSrc: 'event_occurrences' },
+        lengthChange: false,
+        stateSave: true,
+        "processing": true,
+        "columns": [
+            {
+                "data": "start_at", render: function (data, type, row) {
+                    return moment(data).format('YYYY-MM-DD');
+                },
+                orderData: [0, 1]
+            },
+            {
+                "data": "start_at", render: function (data, type, row) {
+                    return moment(data).format('h:mm:ss a');
+                },
+                orderData: [1, 0]
+            },
+            { "data": "name" },
+            { "data": "staff_members", "render": "[, ].name" },
+            {
+                "data": null, render: function (data, type, row, meta) {
+
+                    var msg = '';
+                    if (row.people.length > 0) {
+                        var val = cacheArr.find(d => d.id === row.id && d.type === 4);
+                        var val2 = proccessingArr.find(d => d.id === row.id && d.type === 4);
+
+                        if (typeof (val) !== 'undefined') {
+                            var length = (val.data.length > 4 || row.full) ? val.data.length : 4;
+                            for (var i = 0; i < length; i++) {
+                                msg = msg + 'Slot ' + (i + 1) + '. ';
+                                var person = row.people[i];
+                                if (typeof (person) !== 'undefined') {
+                                    var visit = val.data.find(x => x.person.id === person.id);
+                                    if (typeof (visit) !== 'undefined') {
+                                        if (visit.status !== 'late_cancel') {
+                                            msg = msg + (visit.person.name + ' (' + visit.status + ')') + '<br />';
+                                        }
+                                        else {
+                                            msg = msg + '__________________' + '<br />';
+                                        }
+                                    }
+                                    else {
+                                        msg = msg + '__________________' + '<br />';
+                                    }
+                                }
+                                else {
+                                    msg = msg + '__________________' + '<br />';
+                                }
+
+
+                            }
+                        }
+                        else if (typeof (val2) === 'undefined') {
+                            var url = 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/event_occurrences/' + row.id + '/visits?access_token=@(ViewBag.AccessCode)';
+                            var req = { url: url, row: meta.row, col: meta.col, id: row.id, type: 4 };
+                            reqArr.push(req);
+
+                            msg = msg + '___Processing____' + '<br />';
+                        }
+                    }
+                    else {
+                        msg = 'NA';
+                    }
+
+                    return msg;
+                }
+            },
+            {
+                "data": null, render: function (data, type, row, meta) {
+
+                    var msg = '';
+                    if (isPhoneLoad && row.people.length > 0) {
+                        var ids = '';
+                        for (var i in row.people) {
+
+                            var person = row.people[i];
+                            ids = ids + ',' + person.id;
+                        }
+                        if (ids !== '') {
+                            var val = cacheArr.find(d => d.id === ids && d.type === 5);
+                            var val2 = proccessingArr.find(d => d.id === ids && d.type === 5);
+                            var cntr = 0;
+                            if (typeof (val) !== 'undefined') {
+                                var idArray = ids.split(',');
+                                for (var i in idArray) {
+                                    var id = idArray[i];
+                                    if (!(id === '' || id === null)) {
+                                        var personInfo = val.data.find(x => x.extid == id);
+                                        cntr++;
+                                        msg = msg + cntr + '. ' + (personInfo.extid === '-' ? "-" : (personInfo.name === null ? '' : personInfo.name + ' ') + '(' + personInfo.phone + ')') + '<br />';
+                                    }
+                                }
+
+                            }
+                            else if (typeof (val2) === 'undefined') {
+                                var url = '/Pike13Access/GetParentInfo?externalRefs=' + ids;
+                                var req = { url: url, row: meta.row, col: meta.col, id: ids, type: 5 };
+                                if (!containsObject(req, reqArr))
+                                    reqArr.push(req);
+                            }
+                        }
+                    }
+                    else {
+                        msg = 'NA';
+                    }
+
+                    return msg;
+                }
+            },
+            {
+                "data": null, render: function (data, type, row, meta) {
+
+                    var note = '';
+                    if (isNotesLoad && row.people.length > 0) {
+                        for (var i in row.people) {
+                            var person = row.people[i];
+                            var val = cacheArr.find(d => d.id === person.id && d.type === 2);
+                            var val2 = proccessingArr.find(d => d.id === person.id && d.type === 2);
+                            if (typeof (val) !== 'undefined') {
+                                note = note + person.name + (val.data === '' ? "" : '<br />Note: ' + val.data) + '<br /><br />';
+                            }
+                            else if (typeof (val2) === 'undefined') {
+                                var url = 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/people/' + person.id + '/notes?access_token=@(ViewBag.AccessCode)';
+                                var req = { url: url, row: meta.row, col: meta.col, id: person.id, type: 2 };
+                                if (!containsObject(req, reqArr))
+                                    reqArr.push(req);
+                            }
+                        }
+                    }
+                    else {
+                        note = 'NA';
+                    }
+
+                    return note;
+                }
+            },
+
+            { "data": "description" },
+            {
+                "data": "attendance_complete", render: function (data, type, row) {
+                    return data ? 'Yes' : 'No';
+                }
+            },
+            { "data": "state" },
+            {
+                "data": "full", render: function (data, type, row) {
+                    return data ? 'Yes' : 'No';
+                }
+            }
+        ],
+        columnDefs: [
+            {
+                "targets": [6],
+                "visible": false,
+                "searchable": false
+            },
+        ],
+        order: [0, "asc"],
+        "initComplete": function (settings, json) {
+            makeRequest();
+            userPermExec(json);
+        }
+        };
+
+        var tbButtonsConfig = {
+            buttons: true,
+            "buttons": [
+                {
+                    extend: 'colvis',
+                    postfixButtons: ['colvisRestore'],
+                },
+                'selectAll',
+                'selectNone',
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':visible',
+                        stripNewlines: false,
+                        stripHtml: false
+                    },
+                    footer: true
+                },
+                {
+                    text: 'Reset Filter',
+                    action: function (e, dt, node, config) {
+                        table.state.clear();
+                        window.location.reload();
+                    }
+                },
+            ],
+        };
+    </script>
+    @if(!(User.IsInRole("Admin") || User.IsInRole("Manager")))
+    {
+        <script type="text/javascript">
+            tableConfig.select = false;
+            tbButtonsConfig = {
+                buttons: true,
+                "buttons": [
+                    {
+                        extend: 'colvis',
+                        postfixButtons: ['colvisRestore'],
+                    },
+                    {
+                        text: 'Reset Filter',
+                        action: function (e, dt, node, config) {
+                            table.state.clear();
+                            window.location.reload();
+                        }
+                    },                 
+                ],
+
+            };
+        </script>
+    }
+    <script type="text/javascript">
+
+        $.fn.dataTable.moment('h:mm:ss a');
+
+        var table = $('#dtTable').DataTable(tableConfig);
+
+        new $.fn.dataTable.Buttons(table, tbButtonsConfig);
+
+            // Attach Buttons
+            table.buttons().container()
+                .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+    </script>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor"))
+    {
+        <script>
+            table.button().add(5, {
+                action: function (e, dt, node, config) {
+
+                    isNotesLoad = !isNotesLoad;
+                    if (isNotesLoad) {
+                        dt.ajax.reload(function () {
+                            makeRequest();
+                        });
+
+                        table.buttons(3).text('Disable Notes');
+                    }
+                    else {
+                        table.buttons(3).text('Enable Notes');
+                    }
+                },
+                text: 'Enable Notes',
+                className: 'btn-secondary'
+            });
+        </script>
+    }
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <script>
+            table.button().add(6, {
+                action: function (e, dt, node, config) {
+
+                    isPhoneLoad = !isPhoneLoad;
+                    if (isPhoneLoad) {
+                        dt.ajax.reload(function () {
+                            makeRequest();
+                        });
+                        table.buttons(4).text('Disable Guardian Phones');
+                    }
+                    else {
+                        table.buttons(4).text('Enable Guardian Phones');
+                    }
+                },
+                text: 'Enable Guardian Phones',
+                className: 'btn-secondary'
+            });
+        </script>
+
+        <script>
+            table.button().add(5, {
+                action: function (e, dt, node, config) {
+                    var data = table.rows({ selected: true }).data();
+                    var dataLength = data.length;
+                    var ids = [];
+                    console.log(data);
+                    for (var i = 0; i < dataLength; i++) {
+                        var people = data[i].people;
+                        for (var j in people) {
+                            ids.push(people[j].id);
+                        }
+                    }
+
+                    $('#mailExtIDs').val(ids.join(','));
+                    document.getElementById('sendMail').submit();
+                },
+                text: 'Send Email',
+                className: 'btn-secondary'
+            });
+        </script>
+
+        if (ViewBag.Subdomain == "atss-muscat")
+        {
+            <script>
+                table.button().add(6, {
+                    action: function (e, dt, node, config) {
+                        var data = table.rows({ selected: true }).data();
+                        var dataLength = data.length;
+                        var ids = [];
+                        console.log(data);
+                        for (var i = 0; i < dataLength; i++) {
+                            var people = data[i].people;
+                            for (var j in people) {
+                                ids.push(people[j].id);
+                            }
+                        }
+
+                        $('#smsExtIDs').val(ids.join(','));
+                        document.getElementById('sendSMS').submit();
+                    },
+                    text: 'Send SMS',
+                    className: 'btn-secondary'
+                });
+            </script>
+        }
+    }
+
+
+    @if (ViewBag.CanView == true)
+    {
+        <script type="text/javascript">
+            $('#DateFilter').change(function () {
+                table.ajax.url(getDataUrl($('#DateFilter').val())).load(function () {
+                    makeRequest();
+                    userPermExec(table.ajax.json());
+                });
+            });
+            
+            function userPermExec(json) {
+                var instructorArr = [];
+                instructorArr.push('All');
+                for (var i in json.event_occurrences) {
+                    var row = json.event_occurrences[i];
+                    for (var j in row.staff_members) {
+                        var member = row.staff_members[j];
+                        if (instructorArr.indexOf(member.name) === -1)
+                            instructorArr.push(member.name);
+                    }
+                }
+
+                $.each(instructorArr, function (key, value) {
+                    $('#StaffFilter')
+                        .append($("<option></option>")
+                            .attr("value", value)
+                            .text(value));
+                });
+
+                $("#StaffFilter").change(function () {
+                    var txt = $("#StaffFilter option:selected").text();
+                    if (txt === 'All') {
+                        table
+                            .columns(3)
+                            .search('')
+                            .draw();
+                    }
+                    else {
+                        table
+                            .columns(3)
+                            .search(txt)
+                            .draw();
+                    }
+
+                });
+            }
+        </script>
+    }
+    else
+    {
+        <script>
+        function userPermExec() {
+             @*table
+                    .columns(2)
+                    .search('@ViewBag.UserFullName')
+                    .draw();*@
+        }
+        </script>
+    }
+
+    <script type="text/javascript">
+
+        var isNotesLoad = false;
+        var isPhoneLoad = false;
+
+        var reqArr = [];
+
+        var cacheArr = [];
+
+        var proccessingArr = [];
+
+        function makeRequest() {
+
+            if (reqArr.length === 0)
+                return;
+
+            if (reqArr.length === 1) {
+                table.ajax.reload();
+                table.columns.adjust().draw();
+            }
+            var obj = reqArr.shift();
+            var tp = obj.type;
+            proccessingArr.push({ id: obj.id, type: tp });
+            var val = cacheArr.find(d => d.id === obj.id && d.type === tp);
+
+            if (typeof (val) !== 'undefined') {
+
+                table.cell({ row: val.row, column: val.col }).data(table.cell({ row: val.row, column: val.col }).data());
+                return makeRequest();
+            }
+
+            $.ajax({
+                url: obj.url,
+            })
+                .done(function (data) {
+                    var msg = '';
+
+                    if (tp === 1) {
+                        if (data.extid === '-')
+                            msg = '-';
+                        else
+                            msg = (data.name === null ? '' : data.name) + ' (' + data.phone + ')';
+
+                        cacheArr.push({ url: obj.url, data: msg, id: obj.id, row: obj.row, col: obj.col, type: 1 });
+                    }
+
+                    if (tp === 5) {
+
+                        cacheArr.push({ url: obj.url, data: data, id: obj.id, row: obj.row, col: obj.col, type: 5 });
+                    }
+
+                    if (tp === 2) {
+
+                        for (var i in data.notes) {
+                            msg = msg + '<br />- ' + data.notes[i].note;
+                        }
+
+                        if (data.notes !== null && data.notes.length !== 0) {
+                            cacheArr.push({ url: obj.url, data: msg, id: obj.id, row: obj.row, col: obj.col, type: 2 });
+
+                        }
+                    }
+
+                    if (tp === 3) {
+
+                        msg = data.visits[0].status;
+
+                        cacheArr.push({ url: obj.url, data: msg, id: obj.id, row: obj.row, col: obj.col, type: 3 });
+                    }
+
+                    if (tp === 4) {
+
+                        msg = data.visits;
+
+                        cacheArr.push({ url: obj.url, data: msg, id: obj.id, row: obj.row, col: obj.col, type: 4 });
+                    }
+
+                    table.cell({ row: obj.row, column: obj.col }).data(table.cell({ row: obj.row, column: obj.col }).data());
+                    return makeRequest();
+                });
+        }
+
+        function containsObject(obj, list) {
+            var i;
+            for (i = 0; i < list.length; i++) {
+                if (list[i] === obj) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    </script>
+}

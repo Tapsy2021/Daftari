@@ -1,0 +1,179 @@
+﻿@model Daftari.ViewModel.CustomerMailsVM
+@section CustomStyles {
+    @Styles.Render("~/Content/quillcss")
+    <style>
+        body > #standalone-container {
+            margin: 50px auto;
+            max-width: 720px;
+        }
+
+        #editor-container {
+            height: 350px;
+        }
+    </style>
+}
+@{
+    ViewBag.Title = "Send Email to a Customers";
+}
+
+<h2>Send Email to Customers</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-warning">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+@using (Html.BeginForm("SendCustomerMails", "Communication", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal well">
+        <h4>Aqua-Tots Communications Console</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Customers, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <span class="selectall btn btn-xs btn-light">Select all</span>
+                <span class="deselect btn btn-xs btn-danger">Deselect all</span>
+                @Html.DropDownList("Customers", null, htmlAttributes: new { @class = "form-control select2", @multiple = "multiple", data_toggle = "select2" })
+                @Html.ValidationMessageFor(model => model.Customers, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Subject, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+
+            @Html.HiddenFor(model => model.EmailMessage)
+            @Html.ValidationMessageFor(model => model.EmailMessage, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.MessageDelta)
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2">&nbsp;</div>
+            <div id="standalone-container" class="col-md-10">
+                <div id="toolbar-container">
+                    <span class="ql-formats">
+                        <select class="ql-font"></select>
+                        <select class="ql-size"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-script" value="sub"></button>
+                        <button class="ql-script" value="super"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-header" value="1"></button>
+                        <button class="ql-header" value="2"></button>
+                        <button class="ql-blockquote"></button>
+                        <button class="ql-code-block"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                        <button class="ql-indent" value="-1"></button>
+                        <button class="ql-indent" value="+1"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-direction" value="rtl"></button>
+                        <select class="ql-align"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                        <button class="ql-image"></button>
+                        <button class="ql-video"></button>
+                        <button class="ql-formula"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-clean"></button>
+                    </span>
+                </div>
+                <div id="editor-container"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("file", "Attachments", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" id="Attachments" name="Attachments" multiple="">
+                <input type="text" readonly="" class="form-control" placeholder="Browse...">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Send" class="btn btn-light" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Dashboard", "Index", "Dashboard")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/quill")
+    <script>
+
+        $('.selectall').click(function () {
+            $('#Customers').select2('destroy').find('option').prop('selected', 'selected').end().select2();
+        });
+
+        $('.deselect').click(function () {
+            $('#Customers').select2('destroy').find('option').prop('selected', false).end().select2();
+        });
+
+        $(function () {
+            var quill = new Quill('#editor-container', {
+                modules: {
+                    formula: true,
+                    syntax: true,
+                    toolbar: '#toolbar-container'
+                },
+                placeholder: 'Your Email Message',
+                theme: 'snow'
+            });
+
+            quill.setContents(@Html.Raw(Model.MessageDelta));
+
+            $('input:submit').click(function () {
+                $('#EmailMessage').val(document.querySelector(".ql-editor").innerHTML);
+                $('#MessageDelta').val(JSON.stringify(quill.getContents()));
+                var $button = this;
+                var oldValue = $button.value;
+                setTimeout(function () {
+                    $button.disabled = true;
+                    $button.value = 'Sending...';
+                    setTimeout(function () {
+                        $button.disabled = false;
+                        $button.value = oldValue;
+                    }, 500);
+                }, 0);
+            });
+
+        });
+    </script>
+}
