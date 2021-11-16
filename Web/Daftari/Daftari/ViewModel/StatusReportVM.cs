@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Daftari.Pike13Api.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Web;
 
 namespace Daftari.ViewModel
 {
-    public class StatusReportVM
+    public class StatusDashboardVM
     {
         [Display(Name = "Number of students")]
         public List<int> Total_Stundents { get; set; }
@@ -27,5 +28,14 @@ namespace Daftari.ViewModel
         public List<int> Unpaid_Students { get; set; }
         public List<int> Paid_By_Makeup { get; set; }
         public string Title { get; set; }
+    }
+
+    public class StatusReportVM
+    {
+        [Display(Name = "Date")]
+        public string DateFilter { get; set; }
+
+        [Display(Name = "Status")]
+        public VisitStatus StatusFilter { get; set; }
     }
 }

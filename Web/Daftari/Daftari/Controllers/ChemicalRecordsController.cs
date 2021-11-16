@@ -929,6 +929,11 @@ namespace Daftari.Controllers
             return Json("Deleted", JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult Reports()
+        {
+            return View(new StatusDashboardVM());
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

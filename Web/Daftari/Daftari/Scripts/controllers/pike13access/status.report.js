@@ -168,10 +168,20 @@ function (t) {
         t.StatusReport.init()
     });
 
-    t(".card-body").click(function () {
+    //t(".card-body").click(function () {
 
          
-        //alert("Handler for .click() called.");
-    });
+    //    //alert("Handler for .click() called.");
+    //});
 
 }(window.jQuery);
+
+function OpenStatusReport(status) {
+
+    window.open(rootURL + "StatusReport?status=" + status);
+
+
+
+    //var g = 9;
+    //console.log(g);
+}

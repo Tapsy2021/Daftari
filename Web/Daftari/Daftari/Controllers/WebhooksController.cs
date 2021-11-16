@@ -35,10 +35,10 @@ namespace Daftari.Controllers
 
                 var subscribed_topics = await db.TopicSubsriptions.Where(x => x.Subdomain == Subdomain).ToListAsync();
 
-                var available_topics = Enum.GetNames(typeof(VisitState)).Select(x => new
+                var available_topics = Enum.GetNames(typeof(VisitTopic)).Select(x => new
                 {
-                    key = (int)Enum.Parse(typeof(VisitState), x),
-                    value = ((VisitState)Enum.Parse(typeof(VisitState), x)).GetDisplay()
+                    key = (int)Enum.Parse(typeof(VisitTopic), x),
+                    value = ((VisitTopic)Enum.Parse(typeof(VisitTopic), x)).GetDisplay()
                 }).ToList();
 
                 var detailCollection = (from avail in available_topics
@@ -413,7 +413,7 @@ namespace Daftari.Controllers
                                                 Status = pike_visit.status,
                                                 UpdatedAt = pike_visit.updated_at,
                                                 CreatedAt = pike_visit.created_at,
-                                                IsDeleted = payload.Topic == VisitState.Deleted.GetDisplay()
+                                                IsDeleted = payload.Topic == VisitTopic.Deleted.GetDisplay()
                                             }
                                         }
                                     };
@@ -425,7 +425,7 @@ namespace Daftari.Controllers
                             else
                             {
                                 var visit = event_occurrence.Visits.FirstOrDefault(x => x.VisitID == pike_visit.id);
-                                if (visit == null && payload.Topic != VisitState.Deleted.GetDisplay())
+                                if (visit == null && payload.Topic != VisitTopic.Deleted.GetDisplay())
                                 {
                                     event_occurrence.Visits.Add(new Visit
                                     {
@@ -444,7 +444,7 @@ namespace Daftari.Controllers
                                         Status = pike_visit.status,
                                         UpdatedAt = pike_visit.updated_at,
                                         CreatedAt = pike_visit.created_at,
-                                        IsDeleted = payload.Topic == VisitState.Deleted.GetDisplay()
+                                        IsDeleted = payload.Topic == VisitTopic.Deleted.GetDisplay()
                                     });
                                     if (!string.IsNullOrEmpty(event_occurrence.people))
                                     {
@@ -465,7 +465,7 @@ namespace Daftari.Controllers
                                     //{
                                     //    bh.Log_Error();
                                     //}
-                                    if ((visit.LastModified < pike_visit.LastModified || payload.Topic != VisitState.New.GetDisplay()) && visit.State != VisitState.Deleted.GetDisplay())
+                                    if ((visit.LastModified < pike_visit.LastModified || payload.Topic != VisitTopic.New.GetDisplay()) && visit.State != VisitTopic.Deleted.GetDisplay())
                                     {
                                         visit.CancelledAt = pike_visit.cancelled_at;
                                         visit.CompletedAt = pike_visit.completed_at;
@@ -493,7 +493,7 @@ namespace Daftari.Controllers
                                         //    //visit.IsDeleted = true;
                                         //    db.Visits.Remove(visit);
                                         //}
-                                        if (payload.Topic != VisitState.Deleted.GetDisplay())
+                                        if (payload.Topic != VisitTopic.Deleted.GetDisplay())
                                         {
                                             db.Entry(visit).State = EntityState.Modified;
                                         }

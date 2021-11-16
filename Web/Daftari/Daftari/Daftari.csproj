@@ -679,8 +679,10 @@
     <Content Include="Views\GraduatedCards\Details.cshtml" />
     <Content Include="Views\GraduatedCards\Index.cshtml" />
     <Content Include="Views\GraduatedCards\Open.cshtml" />
+    <Content Include="Views\Pike13Access\StatusDashboard.cshtml" />
     <Content Include="Views\Pike13Access\StatusReport.cshtml" />
-    <Content Include="Views\Pike13Access\DailyStatus.cshtml" />
+    <Content Include="Views\Pike13Access\UnpaidReport.cshtml" />
+    <Content Include="Views\ChemicalRecords\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

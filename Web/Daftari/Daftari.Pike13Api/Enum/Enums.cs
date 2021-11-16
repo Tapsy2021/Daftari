@@ -6,7 +6,7 @@ namespace Daftari.Pike13Api.Enum
     {
 
     }
-    public enum VisitState
+    public enum VisitTopic
     {
         /// <summary>
         ///Triggers when a new visit is created in a state other than "reserved." Also triggers when a visit transitions from "reserved" to "registered", "completed", "noshowed", or "late_cancel."
@@ -51,7 +51,29 @@ namespace Daftari.Pike13Api.Enum
 
     public enum VisitStatus
     {
+        //[Display(Name = "register")]
+        //Register,
+        [Display(Name = "complete")]
+        Complete,
         [Display(Name = "late_cancel")]
-        Late_Cancel
+        Late_Cancel,
+        [Display(Name = "noshow")]
+        NoShow,
+        //[Display(Name = "reset")]
+        //Reset
+        [Display(Name = "unpaid")]
+        Unpaid
+    }
+
+    public enum VisitState
+    {
+        [Display(Name = "completed")]
+        Completed,
+        [Display(Name = "late_canceled")]
+        Late_Canceled,
+        [Display(Name = "noshowed")]
+        NoShowed,
+        [Display(Name = "registered")]
+        Registered
     }
 }

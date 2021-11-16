@@ -436,13 +436,14 @@
                     }
                 }
 
+                $("#StaffFilter").empty();
                 $.each(instructorArr, function (key, value) {
                     $('#StaffFilter')
                         .append($("<option></option>")
                             .attr("value", value)
                             .text(value));
                 });
-
+                
                 $("#StaffFilter").change(function () {
                     var txt = $("#StaffFilter option:selected").text();
                     if (txt === 'All') {
