@@ -107,7 +107,7 @@
         </div> <!-- end col-->
     }
 
-    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("RosterSchedule"))
+    @*if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("RosterSchedule"))
     {
         <div class="col-md-4">
             <div class="card bg-primary text-white">
@@ -120,9 +120,9 @@
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
-    }
+    }*@
 
-    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("AquaCards"))
+    @*if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("AquaCards"))
     {
         <div class="col-md-4">
             <div class="card bg-warning">
@@ -135,7 +135,7 @@
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
-    }
+    }*@
 
     @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
     {

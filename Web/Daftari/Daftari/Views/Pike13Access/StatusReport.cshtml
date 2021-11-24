@@ -282,33 +282,40 @@
                         userPermExec(table.ajax.json());
                     });
                 }
+            },
+            {
+                text: 'Sync Unpaid',
+                action: function (e, dt, node, config) {
+
+                    if ($("#StatusFilter option:selected").text() != "unpaid") {
+
+                        $.NotificationApp.send("Status", "Please select unpaid status first", "top-right", "rgba(0,0,0,0.2)", "info");
+                        return;
+                    }
+
+                    $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info");
+
+                    var dates = $('#DateFilter').val().split(' - ');
+                    var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+                    var to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+
+                    $.ajax({
+                        async: true,
+                        url: rootURL + "SyncUnpaid?from=" + from + "&to=" + to + "&business_id=null",
+                        cache: false
+                    }).done(function (data) {                       
+
+                        $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger");
+
+                        table.ajax.reload();
+                    }).fail(function (msg) {
+                        $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
+
+                        table.ajax.reload();
+                    });
+                },
+                className: 'btn-danger'
             }
-            //{
-            //    text: 'Sync',
-            //    action: function (e, dt, node, config) {
-            //        $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info")
-
-            //        //var dates = $('#DateFilter').val().split(' - ');
-            //        //var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
-            //        //var to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
-
-            //        $.ajax({
-            //            async: true,
-            //            url: rootURL + "SyncUnpaid?from=" + from + "&to=" + to + "&business_id=null",
-            //            cache: false
-            //        }).done(function (data) {                       
-
-            //            $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger")
-
-            //            table.ajax.reload();
-            //        }).fail(function (msg) {
-            //            $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
-
-            //            table.ajax.reload();
-            //        });
-            //    },
-            //    className: 'btn-danger'
-            //}
         ],
     });
 

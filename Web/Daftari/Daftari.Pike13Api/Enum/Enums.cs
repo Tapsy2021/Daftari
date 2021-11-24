@@ -55,14 +55,22 @@ namespace Daftari.Pike13Api.Enum
         //Register,
         [Display(Name = "complete")]
         Complete,
+
         [Display(Name = "late_cancel")]
         Late_Cancel,
+
         [Display(Name = "noshow")]
         NoShow,
         //[Display(Name = "reset")]
         //Reset
         [Display(Name = "unpaid")]
-        Unpaid
+        Unpaid,
+
+        [Display(Name = "enrolled")]
+        Enrolled,
+
+        [Display(Name = "incomplete")]
+        Incomplete
     }
 
     public enum VisitState

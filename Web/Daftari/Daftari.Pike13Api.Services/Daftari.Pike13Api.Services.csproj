@@ -56,8 +56,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pike13Api.cs" />
     <Compile Include="Pike13ApiAuth.cs" />
     <Compile Include="Pike13ApiRepo.cs" />
+    <Compile Include="NewPike13Api.cs" />
+    <Compile Include="Pike13JsonApi.cs" />
+    <Compile Include="Pike13WebhooksRepo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenProvider.cs" />
   </ItemGroup>
@@ -75,9 +79,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

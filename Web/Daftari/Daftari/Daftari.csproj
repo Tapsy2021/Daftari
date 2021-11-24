@@ -392,6 +392,7 @@
     <Content Include="Content\app-modern.min.css.map" />
     <Content Include="Content\app.min.css.map" />
     <Content Include="Content\icons.min.css.map" />
+    <Content Include="Scripts\controllers\chemicalRecords\chemical-records.report.js" />
     <Content Include="Scripts\controllers\pike13access\status.report.js" />
     <Content Include="Scripts\vendor\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\app.min.js">

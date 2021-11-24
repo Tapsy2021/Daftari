@@ -931,7 +931,194 @@ namespace Daftari.Controllers
 
         public ActionResult Reports()
         {
-            return View(new StatusDashboardVM());
+            var sd = TokenProvider.GetProvider().GetSubdomain(User.Identity.Name);
+            var cs = db.GetChemicalRecordSettings().Include(c => c.ChemicalCustomFields).FirstOrDefault();
+
+            if (cs == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var cr = new ChemicalRecordFormVM
+            {
+                ChemicalSettings = cs,
+                //TempUnits = cs.TempUnits,
+                //VolumeUnits = cs.VolumeUnits,
+                //AirTempMax = cs.AirTempMax,
+                //PoolTempMax = cs.PoolTempMax,
+                ////ChemicalRecordSettingsID = cs.ChemicalRecordSettingsID,
+                //ChemicalCustomValues = cs.ChemicalCustomFields.Select(x => new ChemicalCustomValueVM
+                //{
+                //    CustomValue = "",
+                //    ChemicalCustomField = new ChemicalCustomFieldVM
+                //    {
+                //        ChemicalCustomFieldID = x.ChemicalCustomFieldID,
+                //        Label = x.Label,
+                //        InputType = x.InputType,
+                //        Required = x.Required,
+                //        SelectOptions = x.SelectOptions
+                //    }
+                //}).ToList()
+            };
+
+            return View(cr);
+        }
+
+        public async Task<JsonResult> GetReporting(DateTime from, DateTime to, string field)
+        {
+            var sd = TokenProvider.GetProvider().GetSubdomain(User.Identity.Name);
+            if (to.Subtract(from).TotalDays < 6)
+            {
+                from = to.AddDays(-6).Date;
+            }
+
+            var cs = await db.GetChemicalRecordSettings()
+                        .Include(c => c.ChemicalRecords).FirstOrDefaultAsync();
+
+            var detailCollection = new List<object>();
+            if (cs != null)
+            {
+                //foreach (var cr in cs.ChemicalRecords.Where(cr => cr.Date >= from.ToServerTime() && cr.Date <= to.ToServerTime()))
+                //{
+                //    var obj = new Dictionary<string, object>
+                //    {
+                //        { "Id", cr.ChemicalRecordID },
+                //        { "Date", cr.Date.ToClientTime().ToString("yyyy/MM/dd @ HH:mm tt") },
+                //        { "SubmittedBy", cr.AuditDetail.CreatedEntryUserID }
+                //    };
+
+                //    if (cs.FreeChlorine == Visibility.Visible)
+                //    {
+                //        obj.Add("FreeChlorine", cr.FreeChlorine);
+                //    }
+                //    if (cs.TotalChlorine == Visibility.Visible)
+                //    {
+                //        obj.Add("TotalChlorine", cr.TotalChlorine);
+                //    }
+                //    if (cs.TotalBromine == Visibility.Visible)
+                //    {
+                //        obj.Add("TotalBromine", cr.TotalBromine);
+                //    }
+                //    if (cs.pH == Visibility.Visible)
+                //    {
+                //        obj.Add("pH", cr.pH);
+                //    }
+                //    if (cs.Alkalinity == Visibility.Visible)
+                //    {
+                //        obj.Add("Alkalinity", cr.Alkalinity);
+                //    }
+                //    if (cs.CalciumHardness == Visibility.Visible)
+                //    {
+                //        obj.Add("CalciumHardness", cr.CalciumHardness);
+                //    }
+                //    if (cs.PoolTemp == Visibility.Visible)
+                //    {
+                //        obj.Add("PoolTemp", (int?)cr.TempConverter(cr.PoolTemp));
+                //    }
+                //    if (cs.AirTemp == Visibility.Visible)
+                //    {
+                //        obj.Add("AirTemp", (int?)cr.TempConverter(cr.AirTemp));
+                //    }
+                //    if (cs.WaterClarity == Visibility.Visible)
+                //    {
+                //        obj.Add("WaterClarity", cr.WaterClarity.ToString());
+                //    }
+                //    if (cs.Backwash == Visibility.Visible)
+                //    {
+                //        obj.Add("Backwash", cr.Backwash.ToString());
+                //    }
+                //    if (cs.HRR_ORP == Visibility.Visible)
+                //    {
+                //        obj.Add("HRR_ORP", cr.HRR_ORP);
+                //    }
+                //    foreach (var field1 in cs.ChemicalCustomFields)
+                //    {
+                //        obj.Add(field1.Label.Replace(" ", ""), cr.ChemicalCustomValues.Where(x => x.ChemicalCustomFieldID == field1.ChemicalCustomFieldID).Select(x => x.CustomValue).FirstOrDefault());
+                //    }
+                //    var detail = Chemicals.Helpers.AnonymousType.FromDictonaryToAnonymousObject(obj);
+                //    detailCollection.Add(detail);
+                //}
+            }
+
+            //var visits = new List<Visit>();
+            //Chemicals.Models.ChemicalSettings cs;
+
+            //if (to.Subtract(from).TotalDays < 6)
+            //{
+            //    from = to.AddDays(-6).Date;
+            //}
+            //var from = DateTime.Today.AddDays(-6);
+            //var to = from.AddDays(7).AddSeconds(-1);
+
+            //using (Pike13ApiContext db = new Pike13ApiContext())
+            //{
+            //    visits = await db.Visits
+            //                        .Include(x => x.EventOccurrance)
+            //                        .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
+            //                        .Where(x => x.EventOccurrance.SubDomain == sd)
+            //                        .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
+            //                        .ToListAsync();
+            //}
+
+            //using (Chemicals.DAL.ChemicalsEntities db = new Chemicals.DAL.ChemicalsEntities())
+            //{
+            //    cs = await db.ChemicalSettings.Where(q => q.SubDomain == sd).FirstOrDefaultAsync();
+            //}
+
+            var week_dates = from.To(to).ToList();
+            var grouped_chemicals = (from date in week_dates
+                                  join c in cs.ChemicalRecords on date equals c.Date.Date into _c
+                                  from c in _c.DefaultIfEmpty()
+                                  group new { date, c } by date into i
+                                  select new
+                                  {
+                                      Date = i.Key,
+                                      Data = i.Where(x => x.c != null).Select(x => x.c).ToList()
+                                  }).ToList();
+
+            var property = typeof(ChemicalRecord).GetProperty(field);
+
+            var model = new
+            {
+                Labels = week_dates.Select(x => x.ToString("dd MMM")).ToList(),
+                Data = grouped_chemicals.Select(visit => visit.Data.Select(x => (double?)property.GetValue(x)).Average())
+                        .Select(x => x.HasValue ? Math.Round(x.Value, 2) : x).ToList()
+            };
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<JsonResult> Chlorine_Chart_Read(DateTime from, DateTime to)
+        {
+            if (to.Subtract(from).TotalDays < 6)
+            {
+                from = to.AddDays(-6).Date;
+            }
+
+            var cs = await db.GetChemicalRecordSettings()
+                        .Include(c => c.ChemicalRecords).FirstOrDefaultAsync();
+
+            var week_dates = from.To(to).ToList();
+            var grouped_chemicals = (from date in week_dates
+                                     join c in cs.ChemicalRecords on date equals c.Date.Date into _c
+                                     from c in _c.DefaultIfEmpty()
+                                     group new { date, c } by date into i
+                                     select new
+                                     {
+                                         Date = i.Key,
+                                         Data = i.Where(x => x.c != null).Select(x => x.c).ToList()
+                                     }).ToList();
+
+            var model = new
+            {
+                Labels = week_dates.Select(x => x.ToString("dd MMM")).ToList(),
+                FreeChlorine = grouped_chemicals.Select(visit => visit.Data.Select(x => x.FreeChlorine).Average())
+                                .Select(x => x.HasValue ? Math.Round(x.Value, 2) : x).ToList(),
+                CombinedChlorine = grouped_chemicals.Select(visit => visit.Data.Select(x => x.TotalChlorine - x.FreeChlorine).Average())
+                                .Select(x => x.HasValue ? Math.Round(x.Value, 2) : x).ToList()
+            };
+
+            return Json(model, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

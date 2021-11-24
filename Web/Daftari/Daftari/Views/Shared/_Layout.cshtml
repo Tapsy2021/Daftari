@@ -159,18 +159,6 @@
                                             <span> Chemical Record Reports </span>
                                         </a>
                                     </li>
-                                    @*<li>
-                                        <a href="@Url.Action("Index", "Groups")">
-                                            <i class="uil-users-alt"></i>
-                                            <span> Groups </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="@Url.Action("Index", "UsersManage")">
-                                            <i class="uil-user"></i>
-                                            <span> Manage Users </span>
-                                        </a>
-                                    </li>*@
                                 </ul>
                             </div>
                         </li>
@@ -186,7 +174,40 @@
                         </li>
                     }
 
-                    @if (creds.Subdomain == "atss-muscat" && (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Commmunication")))
+                    @if (true)
+                    {
+                        <li class="side-nav-item">
+                            <a data-toggle="collapse" href="#marketLevel" aria-expanded="true" aria-controls="marketLevel" class="side-nav-link collapsed">
+                                <i class="uil-folder-plus"></i>
+                                <span> Marketing / Communications </span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <div class="collapse" id="marketLevel" style="">
+                                <ul class="side-nav-third-level">
+                                    @if (creds.Subdomain == "atss-muscat" && (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Commmunication")))
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("/", "Communication")">
+                                                <i class="uil-comments-alt"></i>
+                                                <span> SMS Marketing </span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if ((User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Commmunication")))
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("SendCustomerMails", "Communication")">
+                                                <i class="uil-comments-alt"></i>
+                                                <span> Email Marketing </span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+                    }
+
+                    @*@if (creds.Subdomain == "atss-muscat" && (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Commmunication")))
                     {
                         <li class="side-nav-item">
                             <a href="@Url.Action("/", "Communication")" class="side-nav-link">
@@ -204,7 +225,7 @@
                                 <span> Email Marketing / Communications </span>
                             </a>
                         </li>
-                    }
+                    }*@
 
                     @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Attendance"))
                     {
@@ -216,35 +237,25 @@
                         </li>
                     }
 
-                    @*@if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Attendance"))
-                    {
-                        <li class="side-nav-item">
-                            <a href="@Url.Action("NewAttendance", "Pike13Access")" class="side-nav-link">
-                                <i class="uil-calendar-alt"></i>
-                                <span> New Attendance </span>
-                            </a>
-                        </li>
-                    }*@
+                    @*@if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("RosterSchedule"))
+        {
+            <li class="side-nav-item">
+                <a href="@Url.Action("RosterSchedule", "Pike13Access")" class="side-nav-link">
+                    <i class="uil-schedule"></i>
+                    <span> Roster Schedule </span>
+                </a>
+            </li>
+        }*@
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("RosterSchedule"))
-                    {
-                        <li class="side-nav-item">
-                            <a href="@Url.Action("RosterSchedule", "Pike13Access")" class="side-nav-link">
-                                <i class="uil-schedule"></i>
-                                <span> Roster Schedule </span>
-                            </a>
-                        </li>
-                    }
-
-                    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("AquaCards"))
-                    {
-                        <li class="side-nav-item">
-                            <a href="@Url.Action("AquaCards", "Pike13Access")" class="side-nav-link">
-                                <i class="uil-web-grid-alt"></i>
-                                <span> Aqua Cards </span>
-                            </a>
-                        </li>
-                    }
+                    @*@if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("AquaCards"))
+        {
+            <li class="side-nav-item">
+                <a href="@Url.Action("AquaCards", "Pike13Access")" class="side-nav-link">
+                    <i class="uil-web-grid-alt"></i>
+                    <span> Aqua Cards </span>
+                </a>
+            </li>
+        }*@
 
                     @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("AquaCards") || User.IsInRole("RosterSchedule"))
                     {
@@ -256,15 +267,15 @@
                         </li>
                     }
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
-                    {
-                        <li class="side-nav-item">
-                            <a href="@Url.Action("CardRosterReport", "Pike13Access")" class="side-nav-link">
-                                <i class="uil-window-restore"></i>
-                                <span> Card Roster Report </span>
-                            </a>
-                        </li>
-                    }
+                    @*@if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <li class="side-nav-item">
+                <a href="@Url.Action("CardRosterReport", "Pike13Access")" class="side-nav-link">
+                    <i class="uil-window-restore"></i>
+                    <span> Card Roster Report </span>
+                </a>
+            </li>
+        }*@
 
                     @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
                     {
@@ -303,12 +314,12 @@
                     @*@if (User.IsInRole("Admin") || User.IsInRole("Forms"))*@
                     @if (User.Identity.IsAuthenticated)
                     {
-                    <li class="side-nav-item">
-                        <a href="@Url.Action("Index", "Forms")" class="side-nav-link">
-                            <i class="uil-water-glass"></i>
-                            <span> Forms </span>
-                        </a>
-                    </li>
+                        <li class="side-nav-item">
+                            <a href="@Url.Action("Index", "Forms")" class="side-nav-link">
+                                <i class="uil-water-glass"></i>
+                                <span> Forms </span>
+                            </a>
+                        </li>
                     }
                 </ul>
 
