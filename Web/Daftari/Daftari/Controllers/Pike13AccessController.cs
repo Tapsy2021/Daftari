@@ -489,7 +489,7 @@ namespace Daftari.Controllers
                 visits = await db.Visits.Include(e => e.EventOccurrance)
                         .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
                         .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
-                        .Where(x => x.Status == status)
+                        .Where(x => x.Status == status || (status == "unpaid" && x.Unpaid == true))
                         .ToListAsync();
             }
 
@@ -500,12 +500,6 @@ namespace Daftari.Controllers
                 customers = await db.GetCustomers().Where(x => all_customers.Contains(x.ExternalReference)).ToListAsync();
             }
 
-            //var TotalRecords = visits.Select(visit => new
-            //{
-            //    person = customers.Where(x => x.ExternalReference == visit.PersonID).Select(x => $"{x.FirstName} {x.LastName}").FirstOrDefault() ?? "Not Synced",
-            //    name = visit.EventOccurrance.Name
-            //}).ToList();
-
             var TotalRecords = (from visit in visits
                                 join customer in customers on visit.PersonID equals customer.ExternalReference
                                 select new
@@ -513,86 +507,8 @@ namespace Daftari.Controllers
                                     person = customer != null ? $"{customer.FirstName} {customer.LastName}" : "Not Synced",
                                     name = visit.EventOccurrance.Name,
                                     photoMD = customer?.PhotoMD,
-                                    status = visit.Status
+                                    status = status
                                 }).ToList();
-
-            
-
-            //var _TotalRecords = eventOccurrances.Select(event_o => new
-            //{
-            //    attendance_complete = event_o.AttendanceComplete,
-            //    capacity_remaining = event_o.CapacityRemaining,
-            //    start_at = event_o.StartAt,
-            //    end_at = event_o.EndAt,
-            //    event_id = event_o.EventID,
-            //    full = event_o.Full,
-            //    id = event_o.EventOccurrenceID,
-            //    location_id = event_o.LocationID,
-            //    people = (from id in (event_o.people?.Split(',') ?? new string[0])
-            //              join customer in customers on id equals customer.ExternalReference.ToString() into _customer
-            //              from customer in _customer.DefaultIfEmpty()
-            //              join card in cards on customer?.ExternalReference equals card.ExternalReferenceID into _card
-            //              from card in _card.DefaultIfEmpty()
-            //              where !string.IsNullOrEmpty(event_o.people)
-            //              select new
-            //              {
-            //                  id = customer?.ExternalReference ?? 0,
-            //                  name = customer != null ? $"{customer.FirstName} {customer.LastName}" : "Not Synced",
-            //                  email = customer?.EmailAddress,
-            //                  level = card?.Level.GetDisplay(),
-            //                  lastOpenDateTime = card?.LastOpenDate.ToUniversalTime(),//.ToString("yyyy-MM-dd hh:mm:ss tt")
-            //              }).ToList(),
-            //    staff_members = (from id in (event_o.StaffMembers?.Split(',') ?? new string[0])
-            //                     join staff in customers on id equals staff.ExternalReference.ToString() into _staff
-            //                     from staff in _staff.DefaultIfEmpty()
-            //                     where !string.IsNullOrEmpty(event_o.StaffMembers)
-            //                     select new
-            //                     {
-            //                         id = staff?.ExternalReference ?? 0,
-            //                         name = staff != null ? $"{staff.FirstName} {staff.LastName}" : "Not Synced",
-            //                         email = staff?.EmailAddress
-            //                     }).ToList(),
-            //    state = event_o.State,
-            //    service_id = event_o.ServiceID,
-            //    name = event_o.Name,
-            //    timezone = event_o.Timezone,
-            //    description = event_o.Description,
-            //    visits_count = event_o.VisitsCount,
-            //    visits = event_o.Visits.Select(x => new
-            //    {
-            //        cancelled_at = x.CancelledAt,
-            //        completed_at = x.CompletedAt,
-            //        created_at = x.CreatedAt,
-            //        event_occurrence_id = x.EventOccurrenceID,
-            //        id = x.VisitID,
-            //        noshow_at = x.NoshowAt,
-            //        only_staff_can_cancel = x.OnlyStaffCanCancel,
-            //        paid = x.Paid,
-            //        paid_for_by = x.PaidForBy,
-            //        person_id = x.PersonID,
-            //        punch_id = x.PunchID,
-            //        registered_at = x.RegisteredAt,
-            //        state = x.State,
-            //        status = x.Status,
-            //        updated_at = x.UpdatedAt,
-            //        person = (from customer in customers
-            //                  where customer.ExternalReference == x.PersonID
-            //                  join card in cards on customer.ExternalReference equals card.ExternalReferenceID into _card
-            //                  from card in _card.DefaultIfEmpty()
-            //                  select new
-            //                  {
-            //                      id = customer.ExternalReference,
-            //                      name = customer.FullName,
-            //                      email = customer.EmailAddress,
-            //                      level = card?.Level.GetDisplay(),
-            //                      lastOpenDateTime = card?.LastOpenDate.ToUniversalTime(),//.ToString("yyyy-MM-dd hh:mm:ss tt"),
-            //                      photoMD = customer.PhotoMD
-            //                  }).FirstOrDefault() ?? new { id = 0L, name = "Not Synced", email = "N/A", level = "", lastOpenDateTime = (DateTime?)null, photoMD = "" }
-            //    }).Where(x => x.status != VisitStatus.Late_Cancel.GetDisplay()).ToList()
-            //})
-            //.Where(ev => ev.visits.Any())
-            //.Where(ev => !staff_member_ids.HasValue || ev.staff_members.Any(x => x.id == staff_member_ids)).ToList();
-
 
             return Json(new
             {
@@ -647,9 +563,17 @@ namespace Daftari.Controllers
                 Total_Cancelled_Stundents = grouped_visits.Select(visit => visit.Data.Where(x => x.Status == "late_cancel").Select(x => x.PersonID).Distinct().Count()).ToList(),
                 Total_No_Show_Stundents = grouped_visits.Select(visit => visit.Data.Where(x => x.Status == "noshow").Select(x => x.PersonID).Distinct().Count()).ToList(),
                 Total_Classes = grouped_visits.Select(visit => visit.Data.Select(x => x.EventOccurrenceID).Distinct().Count()).ToList(),
-                Unpaid_Students = grouped_visits.Select(visit => visit.Data.Where(x => x.Status == "unpaid").Select(x => x.PersonID).Distinct().Count()).ToList(),
+                Unpaid_Students = grouped_visits.Select(visit => visit.Data.Where(x => (x.Unpaid ?? false) || x.Status == "unpaid").Select(x => x.PersonID).Distinct().Count()).ToList(),
                 Paid_By_Makeup = grouped_visits.Select(visit => visit.Data.Where(x => x.Paid == true && (x.PaidForBy?.Contains("") ?? false)).Select(x => x.PersonID).Distinct().Count()).ToList()
             };
+
+            model.Students_Count = model.Total_Stundents.Sum();
+            model.Capacity_Count = model.Total_Capacity.Sum();
+            model.Cancelled_Count = model.Total_Cancelled_Stundents.Sum();
+            model.No_Show_Count = model.Total_No_Show_Stundents.Sum();
+            model.Classes_Count = model.Total_Classes.Sum();
+            model.Unpaid_Count = model.Unpaid_Students.Sum();
+            model.Paid_By_Makeup_Count = model.Paid_By_Makeup.Sum();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -685,7 +609,7 @@ namespace Daftari.Controllers
         {
             string syncDate = null;
             string now = DateTime.Now.ToString("s");
-            string dteType = null;
+            //string dteType = null;
             string syncsettingKey = null;
             string flagsettingKey;
             string sd = null;
@@ -699,18 +623,14 @@ namespace Daftari.Controllers
             {
                 sd = TokenProvider.GetProvider().GetSubdomain(business_id.Value);
             }
-            using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"Initiated b-id => {business_id}, sd => {sd}"), this.HttpContext))
-            {
-                bh.Log_Error();
-            }
 
             switch (type)
             {
-                case 0:
-                    dteType = "updated_since";
-                    syncsettingKey = sd + "EvtSyncDte";
-                    flagsettingKey = sd + "EvtSyncFlag";
-                    break;
+                //case 0:
+                //    dteType = "updated_since";
+                //    syncsettingKey = sd + "EvtSyncDte";
+                //    flagsettingKey = sd + "EvtSyncFlag";
+                //    break;
 
                 case 9:
                     syncsettingKey = sd + "EvtSyncDte";
@@ -759,15 +679,17 @@ namespace Daftari.Controllers
 
             try
             {
-                List<Pike13Event> data;
-                if (dteType != null)
-                {
-                    data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to, null, dteType, syncDate);
-                }
-                else
-                {
-                    data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to);
-                }
+                //List<Pike13Event> data;
+                //if (dteType != null)
+                //{
+                //    data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to, null, dteType, syncDate);
+                //}
+                //else
+                //{
+                //    data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to);
+                //}
+
+                var data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to);
 
                 await ProcessAndSync(data, from, to, sd, all);
             }
@@ -895,7 +817,6 @@ namespace Daftari.Controllers
 
         private async Task<int> ProcessAndSync(List<Pike13Event> data, DateTime from, DateTime to, string subdomain, bool All)
         {
-            data = data.Where(x => x.id == 162204910).ToList();
             var business_id = TokenProvider.GetProvider().GetBusinessId(subdomain);
 
             var count = 0;
@@ -956,7 +877,8 @@ namespace Daftari.Controllers
                                         State = x.state,
                                         Status = x.status,
                                         UpdatedAt = x.updated_at,
-                                        CreatedAt = x.created_at
+                                        CreatedAt = x.created_at,
+                                        Unpaid = x.status == VisitStatus.Unpaid.GetDisplay()
                                     }).ToList()
                                 };
 
@@ -1041,7 +963,8 @@ namespace Daftari.Controllers
                                             Status = pike_visit.status,
                                             UpdatedAt = pike_visit.updated_at,
                                             CreatedAt = pike_visit.created_at,
-                                            IsDeleted = false
+                                            IsDeleted = false,
+                                            Unpaid = pike_visit.status == VisitStatus.Unpaid.GetDisplay()
                                         });
                                         can_save = true;
                                     }
@@ -1065,6 +988,14 @@ namespace Daftari.Controllers
                                             visit.UpdatedAt = pike_visit.updated_at;
                                             visit.CreatedAt = pike_visit.created_at;
                                             visit.AuditDetail.LastModifiedDate = DateTime.Now;
+                                            if (pike_visit.status == VisitStatus.Unpaid.GetDisplay())
+                                            {
+                                                visit.Unpaid = true;
+                                            }
+                                            else if (pike_visit.state != VisitState.Completed.GetDisplay())
+                                            {
+                                                visit.Unpaid = false;
+                                            }
                                             db.Entry(visit).State = EntityState.Modified;
                                             //can_save = true;          
                                             //db.Visits.Remove(visit);                                        
@@ -1102,19 +1033,19 @@ namespace Daftari.Controllers
 
                     await db.SaveChangesAsync();
                     //remove additionals
-                    //var eventOccurrances = await db.EventOccurrances
-                    //                    .Where(x => x.StartAt < to && x.EndAt >= from)
-                    //                    .Where(x => x.State != "deleted" && x.State != "disabled")
-                    //                    .Where(x => x.SubDomain == subdomain)
-                    //                    .ToListAsync();
+                    var eventOccurrances = await db.EventOccurrances
+                                        .Where(x => x.StartAt < to && x.EndAt >= from)
+                                        .Where(x => x.State != "deleted" && x.State != "disabled")
+                                        .Where(x => x.SubDomain == subdomain)
+                                        .ToListAsync();
 
-                    //eventOccurrances = eventOccurrances.Where(exists_ev => !modified_event_occurrences.Any(new_ev => new_ev.EventOccurrenceID == exists_ev.EventOccurrenceID)).ToList();
-                    //foreach (var event_occurrence in eventOccurrances)
-                    //{
-                    //    event_occurrence.State = "disabled";
-                    //    db.Entry(event_occurrence).State = EntityState.Modified;
-                    //}                    
-                    //await db.SaveChangesAsync();
+                    eventOccurrances = eventOccurrances.Where(exists_ev => !modified_event_occurrences.Any(new_ev => new_ev.EventOccurrenceID == exists_ev.EventOccurrenceID)).ToList();
+                    foreach (var event_occurrence in eventOccurrances)
+                    {
+                        event_occurrence.State = "disabled";
+                        db.Entry(event_occurrence).State = EntityState.Modified;
+                    }
+                    await db.SaveChangesAsync();
                 }
 
                 return await db.SaveChangesAsync();
@@ -1129,8 +1060,8 @@ namespace Daftari.Controllers
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
                 // For all existing events
-                //foreach (var event_occurrence in data.Where(x => x.id == 162204910))
-                foreach (var event_occurrence in data)
+                foreach (var event_occurrence in data.Where(x => x.id == 162204910))
+                //foreach (var event_occurrence in data)
                 {
                     try
                     {
@@ -1139,7 +1070,7 @@ namespace Daftari.Controllers
 
                         foreach (var visit in visits)
                         {
-                            if (visit.state == "registered" && (visit.status == "enrolled" || visit.status == "incomplete"))
+                            if (visit.state == VisitState.Registered.GetDisplay() && (visit.status == VisitStatus.Enrolled.GetDisplay() || visit.status == VisitStatus.Incomplete.GetDisplay()))
                             {
                                 var new_visit = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "complete");
                                 Thread.Sleep(200);

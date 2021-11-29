@@ -194,16 +194,14 @@ namespace Daftari.Pike13Api.Services
         }
         
         //////////////////////////////////////////// EVENT OCCURRENCE ///////////////////////////////////////////////////
-        public async Task<List<Pike13Event>> GetEventOccurenceAsync(DateTime StartTime, DateTime EndTime, long? Staff_Mmember_Ids = null, string dateType = null, string dateSince = null)
+        public async Task<List<Pike13Event>> GetEventOccurenceAsync(DateTime StartTime, DateTime EndTime, long? Staff_Mmember_Ids = null)
         {
-            using (var api = new Pike13API<Pike13Event>(_auth))
+            using (var api = new Pike13CoreAPI<Pike13Event>(_auth))
             {
                 api.EndPoint = "event_occurrences";
-                api.IsClientIDNeeded = true;
+                //api.IsClientIDNeeded = true;
                 api.Params.Add("from", string.Concat(StartTime.ToString("s"), "Z"));
                 api.Params.Add("to", string.Concat(EndTime.ToString("s"), "Z"));
-                //api.Params.Add("from", string.Concat(StartTime.ToUniversalTime().ToString("s"), "Z"));
-                //api.Params.Add("to", string.Concat(EndTime.ToUniversalTime().ToString("s"), "Z"));
                 if (Staff_Mmember_Ids.HasValue)
                 {
                     api.Params.Add("staff_member_ids", Staff_Mmember_Ids.ToString());
@@ -215,7 +213,7 @@ namespace Daftari.Pike13Api.Services
 
         public async Task<List<Pike13Event>> GetEventOccurrenceByIdAsync(long? id)
         {
-            using (var api = new Pike13API<Pike13Event>(_auth))
+            using (var api = new Pike13CoreAPI<Pike13Event>(_auth))
             {
                 api.EndPoint = $"event_occurrences/{id}";
                 api.OverrideEndpoint = "event_occurrences";
@@ -258,7 +256,7 @@ namespace Daftari.Pike13Api.Services
         ///////////////////////////////////////////////// VISITS /////////////////////////////////////////////////////////
         public async Task<List<Pike13Visit>> GetVisitsAsync(long id)
         {
-            using (var api = new Pike13API<Pike13Visit>(_auth))
+            using (var api = new Pike13CoreAPI<Pike13Visit>(_auth))
             {
                 api.EndPoint = $"event_occurrences/{id}/visits";
                 api.OverrideEndpoint = "visits";
@@ -270,12 +268,12 @@ namespace Daftari.Pike13Api.Services
 
         public async Task<List<Pike13Visit>> PutVisitAsync(long id, string state)
         {
-            using (var api = new NewPike13Api<Pike13Visit>(_auth))
+            using (var api = new Pike13CoreAPI<Pike13Visit>(_auth))
             {
                 api.EndPoint = $"visits/{id}";
                 api.OverrideEndpoint = "visits";
 
-                api.request = new
+                api.Request = new
                 {
                     visit = new 
                     {

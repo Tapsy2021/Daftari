@@ -63,6 +63,10 @@
     <Compile Include="Migrations\202108211648222_Webhooks.designer.cs">
       <DependentUpon>202108211648222_Webhooks.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202111261725314_UnpaidField.cs" />
+    <Compile Include="Migrations\202111261725314_UnpaidField.designer.cs">
+      <DependentUpon>202111261725314_UnpaidField.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Pike13ApiContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -90,6 +94,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202108211648222_Webhooks.resx">
       <DependentUpon>202108211648222_Webhooks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202111261725314_UnpaidField.resx">
+      <DependentUpon>202111261725314_UnpaidField.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

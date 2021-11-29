@@ -59,6 +59,10 @@ namespace Daftari.Pike13Api.Models
 
         [JsonProperty("only_staff_can_cancel")]
         public bool? OnlyStaffCanCancel { get; set; }
+        /// <summary>
+        /// Local variable, used to mark unpaid in advance
+        /// </summary>
+        public bool? Unpaid { get; set; }
         public AuditDetail AuditDetail { get; set; }
         public bool IsDeleted { get; set; }
         public virtual EventOccurrance EventOccurrance { get; set; }

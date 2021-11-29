@@ -59,7 +59,7 @@
     <Compile Include="Pike13Api.cs" />
     <Compile Include="Pike13ApiAuth.cs" />
     <Compile Include="Pike13ApiRepo.cs" />
-    <Compile Include="NewPike13Api.cs" />
+    <Compile Include="Pike13CoreAPI.cs" />
     <Compile Include="Pike13JsonApi.cs" />
     <Compile Include="Pike13WebhooksRepo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

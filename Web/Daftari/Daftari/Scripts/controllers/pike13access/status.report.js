@@ -16,7 +16,8 @@
             cache: false,
             url: rootURL + "GetReporting?from=" + start + "&to=" + end
         }).done(function (data) {
-
+            //for indicators, use counts
+            //for pie, use count as well
             var index = data.Total_Stundents.length - 1;
 
             $(".now-title").html(data.Title);

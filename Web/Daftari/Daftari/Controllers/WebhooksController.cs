@@ -327,10 +327,6 @@ namespace Daftari.Controllers
         {
             try
             {
-                //using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception(Newtonsoft.Json.JsonConvert.SerializeObject(payload)), this.HttpContext))
-                //{
-                //    bh.Log_Error();
-                //}
                 if (payload != null && payload.Data != null)
                 {
                     // only one record can be processed at a time
@@ -393,7 +389,8 @@ namespace Daftari.Controllers
                                             State = x.state,
                                             Status = x.status,
                                             UpdatedAt = x.updated_at,
-                                            CreatedAt = x.created_at
+                                            CreatedAt = x.created_at,
+                                            Unpaid = x.status == VisitStatus.Unpaid.GetDisplay()
                                         }).ToList() : new List<Visit>
                                         {
                                             new Visit
@@ -413,7 +410,8 @@ namespace Daftari.Controllers
                                                 Status = pike_visit.status,
                                                 UpdatedAt = pike_visit.updated_at,
                                                 CreatedAt = pike_visit.created_at,
-                                                IsDeleted = payload.Topic == VisitTopic.Deleted.GetDisplay()
+                                                IsDeleted = payload.Topic == VisitTopic.Deleted.GetDisplay(),
+                                                Unpaid = pike_visit.status == VisitStatus.Unpaid.GetDisplay()
                                             }
                                         }
                                     };
@@ -444,8 +442,10 @@ namespace Daftari.Controllers
                                         Status = pike_visit.status,
                                         UpdatedAt = pike_visit.updated_at,
                                         CreatedAt = pike_visit.created_at,
-                                        IsDeleted = payload.Topic == VisitTopic.Deleted.GetDisplay()
+                                        IsDeleted = payload.Topic == VisitTopic.Deleted.GetDisplay(),
+                                        Unpaid = pike_visit.status == VisitStatus.Unpaid.GetDisplay()
                                     });
+
                                     if (!string.IsNullOrEmpty(event_occurrence.people))
                                     {
                                         var people = event_occurrence.people.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToList();
@@ -456,15 +456,11 @@ namespace Daftari.Controllers
                                     {
                                         event_occurrence.people = pike_visit.person_id?.ToString();
                                     }
-                                    //event_o.people = !string.IsNullOrEmpty(event_o.people) ? $"{event_o.people},{pike_visit.person_id?.ToString()}" : pike_visit.person_id?.ToString();
+
                                     db.Entry(event_occurrence).State = EntityState.Modified;
                                 }
                                 else
                                 {
-                                    //using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception(Newtonsoft.Json.JsonConvert.SerializeObject(payload)), this.HttpContext))
-                                    //{
-                                    //    bh.Log_Error();
-                                    //}
                                     if ((visit.LastModified < pike_visit.LastModified || payload.Topic != VisitTopic.New.GetDisplay()) && visit.State != VisitTopic.Deleted.GetDisplay())
                                     {
                                         visit.CancelledAt = pike_visit.cancelled_at;
@@ -483,16 +479,15 @@ namespace Daftari.Controllers
                                         visit.UpdatedAt = pike_visit.updated_at;
                                         visit.CreatedAt = pike_visit.created_at;
                                         visit.AuditDetail.LastModifiedDate = DateTime.Now;
-                                        //visit.IsDeleted = false;
-                                        //if (payload.Topic == VisitState.Deleted.GetDisplay())
-                                        //    visit.IsDeleted = true;
-                                        //db.Entry(visit).State = EntityState.Modified;
+                                        if (pike_visit.status == VisitStatus.Unpaid.GetDisplay())
+                                        {
+                                            visit.Unpaid = true;
+                                        }
+                                        else if (pike_visit.state != VisitState.Completed.GetDisplay())
+                                        {
+                                            visit.Unpaid = false;
+                                        }
 
-                                        //else
-                                        //{
-                                        //    //visit.IsDeleted = true;
-                                        //    db.Visits.Remove(visit);
-                                        //}
                                         if (payload.Topic != VisitTopic.Deleted.GetDisplay())
                                         {
                                             db.Entry(visit).State = EntityState.Modified;
@@ -506,10 +501,6 @@ namespace Daftari.Controllers
                                     {
                                         throw new Exception($"Visit - Id => {visit.VisitID} is either late or deleted");
                                     }
-                                    //if (payload.Topic == VisitState.Deleted.GetDisplay())
-                                    //{
-                                    //    db.Visits.Remove(visit);
-                                    //}
                                 }
                                 await db.SaveChangesAsync();
                             }
@@ -534,291 +525,5 @@ namespace Daftari.Controllers
             }
             return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
         }
-
-
-        //public async Task<ActionResult> OnVisitChanged(VisitResponse payload)
-        //{
-        //    try
-        //    {
-        //        // this should process the order asynchronously
-        //        //var tasks = new[]
-        //        //{
-        //        //    Task.Run(() => {
-
-        //        //    var me = payload;
-
-
-        //        //    })
-        //        //};
-
-        //        // without the await here, this should be hit before the order processing is complete
-        //        //return Ok("ok");
-
-
-        //        //Request.InputStream.Position = 0;
-        //        //var rawRequestBody = new System.IO.StreamReader(Request.InputStream).ReadToEnd();
-
-        //        //using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception(rawRequestBody), this.HttpContext))
-        //        //{
-        //        //    bh.Log_Error();
-        //        //}
-
-        //        if (payload != null && payload.Data != null)
-        //        {
-        //            var subdomain = TokenProvider.GetProvider().GetSubdomain(payload.Business_Id.Value);                    
-
-        //            var eventIds = payload.Data.Visits?.Select(x => x.event_occurrence_id).ToList();
-        //            if (!eventIds?.Any() ?? false)
-        //                throw new Exception("Webhooks Visit - no visit object found");
-
-        //            using (Pike13ApiContext db = new Pike13ApiContext())
-        //            {
-        //                if (await db.TopicSubsriptions.Where(x => x.Subdomain == subdomain && x.Topic == payload.Topic && x.TopicID == payload.webhook_id).AnyAsync())
-        //                {
-        //                    var eventOccurrances = await db.EventOccurrances.Include(v => v.Visits)
-        //                                            .Where(x => eventIds.Contains(x.EventOccurrenceID))
-        //                                            .ToListAsync();
-
-        //                    foreach (var pike_event in payload.Data.Visits.GroupBy(x => x.event_occurrence_id))
-        //                    {
-        //                        var event_o = eventOccurrances.FirstOrDefault(x => x.EventOccurrenceID == pike_event.Key);
-        //                        if (event_o == null)
-        //                        {
-        //                            try
-        //                            {
-        //                                using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception(Newtonsoft.Json.JsonConvert.SerializeObject(payload)), this.HttpContext))
-        //                                {
-        //                                    bh.Log_Error();
-        //                                }
-        //                                //fetch it
-        //                                var pikeEv = (await new Pike13ApiRepo(payload.Business_Id.Value).GetEventOccurrenceByIdAsync(pike_event.Key)).First();
-        //                                //var ev = (await new Pike13ApiRepo(User.Identity.Name).GetEventOccurrenceByIdAsync(pike_event.Key)).First();
-        //                                using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception(Newtonsoft.Json.JsonConvert.SerializeObject(pikeEv)), this.HttpContext))
-        //                                {
-        //                                    bh.Log_Error();
-        //                                }
-        //                                //incase another task added it while waiting for the task to respond
-        //                                var ev_exists = await db.EventOccurrances.Include(v => v.Visits)
-        //                                            .Where(x => x.EventOccurrenceID == pike_event.Key)
-        //                                            .FirstOrDefaultAsync();
-        //                                // still does not exist
-        //                                if (ev_exists == null)
-        //                                {
-        //                                    var ev = new EventOccurrance
-        //                                    {
-        //                                        AttendanceComplete = pikeEv.attendance_complete,
-        //                                        CapacityRemaining = pikeEv.capacity_remaining,
-        //                                        EndAt = pikeEv.end_at,
-        //                                        EventID = pikeEv.event_id,
-        //                                        Full = pikeEv.full,
-        //                                        EventOccurrenceID = pikeEv.id,
-        //                                        LocationID = pikeEv.location_id,
-        //                                        Name = pikeEv.name,
-        //                                        StartAt = pikeEv.start_at,
-        //                                        State = pikeEv.state,
-        //                                        ServiceID = pikeEv.service_id,
-        //                                        Timezone = pikeEv.timezone,
-        //                                        people = string.Join(",", pikeEv.people.Select(x => x.id).OrderBy(x => x)) ?? string.Join(",", pike_event.people.Select(x => x.id).OrderBy(x => x)),
-        //                                        StaffMembers = string.Join(",", pikeEv.staff_members.Select(x => x.StaffID).OrderBy(x => x)),
-        //                                        SubDomain = subdomain,
-        //                                        Description = pikeEv.description,
-        //                                        VisitsCount = pikeEv.visits_count,
-        //                                        Visits = pikeEv.visits?.Select(x => new Visit
-        //                                        {
-        //                                            CancelledAt = x.cancelled_at,
-        //                                            CompletedAt = x.completed_at,
-        //                                            EventOccurrenceID = x.event_occurrence_id,
-        //                                            VisitID = x.id,
-        //                                            NoshowAt = x.noshow_at,
-        //                                            OnlyStaffCanCancel = x.only_staff_can_cancel,
-        //                                            Paid = x.paid,
-        //                                            PaidForBy = x.paid_for_by,
-        //                                            PersonID = x.person_id,
-        //                                            PunchID = x.punch_id,
-        //                                            RegisteredAt = x.registered_at,
-        //                                            State = x.state,
-        //                                            Status = x.status,
-        //                                            UpdatedAt = x.updated_at,
-        //                                            CreatedAt = x.created_at
-        //                                        }).ToList()
-        //                                    };
-
-        //                                    db.EventOccurrances.Add(ev);
-        //                                    await db.SaveChangesAsync();
-        //                                    eventOccurrances.Add(ev);
-        //                                }
-        //                                else
-        //                                {
-        //                                    // It was added while we were waiting
-        //                                    foreach (var pike_visit in pike_event)
-        //                                    {
-        //                                        var visit = ev_exists.Visits.FirstOrDefault(x => x.VisitID == pike_visit.id);
-        //                                        if (visit == null)
-        //                                        {
-        //                                            db.Visits.Add(new Visit
-        //                                            {
-        //                                                CancelledAt = pike_visit.cancelled_at,
-        //                                                CompletedAt = pike_visit.completed_at,
-        //                                                EventOccurrenceID = pike_visit.event_occurrence_id,
-        //                                                VisitID = pike_visit.id,
-        //                                                NoshowAt = pike_visit.noshow_at,
-        //                                                OnlyStaffCanCancel = pike_visit.only_staff_can_cancel,
-        //                                                Paid = pike_visit.paid,
-        //                                                PaidForBy = pike_visit.paid_for_by,
-        //                                                PersonID = pike_visit.person_id,
-        //                                                PunchID = pike_visit.punch_id,
-        //                                                RegisteredAt = pike_visit.registered_at,
-        //                                                State = pike_visit.state,
-        //                                                Status = pike_visit.status,
-        //                                                UpdatedAt = pike_visit.updated_at,
-        //                                                CreatedAt = pike_visit.created_at
-        //                                            });
-        //                                            if (!string.IsNullOrEmpty(ev_exists.people))
-        //                                            {
-        //                                                var people = ev_exists.people.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToList();
-        //                                                people.Add(pike_visit.person_id?.ToString());
-        //                                                ev_exists.people = string.Join(",", people.Distinct());
-        //                                            }
-        //                                            else
-        //                                            {
-        //                                                ev_exists.people = pike_visit.person_id?.ToString();
-        //                                            }
-        //                                            //event_o.people = !string.IsNullOrEmpty(event_o.people) ? $"{event_o.people},{pike_visit.person_id?.ToString()}" : pike_visit.person_id?.ToString();
-        //                                            db.Entry(ev_exists).State = EntityState.Modified;
-        //                                        }
-        //                                        else
-        //                                        {
-        //                                            if (visit.LastModified < pike_visit.LastModified)
-        //                                            {
-        //                                                visit.CancelledAt = pike_visit.cancelled_at;
-        //                                                visit.CompletedAt = pike_visit.completed_at;
-        //                                                visit.EventOccurrenceID = pike_visit.event_occurrence_id;
-        //                                                visit.VisitID = pike_visit.id;
-        //                                                visit.NoshowAt = pike_visit.noshow_at;
-        //                                                visit.OnlyStaffCanCancel = pike_visit.only_staff_can_cancel;
-        //                                                visit.Paid = pike_visit.paid;
-        //                                                visit.PaidForBy = pike_visit.paid_for_by;
-        //                                                visit.PersonID = pike_visit.person_id;
-        //                                                visit.PunchID = pike_visit.punch_id;
-        //                                                visit.RegisteredAt = pike_visit.registered_at;
-        //                                                visit.State = pike_visit.state;
-        //                                                visit.Status = pike_visit.status;
-        //                                                visit.UpdatedAt = pike_visit.updated_at;
-        //                                                visit.CreatedAt = pike_visit.created_at;
-        //                                                db.Entry(visit).State = EntityState.Modified;
-        //                                                if (payload.Topic == VisitState.Deleted.GetDisplay())
-        //                                                {
-        //                                                    db.Visits.Remove(visit);
-        //                                                }
-        //                                            }
-        //                                            else
-        //                                            {
-        //                                                using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception("Outdated - " + Newtonsoft.Json.JsonConvert.SerializeObject(visit)), this.HttpContext))
-        //                                                {
-        //                                                    bh.Log_Error();
-        //                                                }
-        //                                            }
-        //                                        }
-        //                                    }
-        //                                    //throw new Exception($"Webhooks Visit - event id => {pike_event.Key}, topic {payload?.Topic} does not exist");
-        //                                    await db.SaveChangesAsync();
-        //                                }
-        //                                continue;
-        //                            }
-        //                            catch (Exception ex)
-        //                            {
-        //                                using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(ex, this.HttpContext))
-        //                                {
-        //                                    bh.Log_Error();
-        //                                }
-        //                            }
-        //                        }
-        //                        else
-        //                        {
-        //                            foreach (var pike_visit in pike_event)
-        //                            {
-        //                                var visit = event_o.Visits.FirstOrDefault(x => x.VisitID == pike_visit.id);
-        //                                if (visit == null)
-        //                                {
-        //                                    db.Visits.Add(new Visit
-        //                                    {
-        //                                        CancelledAt = pike_visit.cancelled_at,
-        //                                        CompletedAt = pike_visit.completed_at,
-        //                                        EventOccurrenceID = pike_visit.event_occurrence_id,
-        //                                        VisitID = pike_visit.id,
-        //                                        NoshowAt = pike_visit.noshow_at,
-        //                                        OnlyStaffCanCancel = pike_visit.only_staff_can_cancel,
-        //                                        Paid = pike_visit.paid,
-        //                                        PaidForBy = pike_visit.paid_for_by,
-        //                                        PersonID = pike_visit.person_id,
-        //                                        PunchID = pike_visit.punch_id,
-        //                                        RegisteredAt = pike_visit.registered_at,
-        //                                        State = pike_visit.state,
-        //                                        Status = pike_visit.status,
-        //                                        UpdatedAt = pike_visit.updated_at,
-        //                                        CreatedAt = pike_visit.created_at
-        //                                    });
-        //                                    if (!string.IsNullOrEmpty(event_o.people))
-        //                                    {
-        //                                        var people = event_o.people.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToList();
-        //                                        people.Add(pike_visit.person_id?.ToString());
-        //                                        event_o.people = string.Join(",", people.Distinct());
-        //                                    }
-        //                                    else
-        //                                    {
-        //                                        event_o.people = pike_visit.person_id?.ToString();
-        //                                    }
-        //                                    //event_o.people = !string.IsNullOrEmpty(event_o.people) ? $"{event_o.people},{pike_visit.person_id?.ToString()}" : pike_visit.person_id?.ToString();
-        //                                    db.Entry(event_o).State = EntityState.Modified;
-        //                                }
-        //                                else
-        //                                {
-        //                                    if (visit.LastModified < pike_visit.LastModified)
-        //                                    {
-        //                                        visit.CancelledAt = pike_visit.cancelled_at;
-        //                                        visit.CompletedAt = pike_visit.completed_at;
-        //                                        visit.EventOccurrenceID = pike_visit.event_occurrence_id;
-        //                                        visit.VisitID = pike_visit.id;
-        //                                        visit.NoshowAt = pike_visit.noshow_at;
-        //                                        visit.OnlyStaffCanCancel = pike_visit.only_staff_can_cancel;
-        //                                        visit.Paid = pike_visit.paid;
-        //                                        visit.PaidForBy = pike_visit.paid_for_by;
-        //                                        visit.PersonID = pike_visit.person_id;
-        //                                        visit.PunchID = pike_visit.punch_id;
-        //                                        visit.RegisteredAt = pike_visit.registered_at;
-        //                                        visit.State = pike_visit.state;
-        //                                        visit.Status = pike_visit.status;
-        //                                        visit.UpdatedAt = pike_visit.updated_at;
-        //                                        visit.CreatedAt = pike_visit.created_at;
-        //                                        db.Entry(visit).State = EntityState.Modified;
-        //                                    }
-        //                                }
-        //                            }
-        //                            //throw new Exception($"Webhooks Visit - event id => {pike_event.Key}, topic {payload?.Topic} does not exist");
-        //                            await db.SaveChangesAsync();
-        //                        }
-        //                    }                            
-        //                }
-        //                else
-        //                {
-        //                    return new HttpStatusCodeResult(System.Net.HttpStatusCode.Gone);
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception($"Webhooks Visit - Payload has no data, id => {payload?.Business_Id}, topic {payload?.Topic}");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(ex, this.HttpContext))
-        //        {
-        //            bh.Log_Error();
-        //        }
-        //    }
-        //    return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
-        //}
-
     }
 }

@@ -28,6 +28,15 @@ namespace Daftari.ViewModel
         public List<int> Unpaid_Students { get; set; }
         public List<int> Paid_By_Makeup { get; set; }
         public string Title { get; set; }
+
+
+        public int Students_Count { get; set; }
+        public int Cancelled_Count { get; set; }
+        public int No_Show_Count { get; set; }
+        public int Classes_Count { get; set; }
+        public int Capacity_Count { get; set; }
+        public int Unpaid_Count { get; set; }
+        public int Paid_By_Makeup_Count { get; set; }
     }
 
     public class StatusReportVM
