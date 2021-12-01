@@ -355,7 +355,7 @@ namespace Daftari.Pike13Api.Services
 
         public async Task<List<Pike13Person>> GetPeopleAsync(string dateType = null, string dateSince = null)
         {
-            using (var api = new Pike13API<Pike13Person>(_auth))
+            using (var api = new Pike13CoreAPI<Pike13Person>(_auth))
             {
                 api.EndPoint = "people";
 
@@ -388,27 +388,43 @@ namespace Daftari.Pike13Api.Services
                 return await api.GetAllDataAsync();
             }
         }
-        
+
         //////////////////////////////////////////////// WEB HOOKS /////////////////////////////////////////////////////////
-        public async Task<Pike13WebhooksResponse> SubscribeToVisits(string UrlSelf)
-        {
-            using (var api = new Pike13HooksApi(_auth))
-            {
-                api.request.attributes.target = UrlSelf;// "https://daftari.app/Pike13Access/OnVisitCreated";
-                api.request.attributes.topic = "visit.updated";
+        //public async Task<Pike13WebhooksResponse> SubscribeToVisits(string UrlSelf)
+        //{
+        //    using (var api = new Pike13HooksApi(_auth))
+        //    {
+        //        api.request.attributes.target = UrlSelf;// "https://daftari.app/Pike13Access/OnVisitCreated";
+        //        api.request.attributes.topic = "visit.updated";
 
-                return await api.GetReportAsync();
-            }
-        }
+        //        return await api.GetReportAsync();
+        //    }
+        //}
 
+        //public async Task<Pike13WebhooksResponse> SubscribeToWebhooks(string UrlSelf, string Topic)
+        //{
+        //    using (var api = new Pike13HooksApi(_auth))
+        //    {
+        //        api.request.attributes.target = UrlSelf;// "https://daftari.app/Pike13Access/OnVisitCreated";
+        //        api.request.attributes.topic = Topic;
+
+        //        return await api.GetReportAsync();
+        //    }
+        //}
         public async Task<Pike13WebhooksResponse> SubscribeToWebhooks(string UrlSelf, string Topic)
         {
-            using (var api = new Pike13HooksApi(_auth))
+            using (var api = new Pike13ReportingAPI<Pike13WebhooksResponse>(_auth))
             {
-                api.request.attributes.target = UrlSelf;// "https://daftari.app/Pike13Access/OnVisitCreated";
+                api.Type = "webhooks";
+                api.EndPoint = "webhooks";
+                api.request.attributes.target = UrlSelf;// "https://daftari.app/Webhooks/OnVisitChanged";
                 api.request.attributes.topic = Topic;
+                api.request.attributes.fields = null;
+                api.request.attributes.page = null;
+                // Not similar to the normal one
+                api.URL = new UriBuilder(string.Format("{0}/api/v3/{1}?access_token={2}", _auth.Host, api.Type, _auth.AccessToken));
 
-                return await api.GetReportAsync();
+                return await api.PostReportAsync();
             }
         }
     }

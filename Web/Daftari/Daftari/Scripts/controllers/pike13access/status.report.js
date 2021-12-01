@@ -18,15 +18,23 @@
         }).done(function (data) {
             //for indicators, use counts
             //for pie, use count as well
-            var index = data.Total_Stundents.length - 1;
+            //var index = data.Total_Stundents.length - 1;
 
             $(".now-title").html(data.Title);
-            $("#total-capacity").html(data.Total_Capacity[index]);
-            $("#total-students").html(data.Total_Stundents[index]);
-            $("#cancelled-students").html(data.Total_Cancelled_Stundents[index]);
-            $("#no-show-students").html(data.Total_No_Show_Stundents[index]);
-            $("#total-classes").html(data.Total_Classes[index]);
-            $("#unpaid-students").html(data.Unpaid_Students[index]);
+            $("#total-capacity").html(data.Capacity_Count);
+            $("#total-students").html(data.Students_Count);
+            $("#cancelled-students").html(data.Cancelled_Count);
+            $("#no-show-students").html(data.No_Show_Count);
+            $("#total-classes").html(data.Classes_Count);
+            $("#unpaid-students").html(data.Unpaid_Count);
+
+            //$(".now-title").html(data.Title);
+            //$("#total-capacity").html(data.Total_Capacity[index]);
+            //$("#total-students").html(data.Total_Stundents[index]);
+            //$("#cancelled-students").html(data.Total_Cancelled_Stundents[index]);
+            //$("#no-show-students").html(data.Total_No_Show_Stundents[index]);
+            //$("#total-classes").html(data.Total_Classes[index]);
+            //$("#unpaid-students").html(data.Unpaid_Students[index]);
             
             window.Apex = {
                 chart: {
@@ -112,10 +120,15 @@
                 dataColors = $("#simple-donut").data("colors");
             var series = [];
 
-            series[3] = data.Total_Cancelled_Stundents[index];
-            series[2] = data.Total_No_Show_Stundents[index];
-            series[1] = data.Total_Stundents[index] - series[3] - series[2];
-            series[0] = data.Total_Capacity[index] - data.Total_Stundents[index];
+            series[3] = data.Cancelled_Count;
+            series[2] = data.No_Show_Count;
+            series[1] = data.Students_Count - series[3] - series[2];
+            series[0] = data.Capacity_Count - data.Students_Count;
+
+            //series[3] = data.Total_Cancelled_Stundents[index];
+            //series[2] = data.Total_No_Show_Stundents[index];
+            //series[1] = data.Total_Stundents[index] - series[3] - series[2];
+            //series[0] = data.Total_Capacity[index] - data.Total_Stundents[index];
 
             (dataColors = $("#simple-donut").data("colors")) && (colors = dataColors.split(","));
             options = {
@@ -169,20 +182,10 @@ function (t) {
         t.StatusReport.init()
     });
 
-    //t(".card-body").click(function () {
-
-         
-    //    //alert("Handler for .click() called.");
-    //});
-
 }(window.jQuery);
 
 function OpenStatusReport(status) {
 
     window.open(rootURL + "StatusReport?status=" + status);
 
-
-
-    //var g = 9;
-    //console.log(g);
 }

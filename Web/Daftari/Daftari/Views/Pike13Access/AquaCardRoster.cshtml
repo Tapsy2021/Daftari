@@ -357,9 +357,9 @@
                         var ids = [];
                         //console.log(data);
                         for (var i = 0; i < dataLength; i++) {
-                            var people = data[i].staff_members;
+                            var people = data[i].visits;
                             for (var j in people) {
-                                ids.push(people[j].id);
+                                ids.push(people[j].person.id);
                             }
                         }
 

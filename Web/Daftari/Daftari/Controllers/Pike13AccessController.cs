@@ -483,11 +483,12 @@ namespace Daftari.Controllers
         {
             var visits = new List<Visit>();
             var customers = new List<AquaCards.Models.Customer>();
-
+            var sd = TokenProvider.GetProvider().GetSubdomain(User.Identity.Name);
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
                 visits = await db.Visits.Include(e => e.EventOccurrance)
                         .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
+                        .Where(x => x.EventOccurrance.SubDomain == sd)
                         .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
                         .Where(x => x.Status == status || (status == "unpaid" && x.Unpaid == true))
                         .ToListAsync();
@@ -521,9 +522,11 @@ namespace Daftari.Controllers
             var visits = new List<Visit>();
             Chemicals.Models.ChemicalSettings cs;
 
-            if (to.Subtract(from).TotalDays < 6)
+            var _from = from;
+            var _to = to;
+            if (_to.Subtract(_from).TotalDays < 6)
             {
-                from = to.AddDays(-6).Date;
+                _from = _to.AddDays(-6).Date;
             }
             //var from = DateTime.Today.AddDays(-6);
             //var to = from.AddDays(7).AddSeconds(-1);
@@ -532,7 +535,7 @@ namespace Daftari.Controllers
             {
                 visits = await db.Visits
                                     .Include(x => x.EventOccurrance)
-                                    .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
+                                    .Where(x => x.EventOccurrance.StartAt < _to && x.EventOccurrance.EndAt >= _from)
                                     .Where(x => x.EventOccurrance.SubDomain == sd)
                                     .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
                                     .ToListAsync();
@@ -543,8 +546,8 @@ namespace Daftari.Controllers
                 cs = await db.ChemicalSettings.Where(q => q.SubDomain == sd).FirstOrDefaultAsync();
             }            
 
-            var week_dates = from.To(to).ToList();
-            var grouped_visits = (from date in week_dates
+            var dates_range = _from.To(_to).ToList();
+            var grouped_visits = (from date in dates_range
                                   join v in visits on date equals v.EventOccurrance.StartAt.Value.Date into _v
                                   from v in _v.DefaultIfEmpty()
                                   group new { date, v } by date into i
@@ -556,8 +559,8 @@ namespace Daftari.Controllers
 
             var model = new StatusDashboardVM
             {
-                Title = to.Date == DateTime.Today ? $"Today's View ({to.Date.ToString("dd MMM")})" : $"View ({to.Date.ToString("dd MMM")})",
-                Labels = week_dates.Select(x => x.ToString("dd MMM")).ToList(),
+                Title = _to.Date == DateTime.Today ? $"Today's View ({_to.Date.ToString("dd MMM")})" : $"View ({_to.Date.ToString("dd MMM")})",
+                Labels = dates_range.Select(x => x.ToString("dd MMM")).ToList(),
                 Total_Stundents = grouped_visits.Select(visit => visit.Data.Select(x => x.PersonID).Distinct().Count()).ToList(),
                 Total_Capacity = grouped_visits.Select(x => cs?.PoolDailyCapacity ?? 0).ToList(),
                 Total_Cancelled_Stundents = grouped_visits.Select(visit => visit.Data.Where(x => x.Status == "late_cancel").Select(x => x.PersonID).Distinct().Count()).ToList(),
@@ -567,13 +570,26 @@ namespace Daftari.Controllers
                 Paid_By_Makeup = grouped_visits.Select(visit => visit.Data.Where(x => x.Paid == true && (x.PaidForBy?.Contains("") ?? false)).Select(x => x.PersonID).Distinct().Count()).ToList()
             };
 
-            model.Students_Count = model.Total_Stundents.Sum();
-            model.Capacity_Count = model.Total_Capacity.Sum();
-            model.Cancelled_Count = model.Total_Cancelled_Stundents.Sum();
-            model.No_Show_Count = model.Total_No_Show_Stundents.Sum();
-            model.Classes_Count = model.Total_Classes.Sum();
-            model.Unpaid_Count = model.Unpaid_Students.Sum();
-            model.Paid_By_Makeup_Count = model.Paid_By_Makeup.Sum();
+            var start = dates_range.IndexOf(from.Date);
+            var end = dates_range.IndexOf(to.Date);
+
+            //var me = model.Total_Stundents.Skip(start).Take(end - start + 1).ToList();
+
+            model.Students_Count = model.Total_Stundents.Skip(start).Take(end - start + 1).Sum();
+            model.Capacity_Count = model.Total_Capacity.Skip(start).Take(end - start + 1).Sum();
+            model.Cancelled_Count = model.Total_Cancelled_Stundents.Skip(start).Take(end - start + 1).Sum();
+            model.No_Show_Count = model.Total_No_Show_Stundents.Skip(start).Take(end - start + 1).Sum();
+            model.Classes_Count = model.Total_Classes.Skip(start).Take(end - start + 1).Sum();
+            model.Unpaid_Count = model.Unpaid_Students.Skip(start).Take(end - start + 1).Sum();
+            model.Paid_By_Makeup_Count = model.Paid_By_Makeup.Skip(start).Take(end - start + 1).Sum();
+
+            //model.Students_Count = model.Total_Stundents.Sum();
+            //model.Capacity_Count = model.Total_Capacity.Sum();
+            //model.Cancelled_Count = model.Total_Cancelled_Stundents.Sum();
+            //model.No_Show_Count = model.Total_No_Show_Stundents.Sum();
+            //model.Classes_Count = model.Total_Classes.Sum();
+            //model.Unpaid_Count = model.Unpaid_Students.Sum();
+            //model.Paid_By_Makeup_Count = model.Paid_By_Makeup.Sum();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -793,7 +809,6 @@ namespace Daftari.Controllers
 
             return Json(new { msg = "Success", type = 2 }, JsonRequestBehavior.AllowGet);
         }
-
 
         private static void RevertSettings(string flagsettingKey, string syncsettingKey, string syncdate = null)
         {
@@ -1060,8 +1075,8 @@ namespace Daftari.Controllers
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
                 // For all existing events
-                foreach (var event_occurrence in data.Where(x => x.id == 162204910))
-                //foreach (var event_occurrence in data)
+                //foreach (var event_occurrence in data.Where(x => x.id == 135993725))
+                foreach (var event_occurrence in data)
                 {
                     try
                     {
@@ -1073,10 +1088,19 @@ namespace Daftari.Controllers
                             if (visit.state == VisitState.Registered.GetDisplay() && (visit.status == VisitStatus.Enrolled.GetDisplay() || visit.status == VisitStatus.Incomplete.GetDisplay()))
                             {
                                 var new_visit = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "complete");
-                                Thread.Sleep(200);
+
+                                Thread.Sleep(60);
                                 if ((new_visit?.Any() ?? false) && new_visit[0].state != visit.state)
                                 {
-                                    await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "reset");
+                                    using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {new_visit[0].id}; State => {new_visit[0].state}; Status => {new_visit[0].status}"), this.HttpContext))
+                                    {
+                                        bh.Log_Error();
+                                    }
+                                    var me = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "reset");
+                                    using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {me[0].id}; State => {me[0].state}; Status => {me[0].status}"), this.HttpContext))
+                                    {
+                                        bh.Log_Error();
+                                    }
                                 }
                             }
                         }

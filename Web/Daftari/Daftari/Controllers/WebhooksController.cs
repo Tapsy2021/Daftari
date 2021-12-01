@@ -147,10 +147,8 @@ namespace Daftari.Controllers
             try
             {
                 var url = Url.Action("OnVisitChanged", "/Webhooks", null, Request.Url.Scheme);
-                //using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception(url), this.HttpContext))
-                //{
-                //    bh.Log_Error();
-                //}
+                //var url = "https://daftari.app/Webhooks/OnVisitChanged";
+
                 var response = await new Pike13ApiRepo(User.Identity.Name).SubscribeToWebhooks(url, Topic);
                 var subdomain = TokenProvider.GetProvider().GetSubdomain(User.Identity.Name);
                 //save this data
@@ -333,7 +331,10 @@ namespace Daftari.Controllers
                     var pike_visit = payload.Data.Visits?.FirstOrDefault();
                     if (pike_visit == null)
                         throw new Exception("Webhooks Visit - no visit object found");
-
+                    using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"Updated id=> {pike_visit.id}; state => {pike_visit.state}; status => {pike_visit.status}"), this.HttpContext))
+                    {
+                        bh.Log_Error();
+                    }
                     var subdomain = TokenProvider.GetProvider().GetSubdomain(payload.Business_Id.Value);
                     
                     using (Pike13ApiContext db = new Pike13ApiContext())

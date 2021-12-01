@@ -61,6 +61,7 @@
     <Compile Include="Pike13ApiRepo.cs" />
     <Compile Include="Pike13CoreAPI.cs" />
     <Compile Include="Pike13JsonApi.cs" />
+    <Compile Include="Pike13ReportingAPI.cs" />
     <Compile Include="Pike13WebhooksRepo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenProvider.cs" />
