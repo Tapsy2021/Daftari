@@ -237,6 +237,16 @@
                         </li>
                     }
 
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Attendance"))
+                    {
+                        <li class="side-nav-item">
+                            <a href="@Url.Action("NewAttendance", "Pike13Access")" class="side-nav-link">
+                                <i class="uil-calendar-alt"></i>
+                                <span> New Attendance </span>
+                            </a>
+                        </li>
+                    }
+
                     @*@if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Instructor") || User.IsInRole("RosterSchedule"))
         {
             <li class="side-nav-item">

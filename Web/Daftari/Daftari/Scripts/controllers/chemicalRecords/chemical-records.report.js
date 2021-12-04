@@ -33,7 +33,7 @@
                 dataColors = $("#" + id).data("colors"),
                 chart_value = $("#" + id).data("value"),
                 title = $("#" + id).data("title")
-            console.log(chart_value);
+            //console.log(chart_value);
 
             if (id == "chlorine-stacked-column") {
                 $.ajax({
@@ -96,7 +96,8 @@
                             }
                         }
                     };
-                    (new ApexCharts(document.querySelector("#" + id), options)).render();
+                    $("#" + id).empty();
+                    new ApexCharts(document.querySelector("#" + id), options).render();
                 });
 
             }
@@ -177,7 +178,8 @@
                             }
                         }]
                     };
-                    (new ApexCharts(document.querySelector("#" + id), options)).render();
+                    $("#" + id).empty();
+                    new ApexCharts(document.querySelector("#" + id), options).render();
 
                 });
 

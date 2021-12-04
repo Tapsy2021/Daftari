@@ -249,46 +249,47 @@
 
 
     <script type="text/javascript">
-            $('#DateFilter').change(function () {
-                table.ajax.url(getDataUrl($('#DateFilter').val())).load()
-            });
+        $('#DateFilter').change(function () {
+            table.ajax.url(getDataUrl($('#DateFilter').val())).load()
+        });
             
         function userPermExec(json) {
-                var instructorArr = [];
-                    instructorArr.push('All');
-                for (var i in json.event_occurrences) {
-                    var row = json.event_occurrences[i];
-                    for (var j in row.staff_members) {
-                        var member = row.staff_members[j];
-                        if (instructorArr.indexOf(member.name) === -1)
-                            instructorArr.push(member.name);
-                    }
+            var instructorArr = [];
+                instructorArr.push('All');
+            for (var i in json.event_occurrences) {
+                var row = json.event_occurrences[i];
+                for (var j in row.staff_members) {
+                    var member = row.staff_members[j];
+                    if (instructorArr.indexOf(member.name) === -1)
+                        instructorArr.push(member.name);
+                }
+            }
+
+            $.each(instructorArr, function (key, value) {
+                $('#StaffFilter')
+                    .append($("<option></option>")
+                        .attr("value", value)
+                        .text(value));
+            });
+
+            $("#StaffFilter").change(function () {
+                var txt = $("#StaffFilter option:selected").text();
+                if (txt === 'All') {
+                    table
+                        .columns(4)
+                        .search('')
+                        .draw();
+                }
+                else {
+                    table
+                        .columns(4)
+                        .search(txt)
+                        .draw();
                 }
 
-                $.each(instructorArr, function (key, value) {
-                    $('#StaffFilter')
-                        .append($("<option></option>")
-                            .attr("value", value)
-                            .text(value));
-                });
+            });
+        }
 
-                $("#StaffFilter").change(function () {
-                    var txt = $("#StaffFilter option:selected").text();
-                    if (txt === 'All') {
-                        table
-                            .columns(4)
-                            .search('')
-                            .draw();
-                    }
-                    else {
-                        table
-                            .columns(4)
-                            .search(txt)
-                            .draw();
-                    }
-
-                });
-            }
         function putVisitToPike(dom, attdStatus, pid, eid) {
 
             $(dom).addClass('disabled');
@@ -322,19 +323,19 @@
                         }
                     })
             });
+        }
 
-                }
-                if (!String.prototype.format) {
-                    String.prototype.format = function () {
-                        var args = arguments;
-                        return this.replace(/{(\d+)}/g, function (match, number) {
-                            return typeof args[number] != 'undefined'
-                                ? args[number]
-                                : match
-                                ;
-                        });
-                    };
-                }
+        if (!String.prototype.format) {
+            String.prototype.format = function () {
+                var args = arguments;
+                return this.replace(/{(\d+)}/g, function (match, number) {
+                    return typeof args[number] != 'undefined'
+                        ? args[number]
+                        : match
+                        ;
+                });
+            };
+        }
 
     </script>
 

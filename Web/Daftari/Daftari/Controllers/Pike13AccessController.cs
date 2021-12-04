@@ -460,7 +460,7 @@ namespace Daftari.Controllers
                             select new
                             {
                                 id = customer.ExternalReference,
-                                name = customer.FullName,
+                                name = customer != null ? $"{customer.FirstName} {customer.LastName}" : "Not Synced",
                                 email = customer.EmailAddress,
                                 level = card?.Level.GetDisplay(),
                                 lastOpenDateTime = card?.LastOpenDate.ToUniversalTime(),//.ToString("yyyy-MM-dd hh:mm:ss tt"),

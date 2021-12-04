@@ -20,33 +20,44 @@
         .NotOpen.selected {
             background: rgb(255, 181, 181) !IMPORTANT;
         }
-        .btn-xs {
-            padding: 0.0rem 0.4rem !important;
-            margin-right: 0.1rem;
-            margin-bottom: 0.1rem;
+
+        .btn-info, .btn-primary, .btn-warning, .btn-danger {
+            padding: 0.0rem 0.5rem !important;
+            margin-right: 0.4rem;
         }
+
         .img-circle {
             width: 33px;
             height: 33px;
             margin: 2px;
             border-radius: 50%;
         }
-        .g-label{
+
+        .g-label {
             height: 15px;
             padding-top: 6px;
             cursor: pointer;
         }
+
+        .disable-btn {
+            pointer-events: none;
+        }
+
+        .btn-xs .active {
+            pointer-events: none!important;
+
+        }
     </style>
 }
 @{
-    ViewBag.Title = "Attendance";
+    ViewBag.Title = "New Attendance";
 }
 
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Attendance</h5>
+                <h5 class="card-title">New Attendance</h5>
 
                 @if (ViewBag.CanView == true)
                 {
@@ -81,7 +92,7 @@
                                 @Html.DisplayNameFor(model => model.e.staff_members)
                             </th>
                             <th>
-                                Attendance
+                                @Html.DisplayNameFor(model => model.e.people)
                             </th>
                         </tr>
                     </thead>
@@ -104,8 +115,8 @@
     }
 
     <script type="text/javascript">
-        var rootURL = '@Url.Action("/")';
-        //var cardURL = '@Url.Action("Open", "StudentCards")';
+         var rootURL = '@Url.Action("/")';
+        var cardURL = '@Url.Action("Open", "StudentCards")';
 
         function getLevelParam(lvl) {
             var levels = ['1 - Tadpoles',
@@ -130,7 +141,7 @@
 
         $.fn.dataTable.moment('h:mm:ss a');
 
-    var table = $('#dtTable').DataTable({
+        var table = $('#dtTable').DataTable({
         scrollY: 550,
         scrollX: true,
         deferRender: false,
@@ -153,31 +164,21 @@
         },
         lengthChange: false,
         //"processing": true,
-        //stateSave: true,
+        stateSave: true,
         "columns": [
             {
-                //"visible": false,
                 "data": "start_at", render: function (data, type, row) {
                     return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('YYYY-MM-DD');
                 },
                 orderData: [0, 1]
             },
             {
-                //"visible": false,
                 "data": "start_at", render: function (data, type, row) {
                     return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('h:mm:ss a');
                 },
                 orderData: [1, 0]
             },
-            //{ "data": "name" },
-            {
-                //"visible": false,
-                "data": null, render: function (data, type, row, meta) {
-                    var msg = '<a class="btn btn-info btn-raised btn-xs"  OnClick="openCards(' + row.id + ')" data-toggle="tooltip" data-placement="bottom" title="Open Cards" data-animation="true"><i class="dripicons-expand-2"></i></a>' + row.name;
-                    
-                    return msg;
-                }
-            },
+            { "data": "name" },
             {
                 "data": null, render: function (data, type, row, meta) {
                     var msg = '';
@@ -189,7 +190,7 @@
                                 msg += '<br/>' + row.staff_members[i].name;
                             }
                         }
-                        //msg = '<a class="btn btn-info btn-raised btn-xs"  OnClick="openCards(' + row.id + ')" data-toggle="tooltip" data-placement="bottom" title="Open Cards" data-animation="true"><i class="dripicons-expand-2"></i></a>' + msg;
+                        //msg = msg;
                     }
                     return msg;
                 }
@@ -197,29 +198,22 @@
             {
                 "data": null, render: function (data, type, row, meta) {
                     var msg = '';
+                    if (!row.attendance_complete && row.visits.length > 0) {
+                        for (var i = 0; i < row.visits.length; i++) {
+                            var visit = row.visits[i];
 
-                    if (!row.attendance_complete) {
-                        //var lvlParam = getLevelParam(data.name);
-                        if (row.visits.length > 0) {
-                            for (var i = 0; i < row.visits.length; i++) {
-                                var visit = row.visits[i];
+                            var templateBttn = '<a class="btn btn-{0} btn-xs {1}" title="{2}" OnClick="putVisitToPike(this,\'{3}\',\'' + visit.person.id + '\',\'' + row.id + '\')"><i class="mdi {4}"></i></a>';
 
-                                var templateBttn = '<a class="btn btn-{0} btn-xs {1}" title="{2}" OnClick="putVisitToPike(this,\'{3}\',\'' + visit.id + '\')"><i class="mdi {4}"></i></a>';
-                                //console.log(visit.status)
-                                msg = msg + '<div>' + (i + 1) + '. '
-                                    + templateBttn.format('primary', visit.status == 'complete' ? 'disabled' : '', 'complete', 'complete', 'mdi-calendar-check')
-                                    + templateBttn.format('warning', visit.status == 'noshow' ? 'disabled' : '','noshow', 'noshow', 'mdi-calendar-question')
-                                    + templateBttn.format('info', visit.status == 'late_cancel' ? 'disabled' : '', 'late_cancel', 'late_cancel', 'mdi-calendar-remove')
-                                    + templateBttn.format('danger', '', 'reset', 'reset', 'mdi-undo-variant')
-                                    + ' '
-                                    + visit.person.name
-                                    + '<div/>';
-                                //msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" /><a class="g-label" OnClick="openCard(' + visit.person.id + ',\'' + data.name + '\')">' + (visit.person.name + ' (' + visit.status + ')') + '</a><br />';
-                            }
-                        } else {
-                            msg = 'NA';
+                            msg = msg
+                                + templateBttn.format('primary', visit.state == 'completed' ? 'disabled' : '', 'complete', 'complete', 'mdi-calendar-check')
+                                + templateBttn.format('warning', visit.state == 'noshowed' ? 'disabled' : '', 'noshow', 'noshow', 'mdi-calendar-question')
+                                + templateBttn.format('info', visit.state == 'late_canceled' ? 'disabled' : '', 'late_cancel', 'late_cancel', 'mdi-calendar-remove')
+                                + templateBttn.format('danger', '', 'reset', 'reset', 'mdi-undo-variant');
+
+                            msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + visit.person.name + '<br />';
                         }
-                    }
+                    } 
+
                     return msg;
                 }
             }
@@ -230,7 +224,7 @@
             }
         },
         columnDefs: [
-            @*{ "visible": '@(ViewBag.CanView == true)' == 'True' ? true : false, "targets": [0,3] }*@
+
         ],
         order: [0, "asc"],
         "initComplete": function (settings, json) {
@@ -238,7 +232,12 @@
 
             userPermExec(json);
         }
-    });
+        });
+
+        table
+            .columns(4)
+            .search('^(?!\s*$).+', true, false, false)
+            .draw();
 
     new $.fn.dataTable.Buttons(table, {
         buttons: true,
@@ -273,32 +272,6 @@
                         userPermExec(table.ajax.json());
                     });
                 }
-            },
-            {
-                text: 'Sync',
-                action: function (e, dt, node, config) {
-                    $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info")
-
-                    var dates = $('#DateFilter').val().split(' - ');
-                    var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
-                    var to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
-
-                    $.ajax({
-                        async: true,
-                        url: rootURL + "SyncEventOccurrences?from=" + from + "&to=" + to + "&type=9",
-                        cache: false
-                    }).done(function (data) {                       
-
-                        $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger")
-
-                        table.ajax.reload();
-                    }).fail(function (msg) {
-                        $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
-
-                        table.ajax.reload();
-                    });
-                },
-                className: 'btn-danger'
             }
         ],
     });
@@ -330,6 +303,7 @@
                     }
                 }
 
+                $("#StaffFilter").empty();
                 $.each(instructorArr, function (key, value) {
                     $('#StaffFilter')
                         .append($("<option></option>")
@@ -359,12 +333,12 @@
     else
     {
         <script>
-        function userPermExec() {
-             @*table
-                    .columns(2)
-                    .search('@ViewBag.UserFullName')
-                    .draw();*@
-        }
+            function userPermExec() {
+                 @*table
+                        .columns(2)
+                        .search('@ViewBag.UserFullName')
+                        .draw();*@
+            }
         </script>
     }
 
@@ -378,8 +352,8 @@
         function openCard(pid, lvl) {
             var lvlParam = getLevelParam(lvl);
             var checkLocalCardUrl = '@Url.Action("GetCardValidity", "StudentCards")?sid=' + pid + lvlParam;
-
-            $.NotificationApp.send("Status", "Searching Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
+            //console.log(lvlParam, checkLocalCardUrl);
+                        $.NotificationApp.send("Status", "Searching Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
 
             $.ajax({
                     method: "GET",
@@ -388,7 +362,7 @@
                 .done(function (msg) {
 
                     var cardURL = '@Url.Action("Open", "StudentCards")' + '?sid=' + pid;// + '&instructors=' + instructors + lvlParam + '&eid=' + eid + '&plan=' + plan + '&startdate=' + stDate;
-                    
+
                     if (msg.Status === 0) {
                         $.NotificationApp.send("Status", "Opening Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
                         window.location.href = cardURL;
@@ -415,7 +389,6 @@
                         $(cntrl).removeClass('disabled');
                     }
                 });
-            //console.log(lvlParam, checkLocalCardUrl);
         }
 
         // convert utc time to local time
@@ -424,33 +397,43 @@
             return moment(toDt);
         }
 
-        function putVisitToPike(dom, attdStatus, vid) {
+        function putVisitToPike(dom, attdStatus, pid, eid) {
 
-            $(dom).siblings().removeClass('disabled');
-            $(dom).addClass('disabled');
-            return;
+           $(dom).addClass('disabled');
 
-            var updateVisitUrl = 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/visits/' + vid + '?access_token=@(ViewBag.AccessCode)';
+            var getVistUrl = 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/people/' + pid + '/visits?event_occurrence_id=' + eid + '&access_token=@(ViewBag.AccessCode)';
+
             $.ajax({
-                method: "PUT",
-                url: updateVisitUrl,
-                data: { "visit": { "state_event": attdStatus } }
-            })
-            .done(function (msg) {
+                method: "GET",
+                url: getVistUrl,
+            }).done(function (data) {
+                var vid = data.visits[0].id;
+                var updateVisitUrl = 'https://@(ViewBag.Subdomain).pike13.com/api/v2/desk/visits/' + vid + '?access_token=@(ViewBag.AccessCode)';
+                $.ajax({
+                    method: "PUT",
+                    url: updateVisitUrl,
+                    data: { "visit": { "state_event": attdStatus } }
+                })
+                    .done(function (msg) {
 
-                $.NotificationApp.send("Status", "Updated", "bottom-right", "rgba(0,0,0,0.2)", "success");
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+                        $.NotificationApp.send("Status", "Updated", "bottom-right", "rgba(0,0,0,0.2)", "success");                        
+                        $(dom).siblings().removeClass('disabled');
+                        //$(dom).addClass('selected')
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
 
-                if (typeof (jqXHR.responseText) === 'undefined') {
-                    var errorMsg = jqXHR.statusText;
-                    $.NotificationApp.send("Error", errorMsg, "bottom-right", "rgba(0,0,0,0.2)", "danger");
-                }
-                else {
-                    var errorMsg = JSON.parse(jqXHR.responseText);
+                        $(dom).removeClass('disabled');
 
-                    $.NotificationApp.send("Error", errorMsg.errors.state_event, "bottom-right", "rgba(0,0,0,0.2)", "danger");
-                }
-            });           
+                        if (typeof (jqXHR.responseText) === 'undefined') {
+                            var errorMsg = jqXHR.statusText;
+                            $.NotificationApp.send("Error", errorMsg, "bottom-right", "rgba(0,0,0,0.2)", "danger");
+                        }
+                        else {
+                            var errorMsg = JSON.parse(jqXHR.responseText);
+
+                            $.NotificationApp.send("Error", errorMsg.errors.state_event, "bottom-right", "rgba(0,0,0,0.2)", "danger");
+                        }
+                    })
+            });
         }
 
         if (!String.prototype.format) {

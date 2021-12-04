@@ -455,6 +455,7 @@
     <Content Include="fonts\Gotham-XLightItalic.otf" />
     <None Include="Properties\PublishProfiles\Contabo.pubxml" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <None Include="Properties\PublishProfiles\Default Settings1.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Lab.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />

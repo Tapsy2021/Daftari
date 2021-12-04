@@ -28,14 +28,6 @@
             $("#total-classes").html(data.Classes_Count);
             $("#unpaid-students").html(data.Unpaid_Count);
 
-            //$(".now-title").html(data.Title);
-            //$("#total-capacity").html(data.Total_Capacity[index]);
-            //$("#total-students").html(data.Total_Stundents[index]);
-            //$("#cancelled-students").html(data.Total_Cancelled_Stundents[index]);
-            //$("#no-show-students").html(data.Total_No_Show_Stundents[index]);
-            //$("#total-classes").html(data.Total_Classes[index]);
-            //$("#unpaid-students").html(data.Unpaid_Students[index]);
-            
             window.Apex = {
                 chart: {
                     parentHeightOffset: 0,
@@ -114,7 +106,31 @@
                     }
                 }
             };
+            //if ($('#leftmenu').is(':empty')) {
+            $("#status-line-chart").empty();
             new ApexCharts(document.querySelector("#status-line-chart"), options).render();
+            //try {
+            //    chart.destroy();
+            //    chart = new ApexCharts(document.querySelector("#status-line-chart"), options);
+            //} catch {
+
+            //}
+            
+            //chart.render();
+            //var destroyChart = () => {
+            //    if (chart.ohYeahThisChartHasBeenRendered) {
+            //        console.log("now");
+            //        chart.destroy();
+            //        chart.ohYeahThisChartHasBeenRendered = false;                    
+            //    }
+            //};
+            //console.log("now 2");
+            //chart.render().then(() => chart.ohYeahThisChartHasBeenRendered = true);
+
+            ////console.log(chart.ohYeahThisChartHasBeenRendered);
+            //chart.destroy();
+            //chart.render();//.then(() => chart.ohYeahThisChartHasBeenRendered = true);
+            ////chart.render();
 
             colors = ["#39afd1", "#ffbc00", "#c41010", "#fa5c7c"],
                 dataColors = $("#simple-donut").data("colors");
@@ -125,18 +141,13 @@
             series[1] = data.Students_Count - series[3] - series[2];
             series[0] = data.Capacity_Count - data.Students_Count;
 
-            //series[3] = data.Total_Cancelled_Stundents[index];
-            //series[2] = data.Total_No_Show_Stundents[index];
-            //series[1] = data.Total_Stundents[index] - series[3] - series[2];
-            //series[0] = data.Total_Capacity[index] - data.Total_Stundents[index];
-
             (dataColors = $("#simple-donut").data("colors")) && (colors = dataColors.split(","));
             options = {
                 chart: {
                     height: 320,
                     type: "donut"
                 },
-                series: series,// [44, data.Total_Stundents[index] - data.Total_No_Show_Stundents[index] - data.Total_Cancelled_Stundents[index], data.Total_No_Show_Stundents[index], data.Total_Cancelled_Stundents[index]],
+                series: series,
                 legend: {
                     show: !0,
                     position: "bottom",
@@ -161,7 +172,8 @@
                     }
                 }]
             };
-            (new ApexCharts(document.querySelector("#simple-donut"), options)).render();
+            $("#simple-donut").empty();
+            new ApexCharts(document.querySelector("#simple-donut"), options).render();
 
         });
     },
@@ -175,17 +187,15 @@
 function (t) {
     "use strict";
     t(document).ready(function (e) {
-        t.StatusReport.init()
+        t.StatusReport.init();
     })
 
     t('#Date').change(function () {
-        t.StatusReport.init()
+        t.StatusReport.init();
     });
 
 }(window.jQuery);
 
 function OpenStatusReport(status) {
-
     window.open(rootURL + "StatusReport?status=" + status);
-
 }
