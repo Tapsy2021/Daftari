@@ -1,11 +1,13 @@
 ﻿using Daftari.AquaCards.DAL;
 using Daftari.Handlers;
+using Daftari.Hubs;
 using Daftari.Pike13Api.DAL;
 using Daftari.Pike13Api.Enum;
 using Daftari.Pike13Api.Models;
 using Daftari.Pike13Api.Services;
 using Daftari.ViewModel;
 using LukeApps.Utilities;
+//using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -623,6 +625,7 @@ namespace Daftari.Controllers
 
         public async Task<JsonResult> SyncEventOccurrences(DateTime from, DateTime to, int type, long? business_id = null, bool all = false)
         {
+            var hub = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<Pike13Hub>();
             string syncDate = null;
             string now = DateTime.Now.ToString("s");
             //string dteType = null;
@@ -642,12 +645,6 @@ namespace Daftari.Controllers
 
             switch (type)
             {
-                //case 0:
-                //    dteType = "updated_since";
-                //    syncsettingKey = sd + "EvtSyncDte";
-                //    flagsettingKey = sd + "EvtSyncFlag";
-                //    break;
-
                 case 9:
                     syncsettingKey = sd + "EvtSyncDte";
                     flagsettingKey = sd + "EvtSyncFlag";
@@ -656,7 +653,7 @@ namespace Daftari.Controllers
                 default:
                     return Json(new { msg = "Invalid Type", type = 2 }, JsonRequestBehavior.AllowGet);
             }
-
+            hub.Clients.All.updateProgress("Initiating sync ...", "");
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
                 var setting = db.Settings.Find(syncsettingKey);
@@ -680,6 +677,7 @@ namespace Daftari.Controllers
                         {
                             bh.Log_Error();
                         }
+                        hub.Clients.All.updateProgress("Done ...", "");
                         return Json(new { msg = "Sync In Progress", type = 1 }, JsonRequestBehavior.AllowGet);
                     }
                     flag.Value = true.ToString();
@@ -693,21 +691,14 @@ namespace Daftari.Controllers
                 await db.SaveChangesAsync();
             }
 
+            
+            hub.Clients.All.updateProgress("Fetching Event Occurrences ...", "");
+
             try
             {
-                //List<Pike13Event> data;
-                //if (dteType != null)
-                //{
-                //    data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to, null, dteType, syncDate);
-                //}
-                //else
-                //{
-                //    data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to);
-                //}
-
                 var data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to);
 
-                await ProcessAndSync(data, from, to, sd, all);
+                await ProcessAndSync(data, from, to, sd, all, hub);
             }
             catch (Exception ex)
             {
@@ -830,7 +821,7 @@ namespace Daftari.Controllers
             }
         }
 
-        private async Task<int> ProcessAndSync(List<Pike13Event> data, DateTime from, DateTime to, string subdomain, bool All)
+        private async Task<int> ProcessAndSync(List<Pike13Event> data, DateTime from, DateTime to, string subdomain, bool All, Microsoft.AspNet.SignalR.IHubContext hub)
         {
             var business_id = TokenProvider.GetProvider().GetBusinessId(subdomain);
 
@@ -839,6 +830,7 @@ namespace Daftari.Controllers
             {
                 var new_event_occurrences = new List<EventOccurrance>();
                 var modified_event_occurrences = new List<EventOccurrance>();
+                hub.Clients.All.updateProgress("Sync in progress ...", "");
                 foreach (var ev in data)
                 {
                     try
@@ -938,12 +930,14 @@ namespace Daftari.Controllers
                     }
                     
                     count++;
+                    hub.Clients.All.updateProgress("Sync in progress ...", count + "/" + data.Count);
                 }
 
                 await db.SaveChangesAsync();
-
+                count = 0;
                 if (All) 
                 {
+                    hub.Clients.All.updateProgress("Verifying Sync ...", "");
                     // For all existing events
                     foreach (var event_occurrence in modified_event_occurrences)
                     {
@@ -1044,8 +1038,10 @@ namespace Daftari.Controllers
                         }
 
                         count++;
+                        hub.Clients.All.updateProgress("Verifying Sync ...", count + "/" + data.Count);
                     }
 
+                    hub.Clients.All.updateProgress("Removing unsed events ...", "");
                     await db.SaveChangesAsync();
                     //remove additionals
                     var eventOccurrances = await db.EventOccurrances
@@ -1062,7 +1058,7 @@ namespace Daftari.Controllers
                     }
                     await db.SaveChangesAsync();
                 }
-
+                hub.Clients.All.updateProgress("Done ...", "");
                 return await db.SaveChangesAsync();
             }
         }

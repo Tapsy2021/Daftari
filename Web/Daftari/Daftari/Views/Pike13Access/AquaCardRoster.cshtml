@@ -17,23 +17,32 @@
             background: rgb(255, 216, 216) !IMPORTANT;
         }
 
-        .NotOpen.selected {
-            background: rgb(255, 181, 181) !IMPORTANT;
-        }
+            .NotOpen.selected {
+                background: rgb(255, 181, 181) !IMPORTANT;
+            }
+
         .btn-info {
             padding: 0.0rem 0.4rem !important;
             margin-right: 0.5rem;
         }
-        .img-circle{
+
+        .img-circle {
             width: 33px;
             height: 33px;
             margin: 2px;
             border-radius: 50%;
         }
-        .g-label{
+
+        .g-label {
             height: 15px;
             padding-top: 6px;
             cursor: pointer;
+        }
+        .card-title {
+            display: inline-block;
+        }
+        #progress {
+            float: right;
         }
     </style>
 }
@@ -45,7 +54,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Roster &amp; Aqua Card</h5>
+                <h5 class="card-title">Roster &amp; Aqua Card</h5><label id="progress"></label>
 
                 @if (ViewBag.CanView == true)
                 {
@@ -95,6 +104,10 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.js" integrity="sha512-nwFvp27oDSOkJAXZdkqJDB2FkkI3dXJKSapfBmm+R9YW/4KvT8SAGhyTxmt6Uxfa49rTYODHdjjVjOLSJELfJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+    @*<script src="@Url.Content("~/Scripts/jquery.signalR-2.2.3.min.js")"></script>*@
+    <script src="@Url.Content("~/signalr/hubs")"></script>
+    @*<script src="signalR/hubs"></script>*@
     @if (ViewBag.CanView == false)
     {
         <script type="text/javascript">
@@ -105,6 +118,56 @@
     <script type="text/javascript">
         var rootURL = '@Url.Action("/")';
         //var cardURL = '@Url.Action("Open", "StudentCards")';
+
+        $(function () {
+
+            var progressNotifier = $.connection.pike13Hub;
+
+            progressNotifier.client.updateProgress = function (operation, progress) {
+                //if (!isSpinning) {
+                //    startSpin();
+                //    isSpinning = true;
+                //}
+                //if (operation == "Done") {
+                //    isSpinning = false;
+                //    stopSpin();
+                //    $("#progress").html("");
+                //    $("#history_XACT").data("kendoDropDownList").dataSource.read();
+                //} else {
+                //   // showTopRightInfoNoty(operation + " " + progress,true);
+                //    $("#progress").html(operation + " " + progress);
+                //}
+                $("#progress").html(operation + " " + progress);
+                console.log(operation + " " + progress);
+                console.log(" might have not sent prop ");
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Hub is started.");
+            });
+
+        });
+
+        //var progressNotifier = $.connection.gridHub;
+
+        //progressNotifier.client.updateProgress = function (operation, progress) {
+        //    //if (!isSpinning) {
+        //    //    startSpin();
+        //    //    isSpinning = true;
+        //    //}
+        //    //if (operation == "Done") {
+        //    //    isSpinning = false;
+        //    //    stopSpin();
+        //    //    $("#progress").html("");
+        //    //    $("#history_XACT").data("kendoDropDownList").dataSource.read();
+        //    //} else {
+        //    //   // showTopRightInfoNoty(operation + " " + progress,true);
+        //    //    $("#progress").html(operation + " " + progress);
+        //    //}
+        //    $("#progress").html(operation + " " + progress);
+
+        //};
+
 
         function getLevelParam(lvl) {
             var levels = ['1 - Tadpoles',
@@ -151,31 +214,24 @@
             dataSrc: 'event_occurrences'
         },
         lengthChange: false,
-        //"processing": true,
-        //stateSave: true,
+        stateSave: true,
         "columns": [
             {
-                //"visible": false,
                 "data": "start_at", render: function (data, type, row) {
                     return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('YYYY-MM-DD');
-                    //return moment(data).format('YYYY-MM-DD');
                 },
                 orderData: [0, 1]
             },
             {
-                //"visible": false,
                 "data": "start_at", render: function (data, type, row) {
                     return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('h:mm:ss a');
-                    //return moment(data).format('h:mm:ss a');
                 },
                 orderData: [1, 0]
             },
-            //{ "data": "name" },
             {
-                //"visible": false,
                 "data": null, render: function (data, type, row, meta) {
                     var msg = '<a class="btn btn-info btn-raised btn-xs"  OnClick="openCards(' + row.id + ')" data-toggle="tooltip" data-placement="bottom" title="Open Cards" data-animation="true"><i class="dripicons-expand-2"></i></a>' + row.name;
-                    
+
                     return msg;
                 }
             },
@@ -190,7 +246,6 @@
                                 msg += '<br/>' + row.staff_members[i].name;
                             }
                         }
-                        //msg = '<a class="btn btn-info btn-raised btn-xs"  OnClick="openCards(' + row.id + ')" data-toggle="tooltip" data-placement="bottom" title="Open Cards" data-animation="true"><i class="dripicons-expand-2"></i></a>' + msg;
                     }
                     return msg;
                 }
@@ -208,29 +263,7 @@
                     }
                     return msg;
                 }
-            },
-            //{
-            //    "data": null, render: function (data, type, row, meta) {
-            //        var msg = '';
-            //        if (row.visits.length > 0) {
-            //            for (var i = 0; i < row.visits.length; i++) {
-            //                var visit = row.visits[i];       
-            //                var d = moment.duration(new moment().diff(visit.person.lastOpenDateTime));
-            //                var isNotOpen = false;
-            //                if (d.as('days') > 1) {
-            //                    row.isNotOpen = true;
-            //                    isNotOpen = true;
-            //                }
-            //                msg = msg + '<a class="g-label" OnClick="openCard(' + row.id + ',\'' + data.name + '\')>' + (i + 1) + '. ' + (visit.person.id === 0 ? "-" :  (visit.person.level != null ? visit.person.level : "(No Card)")) + (isNotOpen ? " (Not Opened)" : "") + '</a><br />';
-            //            }
-            //        } else {
-            //            msg = 'NA';
-            //        }
-            //        return msg;
-            //    }
-            //},
-
-
+            }
         ],
         rowCallback: function (row, data) {
             if (data.isNotOpen) {
@@ -295,7 +328,7 @@
                         async: true,
                         url: rootURL + "SyncEventOccurrences?from=" + from + "&to=" + to + "&business_id=null&type=9&all=true",
                         cache: false
-                    }).done(function (data) {                       
+                    }).done(function (data) {
 
                         $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger")
 
@@ -318,8 +351,7 @@
 
     @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
     {
-        <form id="sendMail" style="display: none;
-" action="@Url.Action("SendMailsToCustomer", "Communication")" method="post">
+        <form id="sendMail" style="display: none;" action="@Url.Action("SendMailsToCustomer", "Communication")" method="post">
             <input name="extIDs" id="mailExtIDs" />
         </form>
         <script>
@@ -453,7 +485,7 @@
                 .done(function (msg) {
 
                     var cardURL = '@Url.Action("Open", "StudentCards")' + '?sid=' + pid;// + '&instructors=' + instructors + lvlParam + '&eid=' + eid + '&plan=' + plan + '&startdate=' + stDate;
-                    
+
                     if (msg.Status === 0) {
                         $.NotificationApp.send("Status", "Opening Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
                         window.location.href = cardURL;

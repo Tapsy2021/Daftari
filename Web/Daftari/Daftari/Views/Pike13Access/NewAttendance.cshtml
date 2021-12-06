@@ -201,17 +201,19 @@
                     if (!row.attendance_complete && row.visits.length > 0) {
                         for (var i = 0; i < row.visits.length; i++) {
                             var visit = row.visits[i];
+                            if (visit.state != "late_canceled") {
+                                var templateBttn = '<a class="btn btn-{0} btn-xs {1}" title="{2}" OnClick="putVisitToPike(this,\'{3}\',\'' + visit.person.id + '\',\'' + row.id + '\')"><i class="mdi {4}"></i></a>';
 
-                            var templateBttn = '<a class="btn btn-{0} btn-xs {1}" title="{2}" OnClick="putVisitToPike(this,\'{3}\',\'' + visit.person.id + '\',\'' + row.id + '\')"><i class="mdi {4}"></i></a>';
+                                msg = msg
+                                    + templateBttn.format('primary', visit.state == 'completed' ? 'disabled' : '', 'complete', 'complete', 'mdi-calendar-check')
+                                    + templateBttn.format('warning', visit.state == 'noshowed' ? 'disabled' : '', 'noshow', 'noshow', 'mdi-calendar-question')
+                                    + templateBttn.format('info', visit.state == 'late_canceled' ? 'disabled' : '', 'late_cancel', 'late_cancel', 'mdi-calendar-remove')
+                                    + templateBttn.format('danger', '', 'reset', 'reset', 'mdi-undo-variant');
 
-                            msg = msg
-                                + templateBttn.format('primary', visit.state == 'completed' ? 'disabled' : '', 'complete', 'complete', 'mdi-calendar-check')
-                                + templateBttn.format('warning', visit.state == 'noshowed' ? 'disabled' : '', 'noshow', 'noshow', 'mdi-calendar-question')
-                                + templateBttn.format('info', visit.state == 'late_canceled' ? 'disabled' : '', 'late_cancel', 'late_cancel', 'mdi-calendar-remove')
-                                + templateBttn.format('danger', '', 'reset', 'reset', 'mdi-undo-variant');
-
-                            msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + visit.person.name + '<br />';
+                                msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + visit.person.name + '<br />';
+                            }
                         }
+
                     } 
 
                     return msg;
