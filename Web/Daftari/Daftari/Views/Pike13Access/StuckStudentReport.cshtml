@@ -38,22 +38,21 @@
             padding-top: 6px;
             cursor: pointer;
         }
+
+        #progress {
+            float: right;
+        }
     </style>
 }
 @{
-    ViewBag.Title = "Status Report";
+    ViewBag.Title = "Stuck Student Report";
 }
 
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Status Report</h5>
-
-                <div class="mb-3">
-                    @Html.LabelFor(model => model.StatusFilter, htmlAttributes: new { @class = "control-label" })<br />
-                    @Html.EnumDropDownListFor(model => model.StatusFilter, "Select...", htmlAttributes: new { @class = "form-control" })
-                </div>
+                <h5 class="card-title">Status Report</h5><label id="progress"></label>
 
                 <div class="mb-3">
                     @Html.LabelFor(model => model.DateFilter, htmlAttributes: new { @class = "form-label" })
@@ -70,7 +69,19 @@
                                 Name
                             </th>
                             <th>
-                                Status
+                                First Visit
+                            </th>
+                            <th>
+                                Last Visit
+                            </th>
+                            <th>
+                                Completed Visits
+                            </th>
+                            <th>
+                                Future Visits
+                            </th>
+                            <th>
+                                Unpaid Visits
                             </th>
                         </tr>
                     </thead>
@@ -85,6 +96,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.js" integrity="sha512-nwFvp27oDSOkJAXZdkqJDB2FkkI3dXJKSapfBmm+R9YW/4KvT8SAGhyTxmt6Uxfa49rTYODHdjjVjOLSJELfJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+    <script src="@Url.Content("~/signalr/hubs")"></script>
 
     <script type="text/javascript">
          var rootURL = '@Url.Action("/")';
@@ -101,7 +114,7 @@
         },
         select: true,
        "ajax": {
-          "url": rootURL + 'GetStatusJSON',
+          "url": rootURL + 'GetStuckStudentJSON',
             "data": function (d) {
                 var dates = $('#DateFilter').val().split(' - ');
                 d.from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
@@ -109,7 +122,7 @@
                 if (typeof (personId) !== 'undefined') {
                     d.staff_member_ids = personId;
                 }
-                d.status = $("#StatusFilter option:selected").text()
+                //d.status = $("#StatusFilter option:selected").text()
             },
             dataSrc: 'visits'
         },
@@ -117,21 +130,6 @@
         //"processing": true,
         stateSave: true,
         "columns": [
-            //{
-            //    "data": "start_at", render: function (data, type, row) {
-            //        return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('YYYY-MM-DD');
-            //        //return moment(data).format('YYYY-MM-DD');
-            //    },
-            //    orderData: [0, 1]
-            //},
-            //{
-            //    "data": "start_at", render: function (data, type, row) {
-            //        return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('h:mm:ss a');
-            //        //return moment(data).format('h:mm:ss a');
-            //    },
-            //    orderData: [1, 0]
-            //},
-            //{ "data": "person" },
             {
                 "data": null, render: function (data, type, row, meta) {
                     var msg = '<img class="img-circle"  src="' + row.photoMD + '" />' + (row.person) + '<br />';
@@ -140,7 +138,17 @@
                 }
             },
             { "data": "name" },
-            { "data": "status" },
+            { "data": "first_visit_date" },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    var msg = row.last_visit_date + ' (' + row.last_visit_service + ')';
+                    return msg;
+                }
+            },
+            { "data": "completed_visits" },
+            { "data": "future_visits" },
+            { "data": "unpaid_visits" },
+
             //{
             //    "data": null, render: function (data, type, row, meta) {
             //        var msg = '';
@@ -285,63 +293,11 @@
                         userPermExec(table.ajax.json());
                     });
                 }
-            }
-            //,
-            //{
-            //    text: 'Sync Unpaid',
-            //    action: function (e, dt, node, config) {
-
-            //        if ($("#StatusFilter option:selected").text() != "unpaid") {
-
-            //            $.NotificationApp.send("Status", "Please select unpaid status first", "top-right", "rgba(0,0,0,0.2)", "info");
-            //            return;
-            //        }
-
-            //        $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info");
-
-            //        var dates = $('#DateFilter').val().split(' - ');
-            //        var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
-            //        var to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
-
-            //        $.ajax({
-            //            async: true,
-            //            url: rootURL + "SyncUnpaid?from=" + from + "&to=" + to + "&business_id=null",
-            //            cache: false
-            //        }).done(function (data) {
-
-            //            $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger");
-
-            //            table.ajax.reload();
-            //        }).fail(function (msg) {
-            //            $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
-
-            //            table.ajax.reload();
-            //        });
-            //    },
-            //    className: 'btn-danger'
-            //}
-        ],
-    });
-
-    // Attach Buttons
-    table.buttons().container()
-        .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
-    </script>
-
-    @if (User.Identity.Name.ToLower() == "oupa")
-    {
-        <script>
-            table.button().add(6, {
-                text: 'Sync Unpaid',
+            },
+            {
+                text: 'Sync',
                 action: function (e, dt, node, config) {
-
-                    if ($("#StatusFilter option:selected").text() != "unpaid") {
-
-                        $.NotificationApp.send("Status", "Please select unpaid status first", "top-right", "rgba(0,0,0,0.2)", "info");
-                        return;
-                    }
-
-                    $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info");
+                    $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info")
 
                     var dates = $('#DateFilter').val().split(' - ');
                     var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
@@ -349,11 +305,11 @@
 
                     $.ajax({
                         async: true,
-                        url: rootURL + "SyncUnpaid?from=" + from + "&to=" + to + "&business_id=null",
+                        url: rootURL + "SyncEventOccurrences?from=" + from + "&to=" + to + "&business_id=null&type=9&all=true",
                         cache: false
                     }).done(function (data) {
 
-                        $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger");
+                        $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger")
 
                         table.ajax.reload();
                     }).fail(function (msg) {
@@ -363,11 +319,34 @@
                     });
                 },
                 className: 'btn-danger'
-            });
-        </script>
-    }
+            }
+        ],
+    });
+
+    // Attach Buttons
+    table.buttons().container()
+        .appendTo('#dtTable_wrapper .col-md-6:eq(0)');
+    </script>
+
 
     <script type="text/javascript">
+
+
+        $(function () {
+
+            var progressNotifier = $.connection.pike13Hub;
+
+            progressNotifier.client.updateProgress = function (operation, progress) {
+                $("#progress").html(operation + " " + progress);
+                console.log(operation + " " + progress);
+                console.log(" might have not sent prop ");
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("Hub is started.");
+            });
+        });
+
         $('#DateFilter').change(function () {
             table.ajax.reload(function () {
                 //makeRequest();
@@ -375,13 +354,13 @@
             });
         });
 
-        $('#StatusFilter').change(function () {
-            console.log("me");
-            table.ajax.reload(function () {
-                //makeRequest();
-                //userPermExec(table.ajax.json());
-            });
-        });
+        //$('#StatusFilter').change(function () {
+        //    console.log("me");
+        //    table.ajax.reload(function () {
+        //        //makeRequest();
+        //        //userPermExec(table.ajax.json());
+        //    });
+        //});
 
         function userPermExec(json) {
             //var instructorArr = [];
@@ -420,6 +399,7 @@
             //});
         }
     </script>
+
 
     <script type="text/javascript">
 

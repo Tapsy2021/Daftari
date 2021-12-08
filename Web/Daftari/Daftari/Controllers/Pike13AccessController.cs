@@ -171,67 +171,6 @@ namespace Daftari.Controllers
         {
             var creds = TokenProvider.GetProvider().GetAccessDetails(User.Identity.Name);
 
-
-            //temp
-            //var new_events = new List<EventOccurrance>();
-            //var event_occurances = await new Pike13ApiRepo(User.Identity.Name).GetEventOccurenceAsync(DateTime.Today.AddDays(-1), DateTime.Today.AddDays(1).AddMinutes(-1));
-            //if (event_occurances.Any())
-            //{
-            //    foreach (var ev in event_occurances)
-            //    {
-            //        var event_o = new EventOccurrance
-            //        {
-            //            AttendanceComplete = ev.attendance_complete,
-            //            CapacityRemaining = ev.capacity_remaining,
-            //            EndAt = ev.end_at,
-            //            EventID = ev.event_id,
-            //            Full = ev.full,
-            //            EventOccurrenceID = ev.id,
-            //            LocationID = ev.location_id,
-            //            Name = ev.name,
-            //            StartAt = ev.start_at,
-            //            State = ev.state,
-            //            ServiceID = ev.service_id,
-            //            Timezone = ev.timezone,
-            //            people = string.Join(",", ev.people.Select(x => x.id).OrderBy(x => x)),
-            //            StaffMembers = string.Join(",", ev.staff_members.Select(x => x.StaffID).OrderBy(x => x)),
-            //            SubDomain = creds.Subdomain,
-            //            Description = ev.description,
-            //            VisitsCount = ev.visits_count
-            //        };
-
-            //        var visits = await new Pike13ApiRepo(User.Identity.Name).GetVisitsAsync(ev.id);
-            //        if (visits.Any())
-            //        {
-            //            event_o.Visits = visits.Select(x => new Visit
-            //            {
-            //                CancelledAt = x.cancelled_at,
-            //                CompletedAt = x.completed_at,
-            //                EventOccurrenceID = x.event_occurrence_id,
-            //                VisitID = x.id,
-            //                NoshowAt = x.noshow_at,
-            //                OnlyStaffCanCancel = x.only_staff_can_cancel,
-            //                Paid = x.paid,
-            //                PaidForBy = x.paid_for_by,
-            //                PersonID = x.person_id,
-            //                PunchID = x.punch_id,
-            //                RegisteredAt = x.registered_at,
-            //                State = x.state,
-            //                Status = x.status,
-            //                UpdatedAt = x.updated_at,
-            //                CreatedAt = x.created_at
-            //            }).ToList();
-            //        }
-            //        new_events.Add(event_o);
-            //    }
-            //}
-
-            //using (Pike13ApiContext db = new Pike13ApiContext())
-            //{
-            //    db.EventOccurrances.AddRange(new_events);
-            //    await db.SaveChangesAsync();
-            //}
-
             if (creds.Role == "limited_staff_member")
             {
                 ViewBag.AccessCode = TokenProvider.GetProvider().GetStaffAccessCode(creds.Subdomain);
@@ -261,6 +200,7 @@ namespace Daftari.Controllers
             {
                 ViewBag.AccessCode = creds.AccessToken;
             }
+
             ViewBag.Subdomain = creds.Subdomain;
             ViewBag.Role = creds.Role;
             ViewBag.PersonID = creds.ID;
@@ -341,14 +281,6 @@ namespace Daftari.Controllers
             return View(new StatusDashboardVM());
         }
 
-        //public ActionResult StatusReport()
-        //{
-
-
-
-        //    return View(new StatusDashboardVM());
-        //}
-
         public ActionResult StatusReport(string status)
         {
             var visit_status = VisitStatus.Late_Cancel;
@@ -365,19 +297,23 @@ namespace Daftari.Controllers
             });
         }
 
+        public ActionResult StuckStudentReport()
+        {
+            return View(new StatusReportVM
+            {
+                //StatusFilter = visit_status
+            });
+        }
+
         public async Task<JsonResult> GetJSON(DateTime from, DateTime to, long? staff_member_ids)
         {
             var eventOccurrances = new List<EventOccurrance>();
-            //var subdomain = TokenProvider.GetProvider().GetSubdomain(User.Identity.Name);
 
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
-                //from = from.ToServerTime();
-                //to = to.ToServerTime();
                 eventOccurrances = await db.GetEventOccurrances().Include(v => v.Visits)
                                         .Where(x => x.StartAt < to && x.EndAt >= from)
                                         .Where(x => x.State != "deleted" && x.State != "disabled")
-                                        //.Where(x => x.SubDomain == subdomain)
                                         .ToListAsync();
             }
 
@@ -393,7 +329,6 @@ namespace Daftari.Controllers
             {
                 customers = await db.GetCustomers().Where(x => all_customers.Contains(x.ExternalReference)).ToListAsync();
                 cards = (await db.StudentCards.Where(s => all_customers.Contains(s.ExternalReferenceID))
-                                    //.Include(s => s.StudentCardDetails)
                                     .ToListAsync())
                                     .GroupBy(c => c.ExternalReferenceID, (Key, i) => i.OrderBy(s => s.Level).Last()).ToList();
             }
@@ -492,7 +427,7 @@ namespace Daftari.Controllers
                         .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
                         .Where(x => x.EventOccurrance.SubDomain == sd)
                         .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
-                        .Where(x => x.Status == status || (status == "unpaid" && x.Unpaid == true))
+                        .Where(x => x.Status == status || (status == "unpaid" && x.State == "registered" && x.Unpaid == true))
                         .ToListAsync();
             }
 
@@ -511,6 +446,75 @@ namespace Daftari.Controllers
                                     name = visit.EventOccurrance.Name,
                                     photoMD = customer?.PhotoMD,
                                     status = status
+                                }).ToList();
+
+            return Json(new
+            {
+                visits = TotalRecords
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<JsonResult> GetStuckStudentJSON(DateTime from, DateTime to, long? staff_member_ids)
+        {
+            var visits = new List<Visit>();
+            var customers = new List<AquaCards.Models.Customer>();
+            var sd = TokenProvider.GetProvider().GetSubdomain(User.Identity.Name);
+            using (Pike13ApiContext db = new Pike13ApiContext())
+            {
+                visits = await db.Visits.Include(e => e.EventOccurrance)
+                        .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
+                        .Where(x => x.EventOccurrance.SubDomain == sd)
+                        .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
+                        //.Where(x => x.Status == status || (status == "unpaid" && x.Unpaid == true))
+                        .ToListAsync();
+            }
+
+            // pick one class detected for each student
+            visits = visits.GroupBy(x => x.PersonID).Select(i => i.OrderBy(x => x.EventOccurrance.StartAt).Last()).ToList();
+
+            var all_customers = visits.Select(x => x.PersonID).Distinct().ToList();
+            var data = await new Pike13ApiRepo(User.Identity.Name).GetClientHistoryAsync(all_customers);
+
+            var fields = data.fields.Select(x => x.name).ToList();
+            //        "completed_visits",
+            //        "first_visit_date",
+            //        "future_visits",
+            //        "last_visit_date",
+            //        "last_visit_service",
+            //        "person_id",
+            //        "unpaid_visits",
+            var person_history = data.rows.Select(row => new
+            {
+                completed_visits = row[fields.IndexOf("completed_visits")],
+                first_visit_date = row[fields.IndexOf("first_visit_date")],
+                future_visits = row[fields.IndexOf("future_visits")],
+                last_visit_date = row[fields.IndexOf("last_visit_date")],
+                last_visit_service = row[fields.IndexOf("last_visit_service")],
+                person_id = row[fields.IndexOf("person_id")],
+                unpaid_visits = row[fields.IndexOf("unpaid_visits")]
+            }).ToList();            
+
+            using (AquaCardsEntities db = new AquaCardsEntities(System.Web.HttpContext.Current.User.Identity.Name))
+            {
+                customers = await db.GetCustomers().Where(x => all_customers.Contains(x.ExternalReference)).ToListAsync();
+            }
+
+            var TotalRecords = (from visit in visits
+                                join customer in customers on visit.PersonID equals customer.ExternalReference
+                                join history in person_history on visit.PersonID.ToString() equals history.person_id into _history
+                                from history in _history.DefaultIfEmpty()
+                                select new
+                                {
+                                    person = customer != null ? $"{customer.FirstName} {customer.LastName}" : "Not Synced",
+                                    name = visit.EventOccurrance.Name,
+                                    photoMD = customer?.PhotoMD,
+                                    completed_visits = history?.completed_visits,
+                                    first_visit_date = history?.first_visit_date,
+                                    future_visits = history?.future_visits,
+                                    last_visit_date = history?.last_visit_date,
+                                    last_visit_service = history?.last_visit_service,
+                                    person_id = history?.person_id,
+                                    unpaid_visits = history?.unpaid_visits
                                 }).ToList();
 
             return Json(new
@@ -708,17 +712,18 @@ namespace Daftari.Controllers
                 }
 
                 RevertSettings(flagsettingKey, syncsettingKey, syncDate);
-
+                hub.Clients.All.updateProgress("Done ...", "");
                 return Json(new { msg = ex.Message, type = 2 }, JsonRequestBehavior.AllowGet);
             }
 
             RevertSettings(flagsettingKey, syncsettingKey);
-
+            hub.Clients.All.updateProgress("Done ...", "");
             return Json(new { msg = "Success", type = 2 }, JsonRequestBehavior.AllowGet);
         }
 
         public async Task<JsonResult> SyncUnpaid(DateTime from, DateTime to, long? business_id = null)
         {
+            var hub = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<Pike13Hub>();
             string syncDate = null;
             string now = DateTime.Now.ToString("s");
             string syncsettingKey = null;
@@ -741,7 +746,7 @@ namespace Daftari.Controllers
 
             syncsettingKey = sd + "UnpSyncDte";
             flagsettingKey = sd + "UnpSyncFlag";
-
+            hub.Clients.All.updateProgress("Initiating sync ...", "");
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
                 var setting = db.Settings.Find(syncsettingKey);
@@ -778,11 +783,12 @@ namespace Daftari.Controllers
                 await db.SaveChangesAsync();
             }
 
+            hub.Clients.All.updateProgress("Fetching Event Occurrences ...", "");
             try
             {
                 var data = await new Pike13ApiRepo(business_id.Value).GetEventOccurenceAsync(from, to);
 
-                await ProcessUnpaid(data, from, to, sd);
+                await ProcessUnpaid(data, from, to, sd, hub);
             }
             catch (Exception ex)
             {
@@ -792,12 +798,12 @@ namespace Daftari.Controllers
                 }
 
                 RevertSettings(flagsettingKey, syncsettingKey, syncDate);
-
+                hub.Clients.All.updateProgress("Done ...", "");
                 return Json(new { msg = ex.Message, type = 2 }, JsonRequestBehavior.AllowGet);
             }
 
             RevertSettings(flagsettingKey, syncsettingKey);
-
+            hub.Clients.All.updateProgress("Done ...", "");
             return Json(new { msg = "Success", type = 2 }, JsonRequestBehavior.AllowGet);
         }
 
@@ -1063,16 +1069,18 @@ namespace Daftari.Controllers
             }
         }
 
-        private async Task<int> ProcessUnpaid(List<Pike13Event> data, DateTime from, DateTime to, string subdomain)
+        private async Task<int> ProcessUnpaid(List<Pike13Event> data, DateTime from, DateTime to, string subdomain, Microsoft.AspNet.SignalR.IHubContext hub)
         {
             var business_id = TokenProvider.GetProvider().GetBusinessId(subdomain);
 
             var count = 0;
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
+                //reset will not update locally because of 
+                hub.Clients.All.updateProgress("Sync in progress ...", "");
                 // For all existing events
-                //foreach (var event_occurrence in data.Where(x => x.id == 135993725))
-                foreach (var event_occurrence in data)
+                foreach (var event_occurrence in data.Where(x => x.id == 135993725))
+                //foreach (var event_occurrence in data)
                 {
                     try
                     {

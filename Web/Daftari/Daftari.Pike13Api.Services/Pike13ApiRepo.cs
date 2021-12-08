@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -154,6 +155,68 @@ namespace Daftari.Pike13Api.Services
                 //{
                 //    new string[] { "btw", "transaction_at", startFmtTime, endFmtTime }
                 //};
+
+                return await api.GetReportAsync();
+            }
+        }
+
+        public async Task<Pike13Report> GetClientHistoryAsync(long id)
+        {
+            using (var api = new Pike13ReportingAPI<Pike13Report>(_auth))
+            {
+                api.EndPoint = "clients";
+
+                api.request.attributes.fields.AddRange(new List<string>
+                {
+                    "completed_visits",
+                    "first_visit_date",
+                    "future_visits",
+                    "last_visit_date",
+                    "last_visit_service",
+                    "person_id",
+                    "unpaid_visits",
+                });
+
+                api.request.attributes.filter = new List<object>()
+                {
+                    new string[] { "eq", "person_id", id.ToString() }
+                };
+
+                //api.request.attributes.filter = new List<object>()
+                //{
+                //    "or",
+                //    new string[][] {
+                //        new string[] { "eq", "person_id", id.ToString() },
+                //        new string[] { "eq", "person_id", id.ToString() },
+                //    }
+                //};
+
+                return await api.GetReportAsync();
+            }
+        }
+
+        public async Task<Pike13Report> GetClientHistoryAsync(List<long?> Ids)
+        {
+            using (var api = new Pike13ReportingAPI<Pike13Report>(_auth))
+            {
+                api.EndPoint = "clients";
+
+                api.request.attributes.fields.AddRange(new List<string>
+                {
+                    "completed_visits",
+                    "first_visit_date",
+                    "future_visits",
+                    "last_visit_date",
+                    "last_visit_service",
+                    "person_id",
+                    "unpaid_visits",
+                });
+
+                api.request.attributes.filter = new List<object>()
+                {
+                    "or",
+                    Ids.Select(id => new string[] { "eq", "person_id", id.ToString() }).ToArray()
+                };
 
                 return await api.GetReportAsync();
             }
@@ -371,7 +434,7 @@ namespace Daftari.Pike13Api.Services
 
         public async Task<List<Pike13StaffMember>> GetStaffMembersAsync()
         {
-            using (var api = new Pike13API<Pike13StaffMember>(_auth))
+            using (var api = new Pike13CoreAPI<Pike13StaffMember>(_auth))
             {
                 api.EndPoint = "staff_members";
 
@@ -381,7 +444,7 @@ namespace Daftari.Pike13Api.Services
 
         public async Task<List<Pike13Note>> GetPersonNotesAsync(long id)
         {
-            using (var api = new Pike13API<Pike13Note>(_auth))
+            using (var api = new Pike13CoreAPI<Pike13Note>(_auth))
             {
                 api.EndPoint = $"people/{id}/notes";
                 api.OverrideEndpoint = "notes";

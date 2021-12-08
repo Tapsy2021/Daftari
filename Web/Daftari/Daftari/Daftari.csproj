@@ -695,6 +695,7 @@
     <Content Include="Views\Pike13Access\StatusReport.cshtml" />
     <Content Include="Views\Pike13Access\UnpaidReport.cshtml" />
     <Content Include="Views\ChemicalRecords\Reports.cshtml" />
+    <Content Include="Views\Pike13Access\StuckStudentReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

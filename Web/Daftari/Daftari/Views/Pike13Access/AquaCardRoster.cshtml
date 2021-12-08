@@ -17,9 +17,9 @@
             background: rgb(255, 216, 216) !IMPORTANT;
         }
 
-            .NotOpen.selected {
-                background: rgb(255, 181, 181) !IMPORTANT;
-            }
+        .NotOpen.selected {
+            background: rgb(255, 181, 181) !IMPORTANT;
+        }
 
         .btn-info {
             padding: 0.0rem 0.4rem !important;
@@ -38,11 +38,16 @@
             padding-top: 6px;
             cursor: pointer;
         }
+
         .card-title {
             display: inline-block;
         }
+
         #progress {
             float: right;
+        }
+        .disabled-link {
+            pointer-events: none;
         }
     </style>
 }
@@ -105,9 +110,7 @@
     <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.js" integrity="sha512-nwFvp27oDSOkJAXZdkqJDB2FkkI3dXJKSapfBmm+R9YW/4KvT8SAGhyTxmt6Uxfa49rTYODHdjjVjOLSJELfJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript" src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
-    @*<script src="@Url.Content("~/Scripts/jquery.signalR-2.2.3.min.js")"></script>*@
     <script src="@Url.Content("~/signalr/hubs")"></script>
-    @*<script src="signalR/hubs"></script>*@
     @if (ViewBag.CanView == false)
     {
         <script type="text/javascript">
@@ -117,26 +120,12 @@
 
     <script type="text/javascript">
         var rootURL = '@Url.Action("/")';
-        //var cardURL = '@Url.Action("Open", "StudentCards")';
 
         $(function () {
 
             var progressNotifier = $.connection.pike13Hub;
 
             progressNotifier.client.updateProgress = function (operation, progress) {
-                //if (!isSpinning) {
-                //    startSpin();
-                //    isSpinning = true;
-                //}
-                //if (operation == "Done") {
-                //    isSpinning = false;
-                //    stopSpin();
-                //    $("#progress").html("");
-                //    $("#history_XACT").data("kendoDropDownList").dataSource.read();
-                //} else {
-                //   // showTopRightInfoNoty(operation + " " + progress,true);
-                //    $("#progress").html(operation + " " + progress);
-                //}
                 $("#progress").html(operation + " " + progress);
                 console.log(operation + " " + progress);
                 console.log(" might have not sent prop ");
@@ -145,29 +134,7 @@
             $.connection.hub.start().done(function () {
                 console.log("Hub is started.");
             });
-
         });
-
-        //var progressNotifier = $.connection.gridHub;
-
-        //progressNotifier.client.updateProgress = function (operation, progress) {
-        //    //if (!isSpinning) {
-        //    //    startSpin();
-        //    //    isSpinning = true;
-        //    //}
-        //    //if (operation == "Done") {
-        //    //    isSpinning = false;
-        //    //    stopSpin();
-        //    //    $("#progress").html("");
-        //    //    $("#history_XACT").data("kendoDropDownList").dataSource.read();
-        //    //} else {
-        //    //   // showTopRightInfoNoty(operation + " " + progress,true);
-        //    //    $("#progress").html(operation + " " + progress);
-        //    //}
-        //    $("#progress").html(operation + " " + progress);
-
-        //};
-
 
         function getLevelParam(lvl) {
             var levels = ['1 - Tadpoles',
@@ -256,7 +223,7 @@
                     if (row.visits.length > 0) {
                         for (var i = 0; i < row.visits.length; i++) {
                             var visit = row.visits[i];
-                            msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" /><a class="g-label" OnClick="openCard(' + visit.person.id + ',\'' + data.name + '\')">' + (visit.person.name + ' (' + visit.status + ')') + '</a><br />';
+                            msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" /><a class="g-label ' + (visit.status == 'noshow' ? 'disabled-link' : '') + '" OnClick="openCard(' + visit.person.id + ',\'' + data.name + '\')">' + (visit.person.name + ' (' + visit.status + ')') + '</a><br />';
                         }
                     } else {
                         msg = 'NA';
@@ -488,12 +455,23 @@
 
                     if (msg.Status === 0) {
                         $.NotificationApp.send("Status", "Opening Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
-                        window.location.href = cardURL;
+                        //window.location.href = cardURL;
                         //window.open(cardURL, '_blank').focus();
+                        const a = document.createElement("a");
+                        a.setAttribute('href', cardURL);
+                        a.setAttribute('target', '_blank');
+                        a.click();
+
                     } else if (msg.Status === 1) {
                         $.NotificationApp.send("Status", "No Existing Card Found. Creating New Now..", "bottom-right", "rgba(0,0,0,0.2)", "info");
-                        window.location.href = cardURL;
+                        //window.location.href = cardURL;
                         //window.open(cardURL, '_blank').focus();
+
+                        const a = document.createElement("a") ;
+                        a.setAttribute('href', cardURL);
+                        a.setAttribute('target', '_blank');
+                        a.click();
+
                     } else {
                         $.NotificationApp.send("Status", msg.StatusMsg, "bottom-right", "rgba(0,0,0,0.2)", "warning");
                         $(cntrl).removeClass('disabled');

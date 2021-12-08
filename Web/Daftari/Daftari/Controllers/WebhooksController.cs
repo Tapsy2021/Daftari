@@ -484,7 +484,7 @@ namespace Daftari.Controllers
                                         {
                                             visit.Unpaid = true;
                                         }
-                                        else if (pike_visit.state != VisitState.Completed.GetDisplay())
+                                        else if (pike_visit.state == VisitState.Completed.GetDisplay())
                                         {
                                             visit.Unpaid = false;
                                         }
