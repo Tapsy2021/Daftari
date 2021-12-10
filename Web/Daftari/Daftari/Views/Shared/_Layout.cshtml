@@ -233,7 +233,7 @@
                         </li>
                     }*@
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Attendance"))
+                    @*@if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Attendance"))
                     {
                         <li class="side-nav-item">
                             <a href="@Url.Action("Attendance", "Pike13Access")" class="side-nav-link">
@@ -241,14 +241,14 @@
                                 <span> Attendance </span>
                             </a>
                         </li>
-                    }
+                    }*@
 
                     @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("FrontDesk") || User.IsInRole("Attendance"))
                     {
                         <li class="side-nav-item">
                             <a href="@Url.Action("NewAttendance", "Pike13Access")" class="side-nav-link">
                                 <i class="uil-calendar-alt"></i>
-                                <span> New Attendance </span>
+                                <span> Attendance </span>
                             </a>
                         </li>
                     }

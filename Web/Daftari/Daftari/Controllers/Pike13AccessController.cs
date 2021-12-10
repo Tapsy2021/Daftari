@@ -291,6 +291,22 @@ namespace Daftari.Controllers
                 visit_status = myStatus;
             } catch { }
 
+            var creds = TokenProvider.GetProvider().GetAccessDetails(User.Identity.Name);
+
+            if (creds.Role == "limited_staff_member")
+            {
+                ViewBag.AccessCode = TokenProvider.GetProvider().GetStaffAccessCode(creds.Subdomain);
+            }
+            else
+            {
+                ViewBag.AccessCode = creds.AccessToken;
+            }
+            ViewBag.Subdomain = creds.Subdomain;
+            ViewBag.Role = creds.Role;
+            ViewBag.PersonID = creds.ID;
+            ViewBag.CanView = creds.Role != "limited_staff_member";
+            ViewBag.UserFullName = creds.PersonName;
+
             return View(new StatusReportVM 
             {
                 StatusFilter = visit_status
@@ -389,6 +405,7 @@ namespace Daftari.Controllers
                     registered_at = x.RegisteredAt,
                     state = x.State,
                     status = x.Status,
+                    unpaid = (x.Status == "unpaid" || x.State == "registered" && (x.Unpaid ?? false)),
                     updated_at = x.UpdatedAt,
                     person = (from customer in customers
                             where customer.ExternalReference == x.PersonID
@@ -446,7 +463,8 @@ namespace Daftari.Controllers
                                     name = visit.EventOccurrance.Name,
                                     photoMD = customer?.PhotoMD,
                                     status = status,
-                                    unpaid = (status == "unpaid" && visit.State == "registered" && (visit.Unpaid ?? false))
+                                    unpaid = (status == "unpaid" && visit.State == "registered" && (visit.Unpaid ?? false)),
+                                    person_id = visit.PersonID
                                 }).ToList();
 
             return Json(new
@@ -459,6 +477,7 @@ namespace Daftari.Controllers
         {
             var visits = new List<Visit>();
             var customers = new List<AquaCards.Models.Customer>();
+            var person_history = new List<pike13_client_reporting>();
             var sd = TokenProvider.GetProvider().GetSubdomain(User.Identity.Name);
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
@@ -474,26 +493,32 @@ namespace Daftari.Controllers
             visits = visits.GroupBy(x => x.PersonID).Select(i => i.OrderBy(x => x.EventOccurrance.StartAt).Last()).ToList();
 
             var all_customers = visits.Select(x => x.PersonID).Distinct().ToList();
-            var data = await new Pike13ApiRepo(User.Identity.Name).GetClientHistoryAsync(all_customers);
-
-            var fields = data.fields.Select(x => x.name).ToList();
-            //        "completed_visits",
-            //        "first_visit_date",
-            //        "future_visits",
-            //        "last_visit_date",
-            //        "last_visit_service",
-            //        "person_id",
-            //        "unpaid_visits",
-            var person_history = data.rows.Select(row => new
+            if (all_customers.Any())
             {
-                completed_visits = row[fields.IndexOf("completed_visits")],
-                first_visit_date = row[fields.IndexOf("first_visit_date")],
-                future_visits = row[fields.IndexOf("future_visits")],
-                last_visit_date = row[fields.IndexOf("last_visit_date")],
-                last_visit_service = row[fields.IndexOf("last_visit_service")],
-                person_id = row[fields.IndexOf("person_id")],
-                unpaid_visits = row[fields.IndexOf("unpaid_visits")]
-            }).ToList();            
+                try
+                {
+                    var data = await new Pike13ApiRepo(User.Identity.Name).GetClientHistoryAsync(all_customers);
+
+                    var fields = data.fields.Select(x => x.name).ToList();
+                    //        "completed_visits",
+                    //        "first_visit_date",
+                    //        "future_visits",
+                    //        "last_visit_date",
+                    //        "last_visit_service",
+                    //        "person_id",
+                    //        "unpaid_visits",
+                    person_history = data.rows.Select(row => new pike13_client_reporting
+                    {
+                        completed_visits = row[fields.IndexOf("completed_visits")],
+                        first_visit_date = row[fields.IndexOf("first_visit_date")],
+                        future_visits = row[fields.IndexOf("future_visits")],
+                        last_visit_date = row[fields.IndexOf("last_visit_date")],
+                        last_visit_service = row[fields.IndexOf("last_visit_service")],
+                        person_id = row[fields.IndexOf("person_id")],
+                        unpaid_visits = row[fields.IndexOf("unpaid_visits")]
+                    }).ToList();
+                } catch { }
+            }           
 
             using (AquaCardsEntities db = new AquaCardsEntities(System.Web.HttpContext.Current.User.Identity.Name))
             {

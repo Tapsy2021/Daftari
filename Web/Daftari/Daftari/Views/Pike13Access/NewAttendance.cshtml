@@ -17,9 +17,9 @@
             background: rgb(255, 216, 216) !IMPORTANT;
         }
 
-        .NotOpen.selected {
-            background: rgb(255, 181, 181) !IMPORTANT;
-        }
+            .NotOpen.selected {
+                background: rgb(255, 181, 181) !IMPORTANT;
+            }
 
         .btn-info, .btn-primary, .btn-warning, .btn-danger {
             padding: 0.0rem 0.5rem !important;
@@ -44,8 +44,11 @@
         }
 
         .btn-xs .active {
-            pointer-events: none!important;
+            pointer-events: none !important;
+        }
 
+        #progress {
+            float: right;
         }
     </style>
 }
@@ -57,7 +60,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">New Attendance</h5>
+                <h5 class="card-title">New Attendance</h5><label id="progress"></label>
 
                 @if (ViewBag.CanView == true)
                 {
@@ -86,13 +89,13 @@
                                 @Html.DisplayNameFor(model => model.e.start_at) Time
                             </th>
                             <th>
+                                @Html.DisplayNameFor(model => model.e.people)
+                            </th>
+                            <th>
                                 @Html.DisplayNameFor(model => model.e.name)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.e.staff_members)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.e.people)
                             </th>
                         </tr>
                     </thead>
@@ -107,6 +110,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/sorting/datetime-moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone-with-data.js" integrity="sha512-nwFvp27oDSOkJAXZdkqJDB2FkkI3dXJKSapfBmm+R9YW/4KvT8SAGhyTxmt6Uxfa49rTYODHdjjVjOLSJELfJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+    <script src="@Url.Content("~/signalr/hubs")"></script>
     @if (ViewBag.CanView == false)
     {
         <script type="text/javascript">
@@ -117,6 +122,21 @@
     <script type="text/javascript">
          var rootURL = '@Url.Action("/")';
         var cardURL = '@Url.Action("Open", "StudentCards")';
+
+        $(function () {
+
+            var progressNotifier = $.connection.pike13Hub;
+
+            progressNotifier.client.updateProgress = function (operation, progress) {
+                $("#progress").html(operation + " " + progress);
+                //console.log(operation + " " + progress);
+                //console.log(" might have not sent prop ");
+            };
+
+            $.connection.hub.start().done(function () {
+                //console.log("Hub is started.");
+            });
+        });
 
         function getLevelParam(lvl) {
             var levels = ['1 - Tadpoles',
@@ -178,23 +198,6 @@
                 },
                 orderData: [1, 0]
             },
-            { "data": "name" },
-            {
-                "data": null, render: function (data, type, row, meta) {
-                    var msg = '';
-                    if (row.staff_members.length > 0) {
-                        for (var i = 0; i < row.staff_members.length; i++) {
-                            if (msg === '') {
-                                msg = row.staff_members[i].name;
-                            } else {
-                                msg += '<br/>' + row.staff_members[i].name;
-                            }
-                        }
-                        //msg = msg;
-                    }
-                    return msg;
-                }
-            },
             {
                 "data": null, render: function (data, type, row, meta) {
                     var msg = '';
@@ -210,12 +213,29 @@
                                     + templateBttn.format('info', visit.state == 'late_canceled' ? 'disabled' : '', 'late_cancel', 'late_cancel', 'mdi-calendar-remove')
                                     + templateBttn.format('danger', '', 'reset', 'reset', 'mdi-undo-variant');
 
-                                msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + visit.person.name + '<br />';
+                                msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + visit.person.name + (visit.unpaid ? ' *' : '') + '<br />';
                             }
                         }
 
-                    } 
+                    }
 
+                    return msg;
+                }
+            },
+            { "data": "name" },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    var msg = '';
+                    if (row.staff_members.length > 0) {
+                        for (var i = 0; i < row.staff_members.length; i++) {
+                            if (msg === '') {
+                                msg = row.staff_members[i].name;
+                            } else {
+                                msg += '<br/>' + row.staff_members[i].name;
+                            }
+                        }
+                        //msg = msg;
+                    }
                     return msg;
                 }
             }
@@ -237,7 +257,7 @@
         });
 
         table
-            .columns(4)
+            .columns(2)
             .search('^(?!\s*$).+', true, false, false)
             .draw();
 
@@ -274,6 +294,32 @@
                         userPermExec(table.ajax.json());
                     });
                 }
+            },
+            {
+                text: 'Sync',
+                action: function (e, dt, node, config) {
+                    $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info")
+
+                    var dates = $('#DateFilter').val().split(' - ');
+                    var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
+                    var to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
+
+                    $.ajax({
+                        async: true,
+                        url: rootURL + "SyncEventOccurrences?from=" + from + "&to=" + to + "&business_id=null&type=9&all=false",
+                        cache: false
+                    }).done(function (data) {
+
+                        $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger")
+
+                        table.ajax.reload();
+                    }).fail(function (msg) {
+                        $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
+
+                        table.ajax.reload();
+                    });
+                },
+                className: 'btn-danger'
             }
         ],
     });
@@ -317,13 +363,13 @@
                     var txt = $("#StaffFilter option:selected").text();
                     if (txt === 'All') {
                         table
-                            .columns(3)
+                            .columns(4)
                             .search('')
                             .draw();
                     }
                     else {
                         table
-                            .columns(3)
+                            .columns(4)
                             .search(txt)
                             .draw();
                     }
@@ -418,7 +464,7 @@
                 })
                     .done(function (msg) {
 
-                        $.NotificationApp.send("Status", "Updated", "bottom-right", "rgba(0,0,0,0.2)", "success");                        
+                        $.NotificationApp.send("Status", "Updated", "bottom-right", "rgba(0,0,0,0.2)", "success");
                         $(dom).siblings().removeClass('disabled');
                         //$(dom).addClass('selected')
                     }).fail(function (jqXHR, textStatus, errorThrown) {

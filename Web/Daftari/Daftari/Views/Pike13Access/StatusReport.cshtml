@@ -17,9 +17,9 @@
             background: rgb(255, 216, 216) !IMPORTANT;
         }
 
-            .NotOpen.selected {
-                background: rgb(255, 181, 181) !IMPORTANT;
-            }
+        .NotOpen.selected {
+            background: rgb(255, 181, 181) !IMPORTANT;
+        }
 
         .btn-info {
             padding: 0.0rem 0.4rem !important;
@@ -100,12 +100,12 @@
 
             progressNotifier.client.updateProgress = function (operation, progress) {
                 $("#progress").html(operation + " " + progress);
-                console.log(operation + " " + progress);
-                console.log(" might have not sent prop ");
+                //console.log(operation + " " + progress);
+                //console.log(" might have not sent prop ");
             };
 
             $.connection.hub.start().done(function () {
-                console.log("Hub is started.");
+                //console.log("Hub is started.");
             });
         });
 
@@ -137,24 +137,9 @@
         //"processing": true,
         stateSave: true,
         "columns": [
-            //{
-            //    "data": "start_at", render: function (data, type, row) {
-            //        return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('YYYY-MM-DD');
-            //        //return moment(data).format('YYYY-MM-DD');
-            //    },
-            //    orderData: [0, 1]
-            //},
-            //{
-            //    "data": "start_at", render: function (data, type, row) {
-            //        return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('h:mm:ss a');
-            //        //return moment(data).format('h:mm:ss a');
-            //    },
-            //    orderData: [1, 0]
-            //},
-            //{ "data": "person" },
             {
                 "data": null, render: function (data, type, row, meta) {
-                    var msg = '<img class="img-circle"  src="' + row.photoMD + '" />' + (row.person) + '<br />';
+                    var msg = '<img class="img-circle"  src="' + row.photoMD + '" /><a target="_blank" href="https://@(ViewBag.Subdomain).pike13.com/people/' + row.person_id + '">' + (row.person) + '</a><br />';
 
                     return msg;
                 }
@@ -163,9 +148,7 @@
             //{ "data": "status" },
             {
                 "data": "start_at", render: function (data, type, row) {
-                    return '<div style="color:' + (row.unpaid ? 'orange' : 'inherit') + ';">' + row.status + '</div>'
-                    //return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('YYYY-MM-DD');
-                    //return moment(data).format('YYYY-MM-DD');
+                    return '<div style="color:' + (row.unpaid ? 'orange' : 'inherit') + ';">' + row.status + '</div>';
                 }
             },
         ],

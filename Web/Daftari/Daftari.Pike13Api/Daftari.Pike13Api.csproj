@@ -58,6 +58,7 @@
     <Compile Include="Models\Pike13Note.cs" />
     <Compile Include="Models\Pike13Person.cs" />
     <Compile Include="Models\Pike13ProfilePhoto.cs" />
+    <Compile Include="Models\Pike13Reporting.cs" />
     <Compile Include="Models\Pike13StaffMember.cs" />
     <Compile Include="Models\Pike13Visit.cs" />
     <Compile Include="Models\Setting.cs" />

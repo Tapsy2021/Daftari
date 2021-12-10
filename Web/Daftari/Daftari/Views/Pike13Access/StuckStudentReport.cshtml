@@ -338,12 +338,12 @@
 
             progressNotifier.client.updateProgress = function (operation, progress) {
                 $("#progress").html(operation + " " + progress);
-                console.log(operation + " " + progress);
-                console.log(" might have not sent prop ");
+                //console.log(operation + " " + progress);
+                //console.log(" might have not sent prop ");
             };
 
             $.connection.hub.start().done(function () {
-                console.log("Hub is started.");
+                //console.log("Hub is started.");
             });
         });
 
