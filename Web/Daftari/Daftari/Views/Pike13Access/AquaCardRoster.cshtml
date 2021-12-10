@@ -293,7 +293,7 @@
 
                     $.ajax({
                         async: true,
-                        url: rootURL + "SyncEventOccurrences?from=" + from + "&to=" + to + "&business_id=null&type=9&all=true",
+                        url: rootURL + "SyncEventOccurrences?from=" + from + "&to=" + to + "&business_id=null&type=9&all=false",
                         cache: false
                     }).done(function (data) {
 
@@ -455,22 +455,22 @@
 
                     if (msg.Status === 0) {
                         $.NotificationApp.send("Status", "Opening Card...", "bottom-right", "rgba(0,0,0,0.2)", "secondary");
-                        //window.location.href = cardURL;
+                        window.location.href = cardURL;
                         //window.open(cardURL, '_blank').focus();
-                        const a = document.createElement("a");
-                        a.setAttribute('href', cardURL);
-                        a.setAttribute('target', '_blank');
-                        a.click();
+                        //const a = document.createElement("a");
+                        //a.setAttribute('href', cardURL);
+                        //a.setAttribute('target', '_blank');
+                        //a.click();
 
                     } else if (msg.Status === 1) {
                         $.NotificationApp.send("Status", "No Existing Card Found. Creating New Now..", "bottom-right", "rgba(0,0,0,0.2)", "info");
-                        //window.location.href = cardURL;
+                        window.location.href = cardURL;
                         //window.open(cardURL, '_blank').focus();
 
-                        const a = document.createElement("a") ;
-                        a.setAttribute('href', cardURL);
-                        a.setAttribute('target', '_blank');
-                        a.click();
+                        //const a = document.createElement("a") ;
+                        //a.setAttribute('href', cardURL);
+                        //a.setAttribute('target', '_blank');
+                        //a.click();
 
                     } else {
                         $.NotificationApp.send("Status", msg.StatusMsg, "bottom-right", "rgba(0,0,0,0.2)", "warning");

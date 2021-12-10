@@ -445,7 +445,8 @@ namespace Daftari.Controllers
                                     person = customer != null ? $"{customer.FirstName} {customer.LastName}" : "Not Synced",
                                     name = visit.EventOccurrance.Name,
                                     photoMD = customer?.PhotoMD,
-                                    status = status
+                                    status = status,
+                                    unpaid = (status == "unpaid" && visit.State == "registered" && (visit.Unpaid ?? false))
                                 }).ToList();
 
             return Json(new
@@ -941,129 +942,128 @@ namespace Daftari.Controllers
 
                 await db.SaveChangesAsync();
                 count = 0;
-                if (All) 
+  
+                hub.Clients.All.updateProgress("Verifying Sync ...", "");
+                // For all existing events
+                foreach (var event_occurrence in modified_event_occurrences)
                 {
-                    hub.Clients.All.updateProgress("Verifying Sync ...", "");
-                    // For all existing events
-                    foreach (var event_occurrence in modified_event_occurrences)
+                    try
                     {
-                        try
+                        // Get all the ID's of people and compare to visit IDs
+                        var people = string.Join(",", event_occurrence.Visits.Select(x => x.PersonID).OrderBy(x => x));
+                        if (event_occurrence.people != people || All)
                         {
-                            // Get all the ID's of people and compare to visit IDs
-                            var people = string.Join(",", event_occurrence.Visits.Select(x => x.PersonID).OrderBy(x => x));
-                            if (event_occurrence.people != people)
+                            // If they don't match, get all the visits and compare with existing
+                            var visits = await new Pike13ApiRepo(business_id).GetVisitsAsync(event_occurrence.EventOccurrenceID);
+                            var can_save = false;
+                            foreach (var pike_visit in visits)
                             {
-                                // If they don't match, get all the visits and compare with existing
-                                var visits = await new Pike13ApiRepo(business_id).GetVisitsAsync(event_occurrence.EventOccurrenceID);
-                                var can_save = false;
-                                foreach (var pike_visit in visits)
+                                var visit = event_occurrence.Visits.FirstOrDefault(x => x.VisitID == pike_visit.id);
+                                if (visit == null)
                                 {
-                                    var visit = event_occurrence.Visits.FirstOrDefault(x => x.VisitID == pike_visit.id);
-                                    if (visit == null)
+                                    event_occurrence.Visits.Add(new Visit
                                     {
-                                        event_occurrence.Visits.Add(new Visit
-                                        {
-                                            CancelledAt = pike_visit.cancelled_at,
-                                            CompletedAt = pike_visit.completed_at,
-                                            EventOccurrenceID = pike_visit.event_occurrence_id,
-                                            VisitID = pike_visit.id,
-                                            NoshowAt = pike_visit.noshow_at,
-                                            OnlyStaffCanCancel = pike_visit.only_staff_can_cancel,
-                                            Paid = pike_visit.paid,
-                                            PaidForBy = pike_visit.paid_for_by,
-                                            PersonID = pike_visit.person_id,
-                                            PunchID = pike_visit.punch_id,
-                                            RegisteredAt = pike_visit.registered_at,
-                                            State = pike_visit.state,
-                                            Status = pike_visit.status,
-                                            UpdatedAt = pike_visit.updated_at,
-                                            CreatedAt = pike_visit.created_at,
-                                            IsDeleted = false,
-                                            Unpaid = pike_visit.status == VisitStatus.Unpaid.GetDisplay()
-                                        });
-                                        can_save = true;
-                                    }
-                                    else
-                                    {
-                                        if (visit.LastModified < pike_visit.LastModified)
-                                        {
-                                            visit.CancelledAt = pike_visit.cancelled_at;
-                                            visit.CompletedAt = pike_visit.completed_at;
-                                            visit.EventOccurrenceID = pike_visit.event_occurrence_id;
-                                            visit.VisitID = pike_visit.id;
-                                            visit.NoshowAt = pike_visit.noshow_at;
-                                            visit.OnlyStaffCanCancel = pike_visit.only_staff_can_cancel;
-                                            visit.Paid = pike_visit.paid;
-                                            visit.PaidForBy = pike_visit.paid_for_by;
-                                            visit.PersonID = pike_visit.person_id;
-                                            visit.PunchID = pike_visit.punch_id;
-                                            visit.RegisteredAt = pike_visit.registered_at;
-                                            visit.State = pike_visit.state;
-                                            visit.Status = pike_visit.status;
-                                            visit.UpdatedAt = pike_visit.updated_at;
-                                            visit.CreatedAt = pike_visit.created_at;
-                                            visit.AuditDetail.LastModifiedDate = DateTime.Now;
-                                            if (pike_visit.status == VisitStatus.Unpaid.GetDisplay())
-                                            {
-                                                visit.Unpaid = true;
-                                            }
-                                            else if (pike_visit.state != VisitState.Completed.GetDisplay())
-                                            {
-                                                visit.Unpaid = false;
-                                            }
-                                            db.Entry(visit).State = EntityState.Modified;
-                                            //can_save = true;          
-                                            //db.Visits.Remove(visit);                                        
-                                        }
-                                    }
-                                }
-                                // To delete
-                                var to_delete = event_occurrence.Visits.Where(vx => !visits.Any(vn => vn.id == vx.VisitID)).ToList();
-                                to_delete.ForEach(obj =>
-                                {
-                                    event_occurrence.Visits.Remove(obj);
+                                        CancelledAt = pike_visit.cancelled_at,
+                                        CompletedAt = pike_visit.completed_at,
+                                        EventOccurrenceID = pike_visit.event_occurrence_id,
+                                        VisitID = pike_visit.id,
+                                        NoshowAt = pike_visit.noshow_at,
+                                        OnlyStaffCanCancel = pike_visit.only_staff_can_cancel,
+                                        Paid = pike_visit.paid,
+                                        PaidForBy = pike_visit.paid_for_by,
+                                        PersonID = pike_visit.person_id,
+                                        PunchID = pike_visit.punch_id,
+                                        RegisteredAt = pike_visit.registered_at,
+                                        State = pike_visit.state,
+                                        Status = pike_visit.status,
+                                        UpdatedAt = pike_visit.updated_at,
+                                        CreatedAt = pike_visit.created_at,
+                                        IsDeleted = false,
+                                        Unpaid = pike_visit.status == VisitStatus.Unpaid.GetDisplay()
+                                    });
                                     can_save = true;
-                                });
-
-                                if (can_save)
-                                {
-                                    db.Entry(event_occurrence).State = EntityState.Modified;
                                 }
-                            }  
-                            if (db.ChangeTracker.HasChanges())
-                            {
-                                await db.SaveChangesAsync();
+                                else
+                                {
+                                    if (visit.LastModified < pike_visit.LastModified || All)
+                                    {
+                                        visit.CancelledAt = pike_visit.cancelled_at;
+                                        visit.CompletedAt = pike_visit.completed_at;
+                                        visit.EventOccurrenceID = pike_visit.event_occurrence_id;
+                                        visit.VisitID = pike_visit.id;
+                                        visit.NoshowAt = pike_visit.noshow_at;
+                                        visit.OnlyStaffCanCancel = pike_visit.only_staff_can_cancel;
+                                        visit.Paid = pike_visit.paid;
+                                        visit.PaidForBy = pike_visit.paid_for_by;
+                                        visit.PersonID = pike_visit.person_id;
+                                        visit.PunchID = pike_visit.punch_id;
+                                        visit.RegisteredAt = pike_visit.registered_at;
+                                        visit.State = pike_visit.state;
+                                        visit.Status = pike_visit.status;
+                                        visit.UpdatedAt = pike_visit.updated_at;
+                                        visit.CreatedAt = pike_visit.created_at;
+                                        visit.AuditDetail.LastModifiedDate = DateTime.Now;
+                                        if (pike_visit.status == VisitStatus.Unpaid.GetDisplay())
+                                        {
+                                            visit.Unpaid = true;
+                                        }
+                                        else if (pike_visit.state != VisitState.Completed.GetDisplay())
+                                        {
+                                            visit.Unpaid = false;
+                                        }
+                                        db.Entry(visit).State = EntityState.Modified;
+                                        //can_save = true;          
+                                        //db.Visits.Remove(visit);                                        
+                                    }
+                                }
                             }
-                        }
-                        catch (Exception ex)
+                            // To delete
+                            var to_delete = event_occurrence.Visits.Where(vx => !visits.Any(vn => vn.id == vx.VisitID)).ToList();
+                            to_delete.ForEach(obj =>
+                            {
+                                event_occurrence.Visits.Remove(obj);
+                                can_save = true;
+                            });
+
+                            if (can_save)
+                            {
+                                db.Entry(event_occurrence).State = EntityState.Modified;
+                            }
+                        }  
+                        if (db.ChangeTracker.HasChanges())
                         {
-                            using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(ex, this.HttpContext))
-                            {
-                                bh.Log_Error();
-                            }
+                            await db.SaveChangesAsync();
                         }
-
-                        count++;
-                        hub.Clients.All.updateProgress("Verifying Sync ...", count + "/" + data.Count);
                     }
-
-                    hub.Clients.All.updateProgress("Removing unsed events ...", "");
-                    await db.SaveChangesAsync();
-                    //remove additionals
-                    var eventOccurrances = await db.EventOccurrances
-                                        .Where(x => x.StartAt < to && x.EndAt >= from)
-                                        .Where(x => x.State != "deleted" && x.State != "disabled")
-                                        .Where(x => x.SubDomain == subdomain)
-                                        .ToListAsync();
-
-                    eventOccurrances = eventOccurrances.Where(exists_ev => !modified_event_occurrences.Any(new_ev => new_ev.EventOccurrenceID == exists_ev.EventOccurrenceID)).ToList();
-                    foreach (var event_occurrence in eventOccurrances)
+                    catch (Exception ex)
                     {
-                        event_occurrence.State = "disabled";
-                        db.Entry(event_occurrence).State = EntityState.Modified;
+                        using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(ex, this.HttpContext))
+                        {
+                            bh.Log_Error();
+                        }
                     }
-                    await db.SaveChangesAsync();
+
+                    count++;
+                    hub.Clients.All.updateProgress("Verifying Sync ...", count + "/" + data.Count);
                 }
+
+                hub.Clients.All.updateProgress("Removing unsed events ...", "");
+                await db.SaveChangesAsync();
+                //remove additionals
+                var eventOccurrances = await db.EventOccurrances
+                                    .Where(x => x.StartAt < to && x.EndAt >= from)
+                                    .Where(x => x.State != "deleted" && x.State != "disabled")
+                                    .Where(x => x.SubDomain == subdomain)
+                                    .ToListAsync();
+
+                eventOccurrances = eventOccurrances.Where(exists_ev => !modified_event_occurrences.Any(new_ev => new_ev.EventOccurrenceID == exists_ev.EventOccurrenceID)).ToList();
+                foreach (var event_occurrence in eventOccurrances)
+                {
+                    event_occurrence.State = "disabled";
+                    db.Entry(event_occurrence).State = EntityState.Modified;
+                }
+                await db.SaveChangesAsync();
+                
                 hub.Clients.All.updateProgress("Done ...", "");
                 return await db.SaveChangesAsync();
             }
@@ -1077,34 +1077,42 @@ namespace Daftari.Controllers
             using (Pike13ApiContext db = new Pike13ApiContext())
             {
                 //reset will not update locally because of 
-                hub.Clients.All.updateProgress("Sync in progress ...", "");
-                // For all existing events
-                foreach (var event_occurrence in data.Where(x => x.id == 135993725))
-                //foreach (var event_occurrence in data)
+                hub.Clients.All.updateProgress("Confirming classes ...", "");
+                // For all existing events                
+                var modified_visits = new List<Pike13Visit>();
+                //foreach (var event_occurrence in data.Where(x => x.id == 163228543))
+                foreach (var event_occurrence in data.OrderBy(x => x.id))
                 {
+                    count++;
+                    hub.Clients.All.updateProgress("Confirming classes ...", count + "/" + data.Count);
                     try
                     {
+                        //THIS SHOULD START BY CONFIRMING ALL FIRST, THEN REVERTING AFTERWARDS
+                        // IN SYNC EVENTS, THERE SHOULD FULL SYNC BUTTON
                         // If they don't match, get all the visits and compare with existing
                         var visits = await new Pike13ApiRepo(business_id).GetVisitsAsync(event_occurrence.id);
-
+                        var visit_count = 0;
                         foreach (var visit in visits)
                         {
+                            visit_count++;
+                            hub.Clients.All.updateProgress("Confirming classes ...", $"{visit_count}/{visits.Count} in {count}/{data.Count}");
                             if (visit.state == VisitState.Registered.GetDisplay() && (visit.status == VisitStatus.Enrolled.GetDisplay() || visit.status == VisitStatus.Incomplete.GetDisplay()))
                             {
                                 var new_visit = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "complete");
 
-                                Thread.Sleep(60);
+                                //Thread.Sleep(60);
                                 if ((new_visit?.Any() ?? false) && new_visit[0].state != visit.state)
                                 {
+                                    modified_visits.Add(new_visit[0]);
                                     using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {new_visit[0].id}; State => {new_visit[0].state}; Status => {new_visit[0].status}"), this.HttpContext))
                                     {
                                         bh.Log_Error();
-                                    }
-                                    var me = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "reset");
-                                    using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {me[0].id}; State => {me[0].state}; Status => {me[0].status}"), this.HttpContext))
-                                    {
-                                        bh.Log_Error();
-                                    }
+                                    }                                    
+                                    //var me = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "reset");
+                                    //using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {me[0].id}; State => {me[0].state}; Status => {me[0].status}"), this.HttpContext))
+                                    //{
+                                    //    bh.Log_Error();
+                                    //}
                                 }
                             }
                         }
@@ -1116,10 +1124,71 @@ namespace Daftari.Controllers
                             bh.Log_Error();
                         }
                     }
-
-                    count++;
                 }
 
+                hub.Clients.All.updateProgress("Reverting classes ...", "");
+                count = 0;
+                var modified_data = modified_visits.GroupBy(x => x.event_occurrence_id).OrderBy(x => x.Key).ToList();
+                foreach (var event_occurrence in modified_data)
+                {
+                    count++;
+                    hub.Clients.All.updateProgress("Reverting classes ...", count + "/" + modified_data.Count);
+                    try
+                    {
+                        //THIS SHOULD START BY CONFIRMING ALL FIRST, THEN REVERTING AFTERWARDS
+                        // IN SYNC EVENTS, THERE SHOULD FULL SYNC BUTTON
+                        // If they don't match, get all the visits and compare with existing
+                        var visits = await new Pike13ApiRepo(business_id).GetVisitsAsync(event_occurrence.Key.Value);
+                        var visit_count = 0;
+                        foreach (var visit in visits)
+                        {
+                            visit_count++;
+                            hub.Clients.All.updateProgress("Reverting classes ...", $"{visit_count}/{visits.Count} in {count}/{modified_data.Count}");
+
+                            var new_visit = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "reset");
+
+                            if (!(new_visit?.Any() ?? false) || new_visit[0].state == visit.state)
+                            {
+                                using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"failed run => {new_visit[0].id}; State => {new_visit[0].state}; Status => {new_visit[0].status}"), this.HttpContext))
+                                {
+                                    bh.Log_Error();
+                                }
+                            }
+                            using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {new_visit[0].id}; State => {new_visit[0].state}; Status => {new_visit[0].status}"), this.HttpContext))
+                            {
+                                bh.Log_Error();
+                            }
+                            //if (visit.state == VisitState.Registered.GetDisplay() && (visit.status == VisitStatus.Enrolled.GetDisplay() || visit.status == VisitStatus.Incomplete.GetDisplay()))
+                            //{
+                            //    var new_visit = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "complete");
+
+                            //    //Thread.Sleep(60);
+                            //    if ((new_visit?.Any() ?? false) && new_visit[0].state != visit.state)
+                            //    {
+                            //        modified_visits.Add(new_visit[0]);
+                            //        using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {new_visit[0].id}; State => {new_visit[0].state}; Status => {new_visit[0].status}"), this.HttpContext))
+                            //        {
+                            //            bh.Log_Error();
+                            //        }
+                            //        //var me = await new Pike13ApiRepo(business_id).PutVisitAsync(visit.id, "reset");
+                            //        //using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"successfully run => {me[0].id}; State => {me[0].state}; Status => {me[0].status}"), this.HttpContext))
+                            //        //{
+                            //        //    bh.Log_Error();
+                            //        //}
+                            //    }
+                            //}
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(ex, this.HttpContext))
+                        {
+                            bh.Log_Error();
+                        }
+                    }
+                }
+
+                hub.Clients.All.updateProgress("Done ...", "");
                 return await db.SaveChangesAsync();
             }
         }
