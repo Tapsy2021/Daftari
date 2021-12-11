@@ -321,7 +321,7 @@
             $.NotificationApp.send("Status", "Requesting Delete", "bottom-right", "rgba(0,0,0,0.2)", "info");
             $.ajax({
                 async: true,
-                url: rootURL + "DeleteVisit/" + _id + '999999',
+                url: rootURL + "DeleteVisit/" + _id,
                 cache: false
             }).done(function (data) {
 
