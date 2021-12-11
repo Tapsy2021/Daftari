@@ -40,6 +40,7 @@ namespace Daftari.Pike13Api.Services
         public string OverrideEndpoint { get; set; }
         protected bool IsPagingQuery { get; set; }
         protected int CurrentPage { get; set; }
+        public bool IsBearerRequired { get; set; }
 
         public Pike13CoreAPI(Pike13ApiAuth auth)
 
@@ -113,8 +114,7 @@ namespace Daftari.Pike13Api.Services
         protected static int DivideRoundingUp(int x, int y)
         {
             // TODO: Define behaviour for negative numbers
-            int remainder;
-            int quotient = Math.DivRem(x, y, out remainder);
+            int quotient = Math.DivRem(x, y, out int remainder);
             return remainder == 0 ? quotient : quotient + 1;
         }
         //////////////////////////////////////////////////////////////////////////////
@@ -126,6 +126,12 @@ namespace Daftari.Pike13Api.Services
             {
                 ContractResolver = new ResponseContractResolver(OverrideEndpoint ?? EndPoint)
             };
+
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return new List<T>();
+            }
+
             var jResponse = JsonConvert.DeserializeObject<FhqCoreApIResponse<T>>(await response.Content.ReadAsStringAsync(), settings);
             return jResponse.Data;
         }
@@ -153,13 +159,6 @@ namespace Daftari.Pike13Api.Services
                 request.Content.Headers.ContentType.MediaType = "application/json";
                 request.Content.Headers.ContentType.CharSet = "UTF-8";
             }
-            //var request = new HttpRequestMessage(httpMethod, BodyBuilder())
-            //{
-            //    Content = _content
-            //};
-            // might only be required for post/put
-            //request.Content.Headers.ContentType.MediaType = "application/json";
-            //request.Content.Headers.ContentType.CharSet = "UTF-8";
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
@@ -186,6 +185,11 @@ namespace Daftari.Pike13Api.Services
             };
             var json = JsonConvert.SerializeObject(Request, settings);
             _content = new StringContent(json, Encoding.UTF8, "application/vnd.api+json");
+
+            if (IsBearerRequired)
+            {
+                _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _auth.AccessToken);
+            }
 
             return URL.Uri;
         }

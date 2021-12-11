@@ -12,10 +12,10 @@ namespace Daftari.ViewModel
         [Display(Name = "Number of students")]
         public List<int> Total_Stundents { get; set; }
 
-        [Display(Name = "Number of students Cancelled")]
+        [Display(Name = "Students Cancelled")]
         public List<int> Total_Cancelled_Stundents { get; set; }
 
-        [Display(Name = "Number of No Show students")]
+        [Display(Name = "No Show students")]
         public List<int> Total_No_Show_Stundents { get; set; }
 
         [Display(Name = "Total Number of classes")]
@@ -28,6 +28,8 @@ namespace Daftari.ViewModel
         public List<int> Unpaid_Students { get; set; }
         public List<int> Paid_By_Makeup { get; set; }
         public string Title { get; set; }
+        [Display(Name = "Total First Visits")]
+        public List<int> Total_First_Visits { get; set; }
 
 
         public int Students_Count { get; set; }
@@ -37,6 +39,7 @@ namespace Daftari.ViewModel
         public int Capacity_Count { get; set; }
         public int Unpaid_Count { get; set; }
         public int Paid_By_Makeup_Count { get; set; }
+        public int First_Visits_Count { get; set; }
     }
 
     public class StatusReportVM

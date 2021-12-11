@@ -464,7 +464,8 @@ namespace Daftari.Controllers
                                     photoMD = customer?.PhotoMD,
                                     status = status,
                                     unpaid = (status == "unpaid" && visit.State == "registered" && (visit.Unpaid ?? false)),
-                                    person_id = visit.PersonID
+                                    person_id = visit.PersonID,
+                                    id = visit.VisitID
                                 }).ToList();
 
             return Json(new
@@ -537,8 +538,8 @@ namespace Daftari.Controllers
                                     completed_visits = history?.completed_visits,
                                     first_visit_date = history?.first_visit_date,
                                     future_visits = history?.future_visits,
-                                    last_visit_date = history?.last_visit_date,
-                                    last_visit_service = history?.last_visit_service,
+                                    last_visit_date = history?.last_visit_date ?? "",
+                                    last_visit_service = history?.last_visit_service ?? "",
                                     person_id = history?.person_id,
                                     unpaid_visits = history?.unpaid_visits
                                 }).ToList();
@@ -576,17 +577,96 @@ namespace Daftari.Controllers
             using (Chemicals.DAL.ChemicalsEntities db = new Chemicals.DAL.ChemicalsEntities())
             {
                 cs = await db.ChemicalSettings.Where(q => q.SubDomain == sd).FirstOrDefaultAsync();
-            }            
+            }
+
+            var all_customers = visits.Select(x => x.PersonID).Distinct().ToList();
+            var person_history = new List<pike13_client_reporting>();
+            if (all_customers.Any())
+            {
+                try
+                {
+                    var data = await new Pike13ApiRepo(User.Identity.Name).GetClientHistoryAsync(all_customers);
+
+                    var fields = data.fields.Select(x => x.name).ToList();
+                    //        "completed_visits",
+                    //        "first_visit_date",
+                    //        "future_visits",
+                    //        "last_visit_date",
+                    //        "last_visit_service",
+                    //        "person_id",
+                    //        "unpaid_visits",
+                    person_history = data.rows.Select(row => new pike13_client_reporting
+                    {
+                        first_visit_date = row[fields.IndexOf("first_visit_date")],
+                        person_id = row[fields.IndexOf("person_id")]
+                    }).ToList();
+                }
+                catch { }
+            }
+
+            var first_visit_data = new List<Tuple<long, DateTime>>();
+
+            person_history.ForEach(obj =>
+            {
+                try
+                {
+                    var valid = long.TryParse(obj.person_id, out long person_id);
+                    if (valid)
+                    {
+                        var date = DateTime.MinValue;
+
+                        if (obj.first_visit_date != null)
+                        {
+                            var valid_date = DateTime.TryParse(obj.first_visit_date, out date);
+                            if (valid_date)
+                            {
+                                first_visit_data.Add(Tuple.Create(person_id, date));
+                            }
+                        }
+                        else
+                        {
+                            date = visits.Where(x => x.PersonID == person_id).Min(x => x.EventOccurrance.StartAt.Value.Date);
+                            first_visit_data.Add(Tuple.Create(person_id, date));
+                        }
+                    }
+                }
+                catch
+                {
+                    using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"Get first visits id => {obj.person_id}; date => {obj.first_visit_date} Failed"), this.HttpContext))
+                    {
+                        bh.Log_Error();
+                    }
+                }
+            });
+
+            //var first_visit_data = (from x in person_history
+            //                        let fvd = x.first_visit_date == "null" ? ""
+            //                        select new 
+            //                        {
+
+            //                        }).ToList();
+
+            //var first_vissit_data = person_history.Select(x => new
+            //{
+            //    person_id = x.person_id,
+            //    first_visit_date = x.first_visit_date == "null" || DateTime.Parse(x.first_visit_date)
+            //}).ToList();
 
             var dates_range = _from.To(_to).ToList();
             var grouped_visits = (from date in dates_range
                                   join v in visits on date equals v.EventOccurrance.StartAt.Value.Date into _v
                                   from v in _v.DefaultIfEmpty()
-                                  group new { date, v } by date into i
+                                  join hist in first_visit_data on date equals hist.Item2 into _hist
+                                  from hist in _hist.DefaultIfEmpty()
+                                  //join hist in person_history on new {}
+                                  //join hist in person_history on v.PersonID?.ToString() equals hist.person_id into _hist
+                                  //from hist in _hist.DefaultIfEmpty()
+                                  group new { date, v, hist } by date into i
                                   select new
                                   {
                                       Date = i.Key,
-                                      Data = i.Where(x => x.v != null).Select(x => x.v).ToList()
+                                      Data = i.Where(x => x.v != null).Select(x => x.v).ToList(),
+                                      First_Visits = i.Where(x => x.hist != null).Select(x => x.hist).ToList()
                                   }).ToList();
 
             var model = new StatusDashboardVM
@@ -599,13 +679,12 @@ namespace Daftari.Controllers
                 Total_No_Show_Stundents = grouped_visits.Select(visit => visit.Data.Where(x => x.Status == "noshow").Select(x => x.PersonID).Distinct().Count()).ToList(),
                 Total_Classes = grouped_visits.Select(visit => visit.Data.Select(x => x.EventOccurrenceID).Distinct().Count()).ToList(),
                 Unpaid_Students = grouped_visits.Select(visit => visit.Data.Where(x => (x.Unpaid ?? false) || x.Status == "unpaid").Select(x => x.PersonID).Distinct().Count()).ToList(),
-                Paid_By_Makeup = grouped_visits.Select(visit => visit.Data.Where(x => x.Paid == true && (x.PaidForBy?.Contains("") ?? false)).Select(x => x.PersonID).Distinct().Count()).ToList()
+                Paid_By_Makeup = grouped_visits.Select(visit => visit.Data.Where(x => x.Paid == true && (x.PaidForBy?.Contains("") ?? false)).Select(x => x.PersonID).Distinct().Count()).ToList(),
+                Total_First_Visits = grouped_visits.Select(visit => visit.First_Visits.Select(x => x.Item1).Distinct().Count()).ToList()
             };
 
             var start = dates_range.IndexOf(from.Date);
             var end = dates_range.IndexOf(to.Date);
-
-            //var me = model.Total_Stundents.Skip(start).Take(end - start + 1).ToList();
 
             model.Students_Count = model.Total_Stundents.Skip(start).Take(end - start + 1).Sum();
             model.Capacity_Count = model.Total_Capacity.Skip(start).Take(end - start + 1).Sum();
@@ -614,14 +693,7 @@ namespace Daftari.Controllers
             model.Classes_Count = model.Total_Classes.Skip(start).Take(end - start + 1).Sum();
             model.Unpaid_Count = model.Unpaid_Students.Skip(start).Take(end - start + 1).Sum();
             model.Paid_By_Makeup_Count = model.Paid_By_Makeup.Skip(start).Take(end - start + 1).Sum();
-
-            //model.Students_Count = model.Total_Stundents.Sum();
-            //model.Capacity_Count = model.Total_Capacity.Sum();
-            //model.Cancelled_Count = model.Total_Cancelled_Stundents.Sum();
-            //model.No_Show_Count = model.Total_No_Show_Stundents.Sum();
-            //model.Classes_Count = model.Total_Classes.Sum();
-            //model.Unpaid_Count = model.Unpaid_Students.Sum();
-            //model.Paid_By_Makeup_Count = model.Paid_By_Makeup.Sum();
+            model.First_Visits_Count = model.Total_First_Visits.Skip(start).Take(end - start + 1).Sum();
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -1218,6 +1290,49 @@ namespace Daftari.Controllers
             }
         }
 
+        public async Task<ActionResult> DeleteVisit(long id)
+        {
 
+            try
+            {
+                await new Pike13ApiRepo(User.Identity.Name).DeleteVisits(id);
+                //remove it if existing
+                await RemoveVisit(id);
+            }
+            catch (System.Net.Http.HttpRequestException ex)
+            {
+                if (ex.Message.Contains("404")) // not found
+                {
+                    await RemoveVisit(id);
+                    // Record is already deleted
+                }
+                using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(ex, this.HttpContext))
+                {
+                    bh.Log_Error();
+                }
+            }
+            catch (Exception ex)
+            {
+                using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(ex, this.HttpContext))
+                {
+                    bh.Log_Error();
+                }
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.NoContent);
+            }
+
+            return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
+        }
+    
+        private async Task<int> RemoveVisit(long id)
+        {
+            using (Pike13ApiContext db = new Pike13ApiContext())
+            {
+                var visit = await db.Visits.FindAsync(id);
+                if (visit != null)
+                    db.Visits.Remove(visit);
+
+                return await db.SaveChangesAsync();
+            }
+        }
     }
 }

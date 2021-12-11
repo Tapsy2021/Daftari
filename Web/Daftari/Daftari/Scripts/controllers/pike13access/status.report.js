@@ -27,6 +27,7 @@
             $("#no-show-students").html(data.No_Show_Count);
             $("#total-classes").html(data.Classes_Count);
             $("#unpaid-students").html(data.Unpaid_Count);
+            $("#total-first-visits").html(data.First_Visits_Count);
 
             window.Apex = {
                 chart: {

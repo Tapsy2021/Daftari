@@ -348,6 +348,18 @@ namespace Daftari.Pike13Api.Services
             }
         }
 
+        public async Task<List<string>> DeleteVisits(long id)
+        {
+            using (var api = new Pike13CoreAPI<string>(_auth))
+            {
+                api.EndPoint = $"visits/{id}?notify_client=false";
+                api.OverrideEndpoint = "visits";
+                api.IsBearerRequired = true;
+
+                return await api.DeleteAsync();
+            }
+        }
+
         public async Task<Pike13Report> GetInvoiceItemTransactionsAsync(DateTime StartTime, DateTime EndTime)
         {
             using (var api = new Pike13JsonApi(_auth))

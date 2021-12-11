@@ -17,9 +17,9 @@
             background: rgb(255, 216, 216) !IMPORTANT;
         }
 
-        .NotOpen.selected {
-            background: rgb(255, 181, 181) !IMPORTANT;
-        }
+            .NotOpen.selected {
+                background: rgb(255, 181, 181) !IMPORTANT;
+            }
 
         .btn-info {
             padding: 0.0rem 0.4rem !important;
@@ -38,6 +38,7 @@
             padding-top: 6px;
             cursor: pointer;
         }
+
         #progress {
             float: right;
         }
@@ -46,6 +47,31 @@
 @{
     ViewBag.Title = "Status Report";
 }
+
+@*<button type="button" class="btn btn-info" data-toggle="modal" data-target="#confirmDelete">
+    Static Backdrop
+</button>*@
+
+<!-- Modal -->
+<div class="modal fade" id="confirmDelete" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-danger">
+                <h5 class="modal-title" id="confirmDeleteLabel">Delete Visit</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div> <!-- end modal header -->
+            <div class="modal-body">
+                <p class="m-0">This will destory the visit in pike13.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Ok</button>
+            </div> <!-- end modal footer -->
+        </div> <!-- end modal content-->
+    </div> <!-- end modal dialog-->
+</div> <!-- end modal-->
 
 <div class="row">
     <div class="col-12">
@@ -74,6 +100,9 @@
                             </th>
                             <th>
                                 Status
+                            </th>
+                            <th>
+                                Action
                             </th>
                         </tr>
                     </thead>
@@ -151,6 +180,11 @@
                     return '<div style="color:' + (row.unpaid ? 'orange' : 'inherit') + ';">' + row.status + '</div>';
                 }
             },
+            {
+                "data": null, render: function (data, type, row, meta) {
+                    return '<a class="btn btn-danger btn-sm" onClick="onDelete(' + row.id + ')" data-toggle="tooltip" data-placement="bottom" title="Remove from Pike13" data-animation="true"><i class="dripicons-cross"></i></a>';
+                }
+            }
         ],
         rowCallback: function (row, data) {
             //if (data.isNotOpen) {
@@ -202,40 +236,6 @@
                     });
                 }
             }
-            //,
-            //{
-            //    text: 'Sync Unpaid',
-            //    action: function (e, dt, node, config) {
-
-            //        if ($("#StatusFilter option:selected").text() != "unpaid") {
-
-            //            $.NotificationApp.send("Status", "Please select unpaid status first", "top-right", "rgba(0,0,0,0.2)", "info");
-            //            return;
-            //        }
-
-            //        $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info");
-
-            //        var dates = $('#DateFilter').val().split(' - ');
-            //        var from = moment(dates[0]).format('YYYY-MM-DDTHH:mm:ss');
-            //        var to = moment(dates[1]).format('YYYY-MM-DDTHH:mm:ss');
-
-            //        $.ajax({
-            //            async: true,
-            //            url: rootURL + "SyncUnpaid?from=" + from + "&to=" + to + "&business_id=null",
-            //            cache: false
-            //        }).done(function (data) {
-
-            //            $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", (data.type === 0) ? "success" : (data.type === 1) ? "info" : "danger");
-
-            //            table.ajax.reload();
-            //        }).fail(function (msg) {
-            //            $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
-
-            //            table.ajax.reload();
-            //        });
-            //    },
-            //    className: 'btn-danger'
-            //}
         ],
     });
 
@@ -302,14 +302,37 @@
         function userPermExec(json) {
 
         }
-    </script>
-
-    <script type="text/javascript">
 
         // convert utc time to local time
         function convertUTCToLocal(utcDt, utcDtFormat) {
             var toDt = moment.utc(utcDt, utcDtFormat).toDate();
             return moment(toDt);
+        }
+
+        var _id;
+        function onDelete(id) {
+            _id = id;
+            $('#confirmDelete').modal('show');
+        }
+
+        function confirmDelete() {
+
+            $('#confirmDelete').modal('hide');
+            $.NotificationApp.send("Status", "Requesting Delete", "bottom-right", "rgba(0,0,0,0.2)", "info");
+            $.ajax({
+                async: true,
+                url: rootURL + "DeleteVisit/" + _id + '999999',
+                cache: false
+            }).done(function (data) {
+
+                $.NotificationApp.send("Status", data.msg, "bottom-right", "rgba(0,0,0,0.2)", "success");
+
+                table.ajax.reload();
+            }).fail(function (msg) {
+                $.NotificationApp.send("Status", 'Fail', "bottom-right", "rgba(0,0,0,0.2)", "danger");
+
+                table.ajax.reload();
+            });
         }
     </script>
 }
