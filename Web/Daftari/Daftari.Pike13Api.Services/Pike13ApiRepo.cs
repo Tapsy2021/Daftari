@@ -222,40 +222,86 @@ namespace Daftari.Pike13Api.Services
             }
         }
 
-        public async Task<Pike13Report> GetEnrollmentsAsync(DateTime Date)
+        //public async Task<Pike13Report> GetEnrollmentsAsync(DateTime Date)
+        //{
+        //    using (var api = new Pike13JsonApi(_auth))
+        //    {
+        //        api.EndPoint = "enrollments";
+        //        api.request.attributes.fields.AddRange(new List<string>
+        //        {
+        //            "person_id",
+        //            "full_name",
+        //            "service_id",
+        //            "service_category",
+        //            "service_name",
+        //            "start_at",
+        //            "end_at",
+        //            "instructor_names",
+        //        });
+
+        //        var StartTime = Date.Date.ToString("yyyy-MM-dd HH\\:mm\\:ss");
+        //        var EndTime = Date.Date.AddHours(24).AddSeconds(-1).ToString("yyyy-MM-dd HH\\:mm\\:ss");
+        //        api.request.attributes.filter = new List<object>()
+        //        {
+        //            "and",
+        //            new string[][] {
+        //                new string[] { "ne", "service_id", "141059" },
+        //                new string[] { "ne", "service_id", "141061" },
+        //                new string[] { "gt", "start_at", StartTime },
+        //                new string[] { "lt", "end_at", EndTime}
+        //            }
+        //        };
+
+        //        return await api.GetReportAsync();
+        //    }
+        //}
+
+        public async Task<Pike13Report> GetEnrollmentsAsync(List<long?> Ids, string service_name)
         {
-            using (var api = new Pike13JsonApi(_auth))
+            using (var api = new Pike13ReportingAPI<Pike13Report>(_auth))
             {
                 api.EndPoint = "enrollments";
                 api.request.attributes.fields.AddRange(new List<string>
                 {
-                    "person_id",
-                    "full_name",
-                    "service_id",
-                    "service_category",
-                    "service_name",
-                    "start_at",
-                    "end_at",
-                    "instructor_names",
+                    "visit_count",
+                    "service_count",
+                    //"person_id",
+                    //"full_name",
+                    //"service_id",
+                    ////"service_category",
+                    //"service_name",
+                    ////"start_at",
+                    ////"end_at",
+                    ////"instructor_names",
                 });
 
-                var StartTime = Date.Date.ToString("yyyy-MM-dd HH\\:mm\\:ss");
-                var EndTime = Date.Date.AddHours(24).AddSeconds(-1).ToString("yyyy-MM-dd HH\\:mm\\:ss");
                 api.request.attributes.filter = new List<object>()
                 {
-                    "and",
-                    new string[][] {
-                        new string[] { "ne", "service_id", "141059" },
-                        new string[] { "ne", "service_id", "141061" },
-                        new string[] { "gt", "start_at", StartTime },
-                        new string[] { "lt", "end_at", EndTime}
-                    }
+                    "or",
+                    Ids.Select(id => new string[] { "eq", "person_id", id.ToString() }).ToArray()
                 };
+
+                //.Concat(IEnumerable<string[]> { new string[] { "eq", "service_name", service_name } })
+
+                api.request.attributes.group = "service_name";
+
+                //var StartTime = Date.Date.ToString("yyyy-MM-dd HH\\:mm\\:ss");
+                //var EndTime = Date.Date.AddHours(24).AddSeconds(-1).ToString("yyyy-MM-dd HH\\:mm\\:ss");
+                //api.request.attributes.filter = new List<object>()
+                //{
+                //    "and",
+                //    new string[][] {
+                //        new string[] { "ne", "service_id", "141059" },
+                //        new string[] { "ne", "service_id", "141061" },
+                //        new string[] { "gt", "start_at", StartTime },
+                //        new string[] { "lt", "end_at", EndTime}
+                //    }
+                //};
 
                 return await api.GetReportAsync();
             }
         }
-        
+
         //////////////////////////////////////////// EVENT OCCURRENCE ///////////////////////////////////////////////////
         public async Task<List<Pike13Event>> GetEventOccurenceAsync(DateTime StartTime, DateTime EndTime, long? Staff_Mmember_Ids = null)
         {

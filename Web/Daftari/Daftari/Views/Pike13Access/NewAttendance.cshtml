@@ -213,7 +213,7 @@
                                     + templateBttn.format('info', visit.state == 'late_canceled' ? 'disabled' : '', 'late_cancel', 'late_cancel', 'mdi-calendar-remove')
                                     + templateBttn.format('danger', '', 'reset', 'reset', 'mdi-undo-variant');
 
-                                msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + visit.person.name + (visit.unpaid ? ' *' : '') + '<br />';
+                                msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + visit.person.name + (visit.unpaid ? ' $' : '') + '<br />';
                             }
                         }
 

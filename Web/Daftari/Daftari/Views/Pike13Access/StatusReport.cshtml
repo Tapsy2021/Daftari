@@ -102,6 +102,9 @@
                                 Status
                             </th>
                             <th>
+                                Session Date
+                            </th>
+                            <th>
                                 Action
                             </th>
                         </tr>
@@ -176,9 +179,15 @@
             { "data": "name" },
             //{ "data": "status" },
             {
-                "data": "start_at", render: function (data, type, row) {
+                "data": null, render: function (data, type, row) {
                     return '<div style="color:' + (row.unpaid ? 'orange' : 'inherit') + ';">' + row.status + '</div>';
                 }
+            },
+            {
+                "data": "date", render: function (data, type, row) {
+                    return convertUTCToLocal(data, "YYYY-MM-DD hh:mm:ss A").format('YYYY-MM-DD');
+                },
+                orderData: [0, 1]
             },
             {
                 "data": null, render: function (data, type, row, meta) {

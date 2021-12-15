@@ -1,5 +1,5 @@
 ﻿table.button().add(3, {
-    text: 'Sync All Customers',
+    text: 'Sync All',
     action: function (e, dt, node, config) {
         $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)", "info")
 
@@ -24,7 +24,7 @@
 });
 
 table.button().add(4, {
-    text: 'Sync New Customers From Last Updated',
+    text: 'Sync New',
     action: function (e, dt, node, config) {
         $.NotificationApp.send("Status", "Requesting Server Sync", "bottom-right", "rgba(0,0,0,0.2)",  "info")
 

@@ -52,7 +52,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Status Report</h5><label id="progress"></label>
+                <h5 class="card-title">Stuck Student Report</h5><label id="progress"></label>
 
                 <div class="mb-3">
                     @Html.LabelFor(model => model.DateFilter, htmlAttributes: new { @class = "form-label" })
@@ -129,14 +129,21 @@
         lengthChange: false,
         //"processing": true,
         stateSave: true,
-        "columns": [
+            "columns": [
             {
                 "data": null, render: function (data, type, row, meta) {
-                    var msg = '<img class="img-circle"  src="' + row.photoMD + '" />' + (row.person) + '<br />';
+                    var msg = '<img class="img-circle"  src="' + row.photoMD + '" /><a target="_blank" href="https://@(ViewBag.Subdomain).pike13.com/people/' + row.person_id + '">' + (row.person) + '</a><br />';
 
                     return msg;
                 }
             },
+            //{
+            //    "data": null, render: function (data, type, row, meta) {
+            //        var msg = '<img class="img-circle"  src="' + row.photoMD + '" />' + (row.person) + '<br />';
+
+            //        return msg;
+            //    }
+            //},
             { "data": "name" },
             { "data": "first_visit_date" },
             {
@@ -147,102 +154,7 @@
             },
             { "data": "completed_visits" },
             { "data": "future_visits" },
-            { "data": "unpaid_visits" },
-
-            //{
-            //    "data": null, render: function (data, type, row, meta) {
-            //        var msg = '';
-            //        if (row.staff_members.length > 0) {
-            //            for (var i = 0; i < row.staff_members.length; i++) {
-            //                if (msg === '') {
-            //                    msg = row.staff_members[i].name;
-            //                } else {
-            //                    msg += '<br/>' + row.staff_members[i].name;
-            //                }
-            //            }
-            //            msg = '<a class="btn btn-info btn-raised btn-xs"  OnClick="openCards(' + row.id + ')" data-toggle="tooltip" data-placement="bottom" title="Open Cards" data-animation="true"><i class="dripicons-expand-2"></i></a>' + msg;
-            //        }
-            //        return msg;
-            //    }
-            //},
-            //{
-            //    "data": null, render: function (data, type, row, meta) {
-            //        var msg = '';
-            //        if (row.visits.length > 0) {
-            //            for (var i = 0; i < row.visits.length; i++) {
-            //                var visit = row.visits[i];
-            //                msg = msg + '<img class="img-circle"  src="' + visit.person.photoMD + '" />' + (visit.person.name + ' (' + visit.status + ')') + '<br />';
-            //            }
-            //        } else {
-            //            msg = 'NA';
-            //        }
-            //        return msg;
-            //    }
-            //},
-            //{
-            //    "data": null, render: function (data, type, row, meta) {
-            //        var msg = '';
-            //        if (row.visits.length > 0) {
-            //            for (var i = 0; i < row.visits.length; i++) {
-            //                var visit = row.visits[i];
-            //                var d = moment.duration(new moment().diff(visit.person.lastOpenDateTime));
-            //                var isNotOpen = false;
-            //                if (d.as('days') > 1) {
-            //                    row.isNotOpen = true;
-            //                    isNotOpen = true;
-            //                }
-
-            //                msg = msg + '<div class="g-label"><a OnClick="openCard(' + visit.person.id + ',\'' + data.name + '\')">' + (visit.person.id === 0 ? "-" :  (visit.person.level != null ? visit.person.level : "(No Card)")) + (isNotOpen ? " (Not Opened)" : "") + '</a></div><br />';
-            //            }
-            //        } else {
-            //            msg = 'NA';
-            //        }
-            //        return msg;
-            //    }
-            //},
-            //{
-            //    "data": null, render: function (data, type, row, meta) {
-            //        var msg = '';
-            //        if (row.visits.length > 0) {
-            //            for (var i = 0; i < row.visits.length; i++) {
-            //                var visit = row.visits[i];
-            //                var lastOpenDateTime = visit.person.lastOpenDateTime;
-            //                if (lastOpenDateTime != null) {
-            //                    var lastOpenDateTime = convertUTCToLocal(visit.person.lastOpenDateTime, "YYYY-MM-DD hh:mm:ss A");
-            //                    msg = msg + '<div class="g-label">' + lastOpenDateTime.format('YYYY-MM-DD') + '</div><br />';
-            //                } else {
-            //                    msg = msg + '<div class="g-label">____________</div><br />';
-            //                }
-            //                //msg = msg + '<div class="g-label">' + (visit.person.id === 0 ? "-" : (lastOpenDateTime != null ? moment(lastOpenDateTime).format('YYYY-MM-DD') : "____________")) + '</div><br />';
-            //            }
-            //        } else {
-            //            msg = 'NA';
-            //        }
-            //        return msg;
-            //    }
-            //},
-            //{
-            //    "data": null, render: function (data, type, row, meta) {
-            //        var msg = '';
-            //        if (row.visits.length > 0) {
-            //            for (var i = 0; i < row.visits.length; i++) {
-            //                var visit = row.visits[i];
-            //                var lastOpenDateTime = visit.person.lastOpenDateTime;
-            //                if (lastOpenDateTime != null) {
-            //                    var lastOpenDateTime = convertUTCToLocal(visit.person.lastOpenDateTime, "YYYY-MM-DD hh:mm:ss A");
-            //                    msg = msg + '<div class="g-label">' + lastOpenDateTime.format('h:mm:ss a') + '</div><br />';
-            //                } else {
-            //                    msg = msg + '<div class="g-label">____________</div><br />';
-            //                }
-            //                //console.log(lastOpenDateTime);
-            //                //msg = msg + '<div class="g-label">' + (visit.person.id === 0 ? "-" : (lastOpenDateTime != null ? moment(lastOpenDateTime).format('h:mm:ss a') : "____________")) + '</div><br />';
-            //            }
-            //        } else {
-            //            msg = 'NA';
-            //        }
-            //        return msg;
-            //    }
-            //},
+            { "data": "unpaid_visits" }
         ],
         rowCallback: function (row, data) {
             //if (data.isNotOpen) {
@@ -278,22 +190,22 @@
                 },
                 footer: true
             },
-            {
-                text: 'Reset Filter',
-                action: function (e, dt, node, config) {
-                    table.state.clear();
-                    window.location.reload();
-                }
-            },
-            {
-                text: 'Reload',
-                action: function (e, dt, node, config) {
-                    dt.ajax.reload(function () {
-                        //makeRequest();
-                        userPermExec(table.ajax.json());
-                    });
-                }
-            },
+            //{
+            //    text: 'Reset Filter',
+            //    action: function (e, dt, node, config) {
+            //        table.state.clear();
+            //        window.location.reload();
+            //    }
+            //},
+            //{
+            //    text: 'Reload',
+            //    action: function (e, dt, node, config) {
+            //        dt.ajax.reload(function () {
+            //            //makeRequest();
+            //            userPermExec(table.ajax.json());
+            //        });
+            //    }
+            //},
             {
                 text: 'Sync',
                 action: function (e, dt, node, config) {

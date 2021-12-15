@@ -10,7 +10,7 @@ namespace Daftari.Pike13Api.Models
 
         public long event_id { get; set; }
 
-        [Display(Name = "Name")]
+        [Display(Name = "Class")]
         public string name { get; set; }
 
         [Display(Name = "Description")]
@@ -20,7 +20,7 @@ namespace Daftari.Pike13Api.Models
 
         public long location_id { get; set; }
 
-        [Display(Name = "Session Start")]
+        [Display(Name = "Start")]
         public DateTime start_at { get; set; }
 
         public DateTime end_at { get; set; }
@@ -42,7 +42,7 @@ namespace Daftari.Pike13Api.Models
         [Display(Name = "Capacity Remaining")]
         public int capacity_remaining { get; set; }
 
-        [Display(Name = "Staff Members")] 
+        [Display(Name = "Staff")] 
         public List<Staff> staff_members { get; set; }
 
         [Display(Name = "People")]

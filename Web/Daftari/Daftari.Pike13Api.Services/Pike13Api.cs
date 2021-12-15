@@ -313,6 +313,7 @@ namespace Daftari.Pike13Api.Services
         public List<string> sort { get; set; }
         public string target { get; set; }
         public string topic { get; set; }
+        public string group { get; set; }
     }
 
     public class Pike13APIRequest

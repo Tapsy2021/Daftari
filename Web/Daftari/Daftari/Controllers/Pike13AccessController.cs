@@ -315,6 +315,22 @@ namespace Daftari.Controllers
 
         public ActionResult StuckStudentReport()
         {
+            var creds = TokenProvider.GetProvider().GetAccessDetails(User.Identity.Name);
+
+            if (creds.Role == "limited_staff_member")
+            {
+                ViewBag.AccessCode = TokenProvider.GetProvider().GetStaffAccessCode(creds.Subdomain);
+            }
+            else
+            {
+                ViewBag.AccessCode = creds.AccessToken;
+            }
+            ViewBag.Subdomain = creds.Subdomain;
+            ViewBag.Role = creds.Role;
+            ViewBag.PersonID = creds.ID;
+            ViewBag.CanView = creds.Role != "limited_staff_member";
+            ViewBag.UserFullName = creds.PersonName;
+
             return View(new StatusReportVM
             {
                 //StatusFilter = visit_status
@@ -444,11 +460,73 @@ namespace Daftari.Controllers
                         .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
                         .Where(x => x.EventOccurrance.SubDomain == sd)
                         .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
-                        .Where(x => x.Status == status || (status == "unpaid" && x.State == "registered" && x.Unpaid == true))
+                        .Where(x => status == "first_visit" || x.Status == status || (status == "unpaid" && x.State == "registered" && x.Unpaid == true))
+                        //.Where(x => x.PersonID == 9417210)
                         .ToListAsync();
             }
 
-            var all_customers = visits.Select(x => x.PersonID).Distinct().ToList();            
+            var all_customers = visits.Select(x => x.PersonID).Distinct().ToList();
+
+            if (status == "first_visit")
+            {
+                var first_visit_data = new List<Tuple<long, DateTime>>();
+                var person_history = new List<pike13_client_reporting>();
+                if (all_customers.Any())
+                {
+                    try
+                    {
+                        var data = await new Pike13ApiRepo(User.Identity.Name).GetClientHistoryAsync(all_customers);
+
+                        var fields = data.fields.Select(x => x.name).ToList();
+
+                        person_history = data.rows.Select(row => new pike13_client_reporting
+                        {
+                            first_visit_date = row[fields.IndexOf("first_visit_date")],
+                            person_id = row[fields.IndexOf("person_id")]
+                        }).ToList();
+                    }
+                    catch { }
+                }                
+
+                person_history.ForEach(obj =>
+                {
+                    try
+                    {
+                        var valid = long.TryParse(obj.person_id, out long person_id);
+                        if (valid)
+                        {
+                            var date = DateTime.MinValue;
+
+                            if (obj.first_visit_date != null)
+                            {
+                                var valid_date = DateTime.TryParse(obj.first_visit_date, out date);
+                                if (valid_date)
+                                {
+                                    first_visit_data.Add(Tuple.Create(person_id, date));
+                                }
+                            }
+                            else
+                            {
+                                date = visits.Where(x => x.PersonID == person_id && x.EventOccurrance.StartAt >= DateTime.Today).Min(x => x.EventOccurrance.StartAt?.Date) ??
+                                        visits.Where(x => x.PersonID == person_id).Min(x => x.EventOccurrance.StartAt.Value.Date);
+                                first_visit_data.Add(Tuple.Create(person_id, date));
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        using (LukeApps.BugsTracker.BugsHandler bh = new LukeApps.BugsTracker.BugsHandler(new Exception($"Get first visits id => {obj.person_id}; date => {obj.first_visit_date} Failed"), this.HttpContext))
+                        {
+                            bh.Log_Error();
+                        }
+                    }
+                });
+                first_visit_data = first_visit_data.OrderBy(x => x.Item2).ToList();
+                var person_ids = first_visit_data.Where(x => x.Item2 < to && x.Item2 >= from).Select(x => x.Item1).Distinct().ToList();
+                visits = visits.Where(x => x.PersonID.HasValue && person_ids.Contains(x.PersonID.Value))
+                            .GroupBy(x => x.PersonID).Select(x => x.OrderBy(v => v.EventOccurrance.StartAt).First()).ToList();
+                all_customers = visits.Select(x => x.PersonID).Distinct().ToList();
+            }
 
             using (AquaCardsEntities db = new AquaCardsEntities(System.Web.HttpContext.Current.User.Identity.Name))
             {
@@ -456,7 +534,8 @@ namespace Daftari.Controllers
             }
 
             var TotalRecords = (from visit in visits
-                                join customer in customers on visit.PersonID equals customer.ExternalReference
+                                join customer in customers on visit.PersonID equals customer.ExternalReference into _customer
+                                from customer in _customer.DefaultIfEmpty()
                                 select new
                                 {
                                     person = customer != null ? $"{customer.FirstName} {customer.LastName}" : "Not Synced",
@@ -465,7 +544,8 @@ namespace Daftari.Controllers
                                     status = status,
                                     unpaid = (status == "unpaid" && visit.State == "registered" && (visit.Unpaid ?? false)),
                                     person_id = visit.PersonID,
-                                    id = visit.VisitID
+                                    id = visit.VisitID,
+                                    date = visit.EventOccurrance.StartAt
                                 }).ToList();
 
             return Json(new
@@ -486,7 +566,6 @@ namespace Daftari.Controllers
                         .Where(x => x.EventOccurrance.StartAt < to && x.EventOccurrance.EndAt >= from)
                         .Where(x => x.EventOccurrance.SubDomain == sd)
                         .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
-                        //.Where(x => x.Status == status || (status == "unpaid" && x.Unpaid == true))
                         .ToListAsync();
             }
 
@@ -494,10 +573,19 @@ namespace Daftari.Controllers
             visits = visits.GroupBy(x => x.PersonID).Select(i => i.OrderBy(x => x.EventOccurrance.StartAt).Last()).ToList();
 
             var all_customers = visits.Select(x => x.PersonID).Distinct().ToList();
+            //all_customers = all_customers.Take(1).ToList();
             if (all_customers.Any())
             {
                 try
                 {
+                    //var mer = visits.Select(x => x.EventOccurrance.Name).FirstOrDefault();
+                    //var me = await new Pike13ApiRepo(User.Identity.Name).GetEnrollmentsAsync(all_customers, mer);
+                    //attendance_completed
+                    //person_id
+                    //service_name
+                    //
+
+
                     var data = await new Pike13ApiRepo(User.Identity.Name).GetClientHistoryAsync(all_customers);
 
                     var fields = data.fields.Select(x => x.name).ToList();
@@ -571,6 +659,7 @@ namespace Daftari.Controllers
                                     .Where(x => x.EventOccurrance.StartAt < _to && x.EventOccurrance.EndAt >= _from)
                                     .Where(x => x.EventOccurrance.SubDomain == sd)
                                     .Where(x => x.EventOccurrance.State != "deleted" && x.EventOccurrance.State != "disabled")
+                                    //.Where(x => x.PersonID == 9417210)
                                     .ToListAsync();
             }
 
@@ -579,7 +668,7 @@ namespace Daftari.Controllers
                 cs = await db.ChemicalSettings.Where(q => q.SubDomain == sd).FirstOrDefaultAsync();
             }
 
-            var all_customers = visits.Select(x => x.PersonID).Distinct().ToList();
+            var all_customers = visits.Select(x => x.PersonID).Distinct().OrderBy(x => x).ToList();
             var person_history = new List<pike13_client_reporting>();
             if (all_customers.Any())
             {
@@ -625,7 +714,8 @@ namespace Daftari.Controllers
                         }
                         else
                         {
-                            date = visits.Where(x => x.PersonID == person_id).Min(x => x.EventOccurrance.StartAt.Value.Date);
+                            date = visits.Where(x => x.PersonID == person_id && x.EventOccurrance.StartAt >= DateTime.Today).Min(x => x.EventOccurrance.StartAt?.Date) ??
+                                    visits.Where(x => x.PersonID == person_id).Min(x => x.EventOccurrance.StartAt.Value.Date);
                             first_visit_data.Add(Tuple.Create(person_id, date));
                         }
                     }
@@ -651,7 +741,7 @@ namespace Daftari.Controllers
             //    person_id = x.person_id,
             //    first_visit_date = x.first_visit_date == "null" || DateTime.Parse(x.first_visit_date)
             //}).ToList();
-
+            first_visit_data = first_visit_data.OrderBy(x => x.Item2).ToList();
             var dates_range = _from.To(_to).ToList();
             var grouped_visits = (from date in dates_range
                                   join v in visits on date equals v.EventOccurrance.StartAt.Value.Date into _v

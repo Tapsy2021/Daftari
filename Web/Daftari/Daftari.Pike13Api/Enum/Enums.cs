@@ -70,7 +70,10 @@ namespace Daftari.Pike13Api.Enum
         Enrolled,
 
         [Display(Name = "incomplete")]
-        Incomplete
+        Incomplete,
+
+        [Display(Name = "first_visit")]
+        First_Visit
     }
 
     public enum VisitState
