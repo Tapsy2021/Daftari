@@ -9,13 +9,14 @@
     <ContentPage.Content>
         <StackLayout BackgroundColor="Transparent">
             <StackLayout HeightRequest="150"></StackLayout>
-            <StackLayout VerticalOptions="CenterAndExpand">
+            <!--<StackLayout VerticalOptions="CenterAndExpand">
                 <Image VerticalOptions="Center" Margin="30,0"
                     Source="intro_logo.png"/>
-            </StackLayout>
+            </StackLayout>-->
             <StackLayout>
-                <Label Text="Welcome to DAFTARI, your personalized swim journal app where you go!"
+                <Label Text="Welcome to DAFTARI, your personalized swim journal app where you go!!"
                        TextColor="White"
+                       FontFamily="Gotham-Bold"
                        FontSize="14"
                        HorizontalTextAlignment="Center"
                        Margin="50,20"/>
