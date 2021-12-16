@@ -6,14 +6,15 @@
              mc:Ignorable="d"
              x:Class="Daftari.Views.MasterHomePage"
              BackgroundImageSource="home_background.png"
-             xmlns:pages="clr-namespace:Daftari.Views">
+             xmlns:pages="clr-namespace:Daftari.Views"
+             xmlns:pages1="clr-namespace:Daftari.Views.Home">
   <MasterDetailPage.Master>
     <pages:HomePageSideMenu x:Name="MasterPage" />
   </MasterDetailPage.Master>
   <MasterDetailPage.Detail>
     <NavigationPage>
       <x:Arguments>
-        <pages:MasterHomePageDetail />
+        <pages1:HomePageDetail />
       </x:Arguments>
     </NavigationPage>
   </MasterDetailPage.Detail>

@@ -3,13 +3,151 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Daftari.Controls"
+             xmlns:renderers="clr-namespace:Daftari.Renderers"
              mc:Ignorable="d"
              x:Class="Daftari.Views.Auth.LoginPage">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         Margin="30,0,30,0">
+                <!--<svg:Icon ResourceId="Dero.Content.Icons.logo_blue.svg" 
+                          WidthRequest="300" 
+                          HeightRequest="45" 
+                          HorizontalOptions="Center" 
+                          VerticalOptions="Center"
+                          Margin="0,90,0,52"/>-->
+
+                <StackLayout VerticalOptions="CenterAndExpand">
+                    <Frame BorderColor="#bdbdbd" 
+                           CornerRadius="10"
+                           Padding="10,3"
+                           Margin="0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="90*"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <renderers:CustomEntry x:Name="Email" Grid.Row="0" Grid.Column="0" Placeholder="Email"
+                                       MaxLength="50"
+                                       FontSize="18"
+                                       FontFamily="Gotham-Medium"
+                                       IsSpellCheckEnabled="false"
+                                       IsTextPredictionEnabled="false">
+                            </renderers:CustomEntry>
+
+                            <!--<svg:Icon Grid.Row="0" Grid.Column="1" ResourceId="Dero.Content.Icons.Span.at_icon.svg" 
+                                      WidthRequest="20" 
+                                      HeightRequest="20" 
+                                      HorizontalOptions="Center" 
+                                      VerticalOptions="Center"
+                                      Margin="0,0,0,0"/>-->
+                        </Grid>
+                    </Frame>
+
+                    <Label x:Name="Email_Error"
+                           Text=""
+                           FontFamily="DIN-PRO"
+                           TextColor="Red"
+                           HorizontalOptions="Start"
+                           Margin="1,0,0,10"/>
+
+                    <Frame BorderColor="#bdbdbd" 
+                           CornerRadius="10"
+                           Padding="10,3"
+                           Margin="0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80*"/>
+                                <ColumnDefinition Width="20*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <renderers:CustomEntry x:Name="Password" Grid.Row="0" Grid.Column="0" Placeholder="Password"
+                                       MaxLength="25"   
+                                       Margin="0"
+                                       FontSize="18"
+                                       FontFamily="Gotham-Medium"
+                                       IsSpellCheckEnabled="false"
+                                       IsTextPredictionEnabled="false"
+                                       IsPassword="True"/>
+
+                            <!--<controls:Icon Grid.Row="0" Grid.Column="1" ResourceId="Daftari.Content.Icons.Span.password_view_icon.svg" 
+                                      WidthRequest="40" 
+                                      HeightRequest="40" 
+                                      HorizontalOptions="Center" 
+                                      VerticalOptions="Center"
+                                      Margin="0,0,0,0"/>-->
+                        </Grid>
+                    </Frame>
+                    <Label Text="Error span"
+                           FontFamily="DIN-PRO"
+                           TextColor="Transparent"
+                           HorizontalOptions="Start"                       
+                           Margin="1,0,0,10"/>
+                    <StackLayout Orientation="Horizontal"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Margin="0">
+
+                        <!--<controls:Icon ResourceId="Dero.Content.Icons.Span.p_message_icon.svg" 
+                                WidthRequest="20" 
+                                HeightRequest="20" 
+                                HorizontalOptions="Center" 
+                                VerticalOptions="Center"
+                                Margin="0,0,0,0"/>-->
+
+                    </StackLayout>
+                </StackLayout>
+                <StackLayout Margin="0,0,0,40">
+                    <Button Text="Log In"
+                        x:Name="Btn_Login"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"
+                        Clicked="OnLogIn_Clicked"/>
+
+                    <Label 
+                        Text="Don't have account?"
+                        FontFamily="Gotham-Medium"
+                        TextTransform="None"
+                        TextColor="#012550"
+                        HorizontalOptions="Center"
+                        FontSize="16"
+                        Margin="0,5,0,0"/>
+
+                    <Button Text="Sign Up"
+                        x:Name="Btn_Sign_Up"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"
+                        Clicked="OnSignUp_Clicked"/>
+                </StackLayout>
+            </StackLayout>
+
+            <!--<StackLayout
+                    IsVisible="{Binding IsRunning, Mode=OneWay}"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    BackgroundColor="Gray" Opacity="0.5">
+                <ActivityIndicator
+                        IsRunning="{Binding IsRunning, Mode=OneWay}"
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="CenterAndExpand"
+                        Color="Black"/>
+            </StackLayout>-->
+
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

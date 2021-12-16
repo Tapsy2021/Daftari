@@ -54,5 +54,10 @@ namespace Daftari.Views
             }
             #endregion
         }
+
+        private void OnLogOut_Tapped(object sender, EventArgs e)
+        {
+            Application.Current.MainPage = new NavigationPage(new Auth.LoginPage());
+        }
     }
 }

@@ -25,6 +25,8 @@
     <None Remove="Content\Fonts\QuicksandLight.ttf" />
     <None Remove="Content\Fonts\QuicksandMedium.ttf" />
     <None Remove="Content\Fonts\QuicksandRegular.ttf" />
+    <None Remove="Content\Icons\password_view_icon.svg" />
+    <None Remove="Content\Icons\Span\password_view_icon.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +44,7 @@
     <EmbeddedResource Include="Content\Fonts\QuicksandLight.ttf" />
     <EmbeddedResource Include="Content\Fonts\QuicksandMedium.ttf" />
     <EmbeddedResource Include="Content\Fonts\QuicksandRegular.ttf" />
+    <EmbeddedResource Include="Content\Icons\Span\password_view_icon.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +60,9 @@
   <ItemGroup>
     <Compile Update="Views\HomePageSideMenu.xaml.cs">
       <DependentUpon>HomePageSideMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Home\HomePageDetail.xaml.cs">
+      <DependentUpon>HomePageDetail.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -82,7 +88,7 @@
     <EmbeddedResource Update="Views\MasterHomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\MasterHomePageDetail.xaml">
+    <EmbeddedResource Update="Views\Home\HomePageDetail.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\HomePageSideMenu.xaml">

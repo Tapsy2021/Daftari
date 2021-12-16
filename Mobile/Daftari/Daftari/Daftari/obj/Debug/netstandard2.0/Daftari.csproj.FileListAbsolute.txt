@@ -9,7 +9,6 @@ C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\Intro\SignPage.xaml.g.cs
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\Intro\WelcomePage.xaml.g.cs
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\MasterHomePage.xaml.g.cs
-C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\MasterHomePageDetail.xaml.g.cs
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Daftari.AssemblyInfoInputs.cache
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Daftari.AssemblyInfo.cs
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\bin\Debug\netstandard2.0\Daftari.deps.json
@@ -20,3 +19,4 @@ C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Daftari.dll
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\ref\Daftari.dll
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Daftari.pdb
+C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\Home\HomePageDetail.xaml.g.cs

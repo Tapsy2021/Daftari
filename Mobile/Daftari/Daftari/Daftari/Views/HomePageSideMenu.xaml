@@ -41,6 +41,7 @@
               Text="Sana's Daftari"
               VerticalOptions="Center"
               Margin="15,0"
+              FontFamily="Gotham-Medium"
               TextColor="#1E3565"
               FontSize="20"
               Style="{DynamicResource SubtitleStyle}"/>
@@ -59,6 +60,7 @@
                     Text="{Binding Title}" 
                     d:Text="{Binding .}"
                     FontSize="18"
+                    FontFamily="Gotham-Medium"
                     TextColor="#1E3565"/>
             </StackLayout>
           </ViewCell>
@@ -68,12 +70,17 @@
 
     <BoxView BackgroundColor="#1892D5" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
 
-    <Label VerticalOptions="FillAndExpand" 
+        <Label VerticalOptions="FillAndExpand" 
                 VerticalTextAlignment="Center"
                 Margin="18,5,0,50"
                 Text="Log Out"
                 FontSize="18"
-                TextColor="#1E3565"/>
+                FontFamily="Gotham-Medium"
+                TextColor="#1E3565">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnLogOut_Tapped" />
+            </Label.GestureRecognizers>
+        </Label>
 
     </StackLayout>
 </ContentPage>

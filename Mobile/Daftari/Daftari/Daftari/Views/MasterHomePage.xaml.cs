@@ -15,6 +15,8 @@ namespace Daftari.Views
         public MasterHomePage()
         {
             InitializeComponent();
+            // This hides the navigation page's navigation bar as it is not needed
+            NavigationPage.SetHasNavigationBar(this, false);
             MasterPage.ListView.ItemSelected += ListView_ItemSelected;
         }
 
