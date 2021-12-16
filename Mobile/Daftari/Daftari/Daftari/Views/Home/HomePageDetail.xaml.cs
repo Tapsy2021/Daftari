@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Daftari.ViewModels;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -15,6 +11,8 @@ namespace Daftari.Views.Home
         public HomePageDetail()
         {
             InitializeComponent();
+
+            BindingContext = new HomeViewModel();
         }
     }
 }
