@@ -64,6 +64,10 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="Renderers\CustomEntryRenderer_IOS.cs" />
+    <Compile Include="Renderers\CustomFrameRender_IOS.cs" />
+    <Compile Include="Renderers\CustomPickerRenderer_IOS.cs" />
+    <Compile Include="Renderers\HiddenTabbedPageRenderer.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />

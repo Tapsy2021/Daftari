@@ -1,5 +1,6 @@
-﻿//using Dero.Models;
+﻿//using Daftari.Models;
 //using System.Collections.Generic;
+//using System.Linq;
 //using Xamarin.Forms.Maps;
 
 //namespace Daftari.Renderers
@@ -7,7 +8,7 @@
 //    public class CustomMap : Map
 //    {
 //        private MapSpan mapSpan { get; set; }
-//        public CustomPin CustomPin { get; set; }
+//        public List<CustomPin> CustomPins { get; set; } = new List<CustomPin>();
 //        public void SetMapSpan(MapSpan mapSpan)
 //        {
 //            this.mapSpan = mapSpan;
@@ -17,9 +18,9 @@
 //            try
 //            {
 //                MoveToRegion(mapSpan);
-//                if (CustomPin != null)
+//                foreach(var custonPin in CustomPins)
 //                {
-//                    Pins.Add(CustomPin);
+//                    Pins.Add(custonPin);
 //                }
 //            } catch { }
 

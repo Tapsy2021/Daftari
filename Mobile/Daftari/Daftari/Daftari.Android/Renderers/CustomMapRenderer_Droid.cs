@@ -9,7 +9,7 @@
 //using Xamarin.Forms.Platform.Android;
 
 //[assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer_Droid))]
-//namespace Dero.Droid.Renderers
+//namespace Daftari.Droid.Renderers
 //{
 //    public class CustomMapRenderer_Droid : MapRenderer
 //    {
@@ -22,6 +22,16 @@
 //        /// Instance of our Custom control declared in the PCL part.
 //        /// </summary>
 //        private CustomMap customMap;
+//        //private List<CustomPin> customPins;
+
+//        //protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+//        //{
+//        //    base.OnElementPropertyChanged(sender, e);
+
+//        //    NativeMap.UiSettings.ZoomControlsEnabled = false;
+//        //    NativeMap.UiSettings.MyLocationButtonEnabled = false;
+//        //    NativeMap.UiSettings.RotateGesturesEnabled = false;
+//        //}
 
 //        protected override void OnElementChanged(ElementChangedEventArgs<Map> e)
 //        {
@@ -32,7 +42,12 @@
 //                if (e.NewElement != null)
 //                {
 //                    customMap = e.NewElement as CustomMap;
+//                    //customPins = customMap.CustomPins;
 //                }
+//                //var map = ((MapView)Control).Map;
+//                //NativeMap.UiSettings.ZoomControlsEnabled = false;
+//                //NativeMap.UiSettings.MyLocationButtonEnabled = false;
+//                //NativeMap.UiSettings.RotateGesturesEnabled = false;
 //            }
 //        }
 

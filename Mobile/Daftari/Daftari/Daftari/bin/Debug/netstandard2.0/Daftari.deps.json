@@ -11,6 +11,7 @@
         "dependencies": {
           "NETStandard.Library": "2.0.3",
           "Newtonsoft.Json": "13.0.1",
+          "SkiaSharp.Extended": "1.60.0",
           "SkiaSharp.Svg": "1.60.0",
           "SkiaSharp.Views.Forms": "2.80.3",
           "Xam.Plugin.TabView": "1.1.1",
@@ -51,6 +52,17 @@
           "lib/netstandard2.0/SkiaSharp.dll": {
             "assemblyVersion": "2.80.0.0",
             "fileVersion": "2.80.3.0"
+          }
+        }
+      },
+      "SkiaSharp.Extended/1.60.0": {
+        "dependencies": {
+          "SkiaSharp": "2.80.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SkiaSharp.Extended.dll": {
+            "assemblyVersion": "1.60.0.0",
+            "fileVersion": "1.60.0.0"
           }
         }
       },
@@ -189,6 +201,13 @@
       "sha512": "sha512-qX6tGNP3+MXNYe2pKm0PCRiJ/cx+LTeLaggwZifB7sUMXhECfKKKHJq45VqZKt37xQegnCCdf1jHXwmHeJQs5Q==",
       "path": "skiasharp/2.80.3",
       "hashPath": "skiasharp.2.80.3.nupkg.sha512"
+    },
+    "SkiaSharp.Extended/1.60.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-aN5NPB9F7JoLnuMR2a3ZcA5WIcgiaalt8W3JgUXzRCQb+Amphx6rIKWwK3uuA0OlVJY8A21Q8m5TqgnMubRniA==",
+      "path": "skiasharp.extended/1.60.0",
+      "hashPath": "skiasharp.extended.1.60.0.nupkg.sha512"
     },
     "SkiaSharp.Svg/1.60.0": {
       "type": "package",

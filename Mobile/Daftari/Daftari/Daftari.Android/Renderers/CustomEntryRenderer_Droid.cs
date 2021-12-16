@@ -21,26 +21,25 @@ namespace Droid.Droid.Renderers
         protected override void OnElementChanged(ElementChangedEventArgs<Entry> e)
         {
             base.OnElementChanged(e);
-            //Control?.SetBackgroundColor(Android.Graphics.Color.Transparent);
             if (Control != null)
             {
                 GradientDrawable gd = new GradientDrawable();
                 gd.SetColor(global::Android.Graphics.Color.Transparent);
-                //Control.SetBackgroundDrawable(gd);
                 Control.Background = gd;
-                //Control.SetRawInputType(InputTypes.TextFlagNoSuggestions);
-                //Control.SetHighlightColor(Android.Graphics.Color.Blue);
-                //Control.SetHintTextColor(ColorStateList.ValueOf(global::Android.Graphics.Color.White));
 
-                //  this.Control.KeyListener = Android.Text.Method.DigitsKeyListener.GetInstance(Resources.Configuration.Locale, true, true);
+                if (Element is CustomEntry customEntry)
+                {
+                    var paddingLeft = (int)customEntry.Padding.Left;
+                    var paddingTop = (int)customEntry.Padding.Top;
+                    var paddingRight = (int)customEntry.Padding.Right;
+                    var paddingBottom = (int)customEntry.Padding.Bottom;
+                    this.Control.SetPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+                }
             }
         }
 
         protected override NumberKeyListener GetDigitsKeyListener(InputTypes inputTypes)
         {
-            //    return DigitsKeyListener.GetInstance(Java.Util.Locale.Default,
-            //        inputTypes.HasFlag(InputTypes.NumberFlagSigned),
-            //        inputTypes.HasFlag(InputTypes.NumberFlagDecimal));
             Control.KeyListener = DigitsKeyListener.GetInstance(string.Format("1234567890{0}", 
                                 System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
             return DigitsKeyListener.GetInstance(string.Format("1234567890{0}",
