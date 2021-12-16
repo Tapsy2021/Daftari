@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Daftari.IntroPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#1892D5">
+    <ContentPage.Content>
+        <StackLayout>
+            <CarouselView ItemsSource="{Binding Intros}" Position="{Binding Position, Mode=TwoWay}"
+                          IndicatorView="indicatorView"
+                          BackgroundColor="Transparent">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout BackgroundColor="Transparent">
+                            <RelativeLayout>
+                                <Image Source="{Binding Background}" Opacity="0.9" Scale="2.2"
+                                          RelativeLayout.WidthConstraint=
+                                            "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                          RelativeLayout.HeightConstraint=
+                                            "{ConstraintExpression Type=RelativeToParent, Property=Height}"/>
+
+                                <Grid RelativeLayout.WidthConstraint=
+                                    "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                  RelativeLayout.HeightConstraint=
+                                    "{ConstraintExpression Type=RelativeToParent, Property=Height}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="100"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <StackLayout Padding="0,30,0,0">
+                                        <Label Text="{Binding Title}"
+                                               TextColor="Black"
+                                               FontSize="24"
+                                               FontFamily="Noteworthy-Bold"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               Margin="50,0"
+                                               HeightRequest="500"/>
+                                    </StackLayout>
+
+                                    <StackLayout Grid.Row="1" Padding="0,0,0,30">
+                                        <Image HeightRequest="250"
+                                            Source="{Binding ImageUri}"/>
+                                    </StackLayout>
+
+                                </Grid>
+
+                                <!--<StackLayout RelativeLayout.WidthConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                            RelativeLayout.HeightConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Height}">
+                                    <StackLayout Padding="0,30">
+                                        <Label Text="{Binding Title}"
+                                               TextColor="Black"
+                                               FontSize="24"
+                                               FontFamily="Noteworthy-Bold"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               Margin="50,0"
+                                               HeightRequest="500"/>
+                                    </StackLayout>
+                                    <StackLayout Padding="0,0,0,30">
+                                        <Image HeightRequest="250"
+                                            Source="{Binding ImageUri}"/>
+                                    </StackLayout>
+                                </StackLayout>-->  
+                            </RelativeLayout>
+
+                            <StackLayout VerticalOptions="EndAndExpand">
+                                <Label Text="{Binding Message}"
+                                       TextColor="White"
+                                       FontSize="14"
+                                       FontFamily="Quicksand-Regular"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="End"
+                                       Margin="50,20"/>
+                            </StackLayout>       
+                        </StackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+
+            <IndicatorView x:Name="indicatorView"
+                           IndicatorsShape="Circle"
+                           IndicatorColor="#A8D0E6"
+                           SelectedIndicatorColor="#e9f2f7"
+                           IndicatorSize="10"
+                           HorizontalOptions="Center" />
+
+            <StackLayout Padding="0,15">
+                <Button Text="Next"
+                        x:Name="Btn_Next"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="30,0"
+                        FontFamily="Gotham-Bold"
+                        Clicked="OnNext_Clicked"
+                        CornerRadius="30"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

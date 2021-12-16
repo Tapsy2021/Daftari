@@ -7810,31 +7810,37 @@ namespace Daftari.Droid
 			public const int ollietheotter_swim_stand = 2131165306;
 			
 			// aapt resource value: 0x7F07007B
-			public const int ollietheotter_swim_walk = 2131165307;
+			public const int ollietheotter_swim_stand_background = 2131165307;
 			
 			// aapt resource value: 0x7F07007C
-			public const int onboarding_1 = 2131165308;
+			public const int ollietheotter_swim_walk = 2131165308;
 			
 			// aapt resource value: 0x7F07007D
-			public const int onboarding_2 = 2131165309;
+			public const int ollietheotter_swim_walk_background = 2131165309;
 			
 			// aapt resource value: 0x7F07007E
-			public const int onboarding_3 = 2131165310;
+			public const int onboarding_1 = 2131165310;
+			
+			// aapt resource value: 0x7F07007F
+			public const int onboarding_2 = 2131165311;
+			
+			// aapt resource value: 0x7F070080
+			public const int onboarding_3 = 2131165312;
 			
 			// aapt resource value: 0x7F070002
 			public const int Prev = 2131165186;
 			
-			// aapt resource value: 0x7F07007F
-			public const int temp_home_1 = 2131165311;
-			
-			// aapt resource value: 0x7F070080
-			public const int temp_home_2_1 = 2131165312;
-			
 			// aapt resource value: 0x7F070081
-			public const int tooltip_frame_dark = 2131165313;
+			public const int temp_home_1 = 2131165313;
 			
 			// aapt resource value: 0x7F070082
-			public const int tooltip_frame_light = 2131165314;
+			public const int temp_home_2_1 = 2131165314;
+			
+			// aapt resource value: 0x7F070083
+			public const int tooltip_frame_dark = 2131165315;
+			
+			// aapt resource value: 0x7F070084
+			public const int tooltip_frame_light = 2131165316;
 			
 			// aapt resource value: 0x7F070003
 			public const int Up = 2131165187;

@@ -15,3 +15,4 @@ using Xamarin.Forms.Xaml;
 [assembly: ExportFont("QuicksandRegular.ttf", Alias = "Quicksand-Regular")]
 [assembly: ExportFont("QuicksandMedium.ttf", Alias = "Quicksand-Medium")]
 [assembly: ExportFont("QuicksandBold.ttf", Alias = "Quicksand-Bold")]
+[assembly: ExportFont("NoteworthyBold.ttf", Alias = "Noteworthy-Bold")]

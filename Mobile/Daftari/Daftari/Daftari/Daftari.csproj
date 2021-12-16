@@ -11,6 +11,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Content\Fonts\GothamBold.ttf" />
+    <None Remove="Content\Fonts\GothamBoldItalic.ttf" />
+    <None Remove="Content\Fonts\GothamBook.ttf" />
+    <None Remove="Content\Fonts\GothamBookItalic.ttf" />
+    <None Remove="Content\Fonts\GothamLight.ttf" />
+    <None Remove="Content\Fonts\GothamLightItalic.ttf" />
+    <None Remove="Content\Fonts\GothamMedium.ttf" />
+    <None Remove="Content\Fonts\GothamMediumItalic.ttf" />
+    <None Remove="Content\Fonts\GothamMedium_1.ttf" />
+    <None Remove="Content\Fonts\NoteworthyBold.ttf" />
+    <None Remove="Content\Fonts\QuicksandBold.ttf" />
+    <None Remove="Content\Fonts\QuicksandLight.ttf" />
+    <None Remove="Content\Fonts\QuicksandMedium.ttf" />
+    <None Remove="Content\Fonts\QuicksandRegular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Content\Fonts\GothamBold.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamBoldItalic.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamBook.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamBookItalic.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamLight.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamLightItalic.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamMedium.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamMediumItalic.ttf" />
+    <EmbeddedResource Include="Content\Fonts\GothamMedium_1.ttf" />
+    <EmbeddedResource Include="Content\Fonts\NoteworthyBold.ttf" />
+    <EmbeddedResource Include="Content\Fonts\QuicksandBold.ttf" />
+    <EmbeddedResource Include="Content\Fonts\QuicksandLight.ttf" />
+    <EmbeddedResource Include="Content\Fonts\QuicksandMedium.ttf" />
+    <EmbeddedResource Include="Content\Fonts\QuicksandRegular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Xam.Plugin.TabView" Version="1.1.1" />
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1451" />
@@ -24,6 +58,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="IntroPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\Auth\LoginPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

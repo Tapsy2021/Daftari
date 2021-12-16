@@ -29,7 +29,7 @@
   </ContentPage>
   <ContentPage Title="Tab 2" BackgroundImageSource="onboarding_2.png">
         <StackLayout BackgroundColor="Transparent">
-            <StackLayout >
+            <StackLayout>
                 <Label Text="Welcome!"
                        TextColor="Black"
                        FontSize="24"
