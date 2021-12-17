@@ -28,4 +28,11 @@ namespace Daftari.Utils
         [Display(Name = "8 - Stingrays", Description = "Proficiency")]
         Eight
     }
+
+    public enum SkillDifficulty
+    {
+        BEGINNER,
+        INTERMEDIATE,
+        ADVANCED
+    }
 }

@@ -23,7 +23,64 @@ namespace Daftari.ViewModels
                 new StudentCard
                 {
                     StudentName = "Oupa Mokone",
-                    Level = Utils.SkillLevel.Four
+                    Level = Utils.SkillLevel.Four,
+                    StudentCardDetails = new List<StudentCardDetail>
+                    {
+                        new StudentCardDetail
+                        {
+                            IsComplete = true,
+                            Skill = new Skill
+                            {
+                                SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
+                                SkillLevel = Utils.SkillLevel.Four
+                            }
+                        },
+                        new StudentCardDetail
+                        {
+                            IsComplete = true,
+                            Skill = new Skill
+                            {
+                                SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
+                                SkillLevel = Utils.SkillLevel.Four
+                            }
+                        },
+                        new StudentCardDetail
+                        {
+                            IsComplete = false,
+                            Skill = new Skill
+                            {
+                                SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
+                                SkillLevel = Utils.SkillLevel.Four
+                            }
+                        },
+                        new StudentCardDetail
+                        {
+                            IsComplete = true,
+                            Skill = new Skill
+                            {
+                                SkillDifficulty = Utils.SkillDifficulty.ADVANCED,
+                                SkillLevel = Utils.SkillLevel.Four
+                            }
+                        },
+                        new StudentCardDetail
+                        {
+                            IsComplete = false,
+                            Skill = new Skill
+                            {
+                                SkillDifficulty = Utils.SkillDifficulty.ADVANCED,
+                                SkillLevel = Utils.SkillLevel.Four
+                            }
+                        },
+                        new StudentCardDetail
+                        {
+                            IsComplete = true,
+                            Skill = new Skill
+                            {
+                                SkillDifficulty = Utils.SkillDifficulty.BEGINNER,
+                                SkillLevel = Utils.SkillLevel.Four
+                            }
+                        },
+                    }
                 },
                 new StudentCard
                 {
