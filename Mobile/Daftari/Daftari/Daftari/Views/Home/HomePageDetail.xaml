@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tabview="clr-namespace:Xam.Plugin.TabView;assembly=Xam.Plugin.TabView"
+             xmlns:renderers="clr-namespace:Daftari.Renderers"
              mc:Ignorable="d"
              BackgroundColor="Transparent"
              x:Class="Daftari.Views.Home.HomePageDetail"
@@ -80,21 +81,24 @@
                                                 <ColumnDefinition Width="60*"/>
                                                 <ColumnDefinition Width="20*"/>
                                             </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="40"/>
+                                            </Grid.RowDefinitions>
            
                                             <StackLayout Grid.Column="1">
-                                                <Label Text="{Binding Month}"
+                                                <renderers:CustomLabel Text="{Binding Month}"
                                                         Padding="0"
                                                         Margin="0"
-                                                        FontSize="20"
+                                                        FontSize="18"
                                                         TextColor="#012550"
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"
                                                         FontFamily="Quicksand-Bold"/>
 
-                                                <Label Text="{Binding Year}"
+                                                <renderers:CustomLabel Text="{Binding Year}"
                                                         Padding="0"
                                                         Margin="0"
-                                                        FontSize="20"
+                                                        FontSize="17"
                                                         TextColor="#1E3565"
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"
@@ -104,7 +108,7 @@
                                         
                                         <CollectionView ItemsSource="{Binding Week_Codes}"
                                                         SelectionMode="None"
-                                                        HeightRequest="80"
+                                                        HeightRequest="25"
                                                         Margin="0,10,0,0">
                                             <CollectionView.ItemsLayout>
                                                 <GridItemsLayout Orientation="Vertical" Span="7"/>
@@ -112,7 +116,7 @@
                                             <CollectionView.ItemTemplate>
                                                 <DataTemplate>
                                                     <StackLayout Padding="1,0" Margin="0">
-                                                        <Frame HeightRequest="25"
+                                                        <Frame 
                                                                Padding="0"
                                                                HasShadow="False">
                                                             <Label Text="{Binding .}"
@@ -169,30 +173,63 @@
                                        BackgroundColor="#ebebeb">
                                     <StackLayout>
 
-                                        <Grid>
+                                        <Grid Padding="13,4">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="40*"/>
                                                 <ColumnDefinition Width="20*"/>
                                                 <ColumnDefinition Width="40*"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="30"/>
-                                                <RowDefinition Height="40"/>
+                                                <RowDefinition Height="45"/>
+                                                <RowDefinition Height="25"/>
                                                 <RowDefinition Height="30"/>
                                             </Grid.RowDefinitions>
 
                                             <Label Text="{Binding SelectedItem.WeekName}"
-                                                    FontSize="14"
+                                                    FontSize="15"
                                                     TextColor="#1E3565"
                                                     VerticalOptions="Center"
-                                                    HorizontalOptions="Center"
+                                                    HorizontalOptions="Start"
                                                     FontFamily="Noteworthy-Bold"/>
 
-                                            <Label Grid.Column="2" Text="{Binding SelectedItem.Month}"
-                                                    FontSize="14"
+                                            <Frame Grid.Column="1" 
+                                                   CornerRadius="30" 
+                                                   Margin="1" 
+                                                   Padding="1" 
+                                                   HasShadow="True" 
+                                                   BackgroundColor="#FFD330">
+                                                <Label Text="{Binding SelectedItem.Day}"
+                                                    FontSize="22"
+                                                    Padding="4"
                                                     TextColor="#1E3565"
                                                     VerticalOptions="Center"
                                                     HorizontalOptions="Center"
+                                                    FontFamily="Gotham-Bold"/>
+
+                                            </Frame>
+
+                                            <Label Grid.Column="2" Text="{Binding SelectedItem.Month}"
+                                                    FontSize="15"
+                                                    TextColor="#1E3565"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="End"
+                                                    FontFamily="Noteworthy-Bold"/>
+
+                                            <Image Grid.Row="1" Grid.ColumnSpan="2" Source="{Binding SelectedItem.LevelImage}"
+                                                   HorizontalOptions="Start"/>
+
+                                            <Label Grid.Row="1" Grid.Column="2" Text="{Binding SelectedItem.StartAt, StringFormat='{0:h:mm tt}'}"
+                                                    FontSize="14"
+                                                    TextColor="#1E3565"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="End"
+                                                    FontFamily="Gotham-Bold"/>
+
+                                            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding SelectedItem.ServiceName}"
+                                                    FontSize="13"
+                                                    TextColor="#1E3565"
+                                                    VerticalOptions="Start"
+                                                    HorizontalOptions="Start"
                                                     FontFamily="Noteworthy-Bold"/>
                                         </Grid>
 
@@ -203,11 +240,29 @@
 
                         </tabview:TabItem>
                         <tabview:TabItem HeaderText="Bills">
-                            <Label
-                            FontSize="Large"
-                            HorizontalOptions="Center"
-                            Text="Hello There!"
-                            VerticalOptions="Center" />
+                            <StackLayout>
+                                <Label
+                                    FontSize="22"
+                                    FontFamily="Gotham-Bold"
+                                    HorizontalTextAlignment="Center"
+                                    HorizontalOptions="Center"
+                                    Text="7 OMR"
+                                    Margin="0,20,0,0"
+                                    TextColor="#1E3565"
+                                    VerticalOptions="Center" />
+
+                                <BoxView BackgroundColor="#1E3565" Margin="50,0" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+
+                                <Label Text="Bills are due"
+                                    FontSize="15"
+                                    FontFamily="Gotham-Light-Italic"
+                                    HorizontalTextAlignment="Center"
+                                    HorizontalOptions="Center"                                    
+                                    Margin="0,20,0,0"
+                                    TextColor="#1E3565"
+                                    VerticalOptions="Center" />
+
+                            </StackLayout>
                         </tabview:TabItem>
                     </tabview:TabViewControl.ItemSource>
                 </tabview:TabViewControl>

@@ -38,7 +38,10 @@ namespace Daftari.ViewModels
                 //Insert
                 Calendar_Dates.Add(new CalendarDate
                 {
-                    StartAt = date
+                    StartAt = date,
+                    EndAt = date,
+                    HasEvent = date.Day == 11,
+                    ServiceName = date.Day == 11 ? "4 - Seahorses" : ""
                 });
             }
 
@@ -59,9 +62,7 @@ namespace Daftari.ViewModels
                 {
                     StartAt = date,
                     EndAt = date,
-                    TextColor = "#BFBFBF",
-                    HasEvent = date.Day == 11,
-                    ServiceName = "level_2_minnows.png"
+                    TextColor = "#BFBFBF"
                 }));
 
                 var last_day_of_week = (int)end.DayOfWeek;
@@ -74,6 +75,7 @@ namespace Daftari.ViewModels
                 Calendar_Dates.AddRange(end.AddDays(1).To(next_end).Select(date => new CalendarDate
                 {
                     StartAt = date,
+                    EndAt = date,
                     TextColor = "#BFBFBF"
                 }));
 
@@ -99,6 +101,7 @@ namespace Daftari.ViewModels
 
         void ItemChanged(CalendarDate item)
         {
+            OnPropertyChanged("SelectedItem");
             if (item != null)
             {
                 //var page = Application.Current.MainPage.Navigation?.NavigationStack.Last() ?? Application.Current.MainPage;

@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Renderers\CustomLabelRenderer_Droid.cs" />
     <Compile Include="Renderers\CustomEntryRenderer_Droid.cs" />
     <Compile Include="Renderers\CustomFrameRender_Droid.cs" />
     <Compile Include="Renderers\CustomMapRenderer_Droid.cs" />

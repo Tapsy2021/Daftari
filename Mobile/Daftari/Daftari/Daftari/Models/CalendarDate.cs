@@ -23,16 +23,22 @@ namespace Daftari.Models
         public CalendarDate()
         {
             TextColor = "#1E3565";
-        }  
-        
+        }
+
         public string WeekName
         {
-            get { return CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedDayName(StartAt.DayOfWeek); }
+            get { return CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(StartAt.DayOfWeek); }
         }
 
         public string Month
         {
-            get { return StartAt.ToString("MMMMM"); }
+            get { return StartAt.ToString("MMMM"); }
+        }
+
+        public string LevelImage
+        {
+            //get { return $"level_4_seahorses.png"; }
+            get { return $"level_{ServiceName?.Replace(" ", "").Replace("-", "_")}.png".ToLower(); }
         }
     }
 }
