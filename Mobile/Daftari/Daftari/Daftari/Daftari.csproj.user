@@ -6,4 +6,9 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Views\Component\CustomNavigationPage.xaml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

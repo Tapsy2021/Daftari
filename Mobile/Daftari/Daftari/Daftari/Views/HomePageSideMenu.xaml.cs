@@ -33,13 +33,13 @@ namespace Daftari.Views
             {
                 MenuItems = new ObservableCollection<HomeMenuItem>(new[]
                 {
-                    new HomeMenuItem { Id = 0, Title = "Home",Icon = "icon_home.png" },
+                    new HomeMenuItem { Id = 0, Title = "Home",Icon = "icon_home.png", TargetType = typeof(Home.HomePageDetail) },
                     new HomeMenuItem { Id = 1, Title = "Swim Finder", Icon = "icon_swim_finder.png" },
                     new HomeMenuItem { Id = 2, Title = "Price List", Icon = "icon_checklist.png" },
-                    new HomeMenuItem { Id = 3, Title = "Aqua Card", Icon = "icon_aqua_cards.png" },
+                    new HomeMenuItem { Id = 3, Title = "Aqua Card", Icon = "icon_aqua_cards.png", TargetType = typeof(AquaCard.CardsPage) },
                     new HomeMenuItem { Id = 4, Title = "Team Oman", Icon= "icon_people.png" },
                     new HomeMenuItem { Id = 5, Title = "Shop Now", Icon= "icon_people.png" },
-                    new HomeMenuItem { Id = 6, Title = "Contact Us", Icon= "icon_people.png" },
+                    new HomeMenuItem { Id = 6, Title = "Contact Us", Icon= "icon_people.png", TargetType = typeof(Communication.ContactUsPage) },
                 });
             }
 
