@@ -14,6 +14,7 @@ namespace Daftari.ViewModels
         public List<StudentCard> source;
         public StudentCard CurrentItem { get; set; }
         public int Position { get; set; }
+        public int Skill_Position { get; set; }
         public ICommand TapCommand => new Command<string>(ButtonPressed);
         public ICommand ItemChangedCommand => new Command<StudentCard>(ItemChanged);
         public AquaCardViewModel()
@@ -31,6 +32,7 @@ namespace Daftari.ViewModels
                             IsComplete = true,
                             Skill = new Skill
                             {
+                                SetName = "WALL EXIT ENTRY",
                                 SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
                                 SkillLevel = Utils.SkillLevel.Four
                             }
@@ -40,6 +42,7 @@ namespace Daftari.ViewModels
                             IsComplete = true,
                             Skill = new Skill
                             {
+                                SetName = "VERTICAL BOBS",
                                 SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
                                 SkillLevel = Utils.SkillLevel.Four
                             }
@@ -49,6 +52,7 @@ namespace Daftari.ViewModels
                             IsComplete = false,
                             Skill = new Skill
                             {
+                                SetName = "FRONT FLOAT",
                                 SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
                                 SkillLevel = Utils.SkillLevel.Four
                             }
@@ -58,6 +62,7 @@ namespace Daftari.ViewModels
                             IsComplete = true,
                             Skill = new Skill
                             {
+                                SetName = "WALL EXIT ENTRY",
                                 SkillDifficulty = Utils.SkillDifficulty.ADVANCED,
                                 SkillLevel = Utils.SkillLevel.Four
                             }
@@ -67,6 +72,7 @@ namespace Daftari.ViewModels
                             IsComplete = false,
                             Skill = new Skill
                             {
+                                SetName ="VERTICAL BOBS",
                                 SkillDifficulty = Utils.SkillDifficulty.ADVANCED,
                                 SkillLevel = Utils.SkillLevel.Four
                             }
@@ -76,6 +82,7 @@ namespace Daftari.ViewModels
                             IsComplete = true,
                             Skill = new Skill
                             {
+                                SetName = "WALL EXIT ENTRY",
                                 SkillDifficulty = Utils.SkillDifficulty.BEGINNER,
                                 SkillLevel = Utils.SkillLevel.Four
                             }
@@ -85,7 +92,30 @@ namespace Daftari.ViewModels
                 new StudentCard
                 {
                     StudentName = "Bohlale Mokone",
-                    Level = Utils.SkillLevel.One
+                    Level = Utils.SkillLevel.Three,
+                    StudentCardDetails = new List<StudentCardDetail>
+                    {
+                        new StudentCardDetail
+                        {
+                            IsComplete = true,
+                            Skill = new Skill
+                            {
+                                SetName = "BREATH CONTROL & SUBMERSION",
+                                SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
+                                SkillLevel = Utils.SkillLevel.Three
+                            }
+                        },
+                        new StudentCardDetail
+                        {
+                            IsComplete = true,
+                            Skill = new Skill
+                            {
+                                SetName = "WALL EXIT/ENTRY",
+                                SkillDifficulty = Utils.SkillDifficulty.INTERMEDIATE,
+                                SkillLevel = Utils.SkillLevel.Three
+                            }
+                        }
+                    }
                 }
             };
             Cards = new ObservableCollection<StudentCard>(source);
@@ -103,6 +133,10 @@ namespace Daftari.ViewModels
             {
                 case "Back":
                     await Application.Current.MainPage.Navigation.PopAsync();
+                    break;
+                case "Skill_Back":
+                    break;
+                case "Skill_Next":
                     break;
             }
         }

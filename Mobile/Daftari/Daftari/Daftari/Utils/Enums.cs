@@ -31,8 +31,13 @@ namespace Daftari.Utils
 
     public enum SkillDifficulty
     {
+        [Display(Name = "BEGINNER SKILLS")]
         BEGINNER,
+
+        [Display(Name = "INTERMEDIATE SKILLS")]
         INTERMEDIATE,
+
+        [Display(Name = "ADVANCED SKILLS")]
         ADVANCED
     }
 }

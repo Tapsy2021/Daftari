@@ -12,17 +12,17 @@
         <StackLayout>
             <AbsoluteLayout>
                 <Image Source="aqua_cards_title.png" 
-                       HeightRequest="160"
+                       HeightRequest="110"
                        Aspect="Fill"></Image>
                 <Label Text="Aqua Cards" 
                        TextColor="#1E3565" 
                        FontSize="22" 
                        FontFamily="Gotham-Medium"
                        VerticalOptions="Center"
-                       VerticalTextAlignment="Center"
+                       VerticalTextAlignment="Start"
                        HorizontalTextAlignment="Start"
                        AbsoluteLayout.LayoutFlags="PositionProportional"
-                       AbsoluteLayout.LayoutBounds="0.9,0.022,250,70"/>
+                       AbsoluteLayout.LayoutBounds="1.0,0,250,70"/>
                 <Image Source="black_arrow.png" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.07,0.14,20,20"/>
             </AbsoluteLayout>
             <IndicatorView x:Name="indicatorView"
@@ -38,71 +38,80 @@
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout BackgroundColor="Transparent">
-                            <RelativeLayout>
+                            <StackLayout>
                                 <forms:ChartView Chart="{Binding Chart}"
                                                  VerticalOptions="Start" 
                                                  HorizontalOptions="Center" 
                                                  HeightRequest="350" 
                                                  WidthRequest="350"/>
 
+                                <Image Source="{Binding LevelImage}"
+                                       HeightRequest="45"/>
 
-                                <!--<Image Source="{Binding Background}" Opacity="0.9" Scale="2.2"
-                                          RelativeLayout.WidthConstraint=
-                                            "{ConstraintExpression Type=RelativeToParent, Property=Width}"
-                                          RelativeLayout.HeightConstraint=
-                                            "{ConstraintExpression Type=RelativeToParent, Property=Height}"/>-->
+                                <CarouselView ItemsSource="{Binding DifficultyDetails}" Position="{Binding Position, Mode=TwoWay}"  
+                                              IsSwipeEnabled="False"
+                                              BackgroundColor="Transparent">
+                                    <CarouselView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackLayout BackgroundColor="Transparent">
 
-                                <!--<Grid RelativeLayout.WidthConstraint=
-                                    "{ConstraintExpression Type=RelativeToParent, Property=Width}"
-                                  RelativeLayout.HeightConstraint=
-                                    "{ConstraintExpression Type=RelativeToParent, Property=Height}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="100"/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <StackLayout Padding="0,30,0,0">
-                                        <Label Text="{Binding Title}"
-                                               TextColor="Black"
-                                               FontSize="24"
-                                               FontFamily="Noteworthy-Bold"
-                                               HorizontalTextAlignment="Center"
-                                               VerticalTextAlignment="Center"
-                                               Margin="50,0"
-                                               HeightRequest="500"/>
-                                    </StackLayout>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="10*"/>
+                                                        <ColumnDefinition Width="80*"/>
+                                                        <ColumnDefinition Width="10*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="23"/>
+                                                    </Grid.RowDefinitions>
 
-                                    <StackLayout Grid.Row="1" Padding="0,0,0,30">
-                                        <Image HeightRequest="250"
-                                            Source="{Binding ImageUri}"/>
-                                    </StackLayout>
+                                                    <ImageButton Source="carousel_back_arrow.png"
+                                                                 BackgroundColor="Transparent" 
+                                                                 Margin="15,0,0,0"
+                                                                 Clicked="OnSkillBack_Clicked"/>
 
-                                </Grid>-->
-                            </RelativeLayout>
+                                                    <Label Grid.Column="1" Text="{Binding DifficultyName}" 
+                                                           TextColor="{Binding Color}" 
+                                                           FontSize="20" 
+                                                           FontFamily="Gotham-Medium"
+                                                           VerticalOptions="Center"
+                                                           VerticalTextAlignment="Center"
+                                                           HorizontalTextAlignment="Center"/>
 
-                            <!--<StackLayout VerticalOptions="EndAndExpand">
-                                <Label Text="{Binding Message}"
-                                       TextColor="White"
-                                       FontSize="14"
-                                       FontFamily="Quicksand-Regular"
-                                       HorizontalTextAlignment="Center"
-                                       VerticalTextAlignment="End"
-                                       Margin="50,20"/>
-                            </StackLayout>-->
+                                                    <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
+                                                                 BackgroundColor="Transparent" 
+                                                                 Margin="0,0,15,0"
+                                                                 Clicked="OnSkillNext_Clicked"/>
+
+                                                    <Label Grid.Row="1" Grid.ColumnSpan="3" TextColor="#707070" 
+                                                       FontSize="16" 
+                                                       FontFamily="Gotham-Book"
+                                                       VerticalOptions="Center"
+                                                       VerticalTextAlignment="Center"
+                                                       HorizontalTextAlignment="Center">
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span Text="The focus of Level " />
+                                                                <Span Text="{Binding Level}"/>
+                                                                <Span Text=" is "/>
+                                                                <Span TextColor="{Binding Color}" Text="{Binding Focus}"/>
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+
+                                                </Grid>
+
+                                            </StackLayout>
+                                        </DataTemplate>
+                                    </CarouselView.ItemTemplate>
+                                </CarouselView>
+                            </StackLayout>
+
                         </StackLayout>
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
             </CarouselView>
 
-            <!--<StackLayout Padding="0,15">
-                <Button Text="Next"
-                        x:Name="Btn_Next"
-                        BackgroundColor="Red"                        
-                        TextColor="White"
-                        Margin="30,0"
-                        FontFamily="Gotham-Bold"
-                        Clicked="OnNext_Clicked"
-                        CornerRadius="30"/>
-            </StackLayout>-->
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -1,4 +1,5 @@
 ﻿using Daftari.Utils;
+using Daftari.ViewModels;
 using Microcharts;
 using SkiaSharp;
 using System;
@@ -9,7 +10,7 @@ using System.Text;
 
 namespace Daftari.Models
 {
-    public class StudentCard
+    public class StudentCard : ViewModelBase
     {
         private const string White_Color = "#FFFFFF";
         private const string Primary_Color = "#0CBA70";
@@ -33,26 +34,67 @@ namespace Daftari.Models
         public SkillLevel Level { get; set; }
         public List<StudentCardDetail> StudentCardDetails { get; set; }
 
+        public string LevelImage
+        {
+            get { return $"level_{Level.GetDisplay().Replace(" ", "").Replace("-", "_")}.png".ToLower(); }
+        }
+
         public StudentCard()
         {
             StudentCardDetails = new List<StudentCardDetail>();
         }
 
+        public int Position { get; set; }
+        private List<SkillDifficultyDetail> _DifficultyDetails;
+        public List<SkillDifficultyDetail> DifficultyDetails
+        {
+            get
+            {
+                if (_DifficultyDetails == null)
+                {
+                    _DifficultyDetails = Enum.GetValues(typeof(SkillDifficulty)).Cast<SkillDifficulty>().Select(x => new SkillDifficultyDetail
+                    {
+                        DifficultyName = x.GetDisplay(),
+                        Color = Colors[(int)x],
+                        Level = (1 + (int)Level).ToString().PadLeft(2, '0'),
+                        Focus = Level.GetDescription().ToUpper(),
+                        SkillCompletions = StudentCardDetails.Where(sk => sk.Skill.SkillDifficulty == x).GroupBy(s => s.Skill.SetName).Select(sk => new SkillCompletion
+                        {
+                            SetName = sk.Key,
+                            IsComplete = sk.All(sks => sks.IsComplete)
+                        }).ToList()
+                    }).ToList();
+                }
+
+                return _DifficultyDetails;
+            }
+        }
+
+        public void OnNotify(string PropertyName)
+        {
+            OnPropertyChanged(PropertyName);
+        }
+
+        private RadialGaugeChart _Chart;
         public RadialGaugeChart Chart
         {
             get
             {
-                return new RadialGaugeChart
+                if (_Chart == null)
                 {
-                    Margin = 0,
-                    MaxValue = 100, // assign StudentCardDetails count then only count total
-                    MinValue = 0,
-                    Entries = entries.Concat(Enum.GetValues(typeof(SkillDifficulty)).Cast<SkillDifficulty>().Select(x => new ChartEntry(GetProgress(x))
+                    _Chart = new RadialGaugeChart
                     {
-                        Color = SKColor.Parse(Colors[(int)x]),
-                        ValueLabelColor = SKColor.Parse(Colors[(int)x])
-                    }))
-                };
+                        Margin = 0,
+                        MaxValue = 100, // assign StudentCardDetails count then only count total
+                        MinValue = 0,
+                        Entries = entries.Concat(Enum.GetValues(typeof(SkillDifficulty)).Cast<SkillDifficulty>().Select(x => new ChartEntry(GetProgress(x))
+                        {
+                            Color = SKColor.Parse(Colors[(int)x]),
+                            ValueLabelColor = SKColor.Parse(Colors[(int)x])
+                        }))
+                    };
+                }
+                return _Chart;
             }
         }
 
