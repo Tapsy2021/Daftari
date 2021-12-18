@@ -1,0 +1,564 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:renderers="clr-namespace:Daftari.Renderers"
+            mc:Ignorable="d"
+             x:Class="Daftari.Views.Auth.SignUpPage">
+  <!--Pages can be added as references or inline-->
+    <ContentPage Title="Tab 1" BackgroundColor="#1892D5">
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         Margin="20,0">
+
+                <RelativeLayout>
+                    <Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
+                                        RelativeLayout.WidthConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                       HeightRequest="260"/>
+
+                    <Grid RelativeLayout.WidthConstraint=
+                                "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                          Padding="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="80*"/>
+                            <ColumnDefinition Width="10*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <ImageButton Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="15,0,0,0"/>
+
+                        <Label Grid.Column="1" Text="Sign Up" 
+                                TextColor="#012550" 
+                                FontSize="18" 
+                                FontFamily="Gotham-Medium"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="0,0,15,0"/>
+
+                        <Label Grid.Row="1" Grid.Column="1" Text="Step 1 of 4" 
+                                TextColor="Red" 
+                                FontSize="15" 
+                                FontFamily="Gotham-Book"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <StackLayout Grid.Row="2" Grid.ColumnSpan="3" Padding="0,0,0,30">
+                            <Image Source="ollietheotter_swim_stand.png"
+                                   HeightRequest="250"/>
+                        </StackLayout>
+
+                    </Grid>
+                </RelativeLayout>
+
+                <StackLayout Margin="20,0">
+                    <Entry x:Name="FullName" Grid.Row="0" Grid.Column="0" Placeholder="Full Name"
+                            MaxLength="50"
+                            FontSize="18"
+                            TextColor="White"
+                            PlaceholderColor="White"
+                            FontFamily="Gotham-Book"
+                            IsSpellCheckEnabled="false"
+                            IsTextPredictionEnabled="false">
+                    </Entry>
+
+                    <Entry x:Name="Email" Grid.Row="0" Grid.Column="0" Placeholder="Email"
+                            MaxLength="50"
+                            FontSize="18"
+                            TextColor="White"
+                            PlaceholderColor="White"
+                            FontFamily="Gotham-Book"
+                            IsSpellCheckEnabled="false"
+                            IsTextPredictionEnabled="false">
+                    </Entry>
+
+                    <Entry x:Name="Password" Grid.Row="0" Grid.Column="0" Placeholder="Password"
+                            MaxLength="25"   
+                            Margin="0"
+                            FontSize="18"
+                            TextColor="White"
+                            PlaceholderColor="White"
+                            FontFamily="Gotham-Book"
+                            IsSpellCheckEnabled="false"
+                            IsTextPredictionEnabled="false"
+                            IsPassword="True"/>
+
+                    <Entry x:Name="ConfirmPassword" Grid.Row="0" Grid.Column="0" Placeholder="Confirm Password"
+                            MaxLength="25"   
+                            Margin="0"
+                            FontSize="18"
+                            TextColor="White"
+                            PlaceholderColor="White"
+                            FontFamily="Gotham-Book"
+                            IsSpellCheckEnabled="false"
+                            IsTextPredictionEnabled="false"
+                            IsPassword="True"/>
+
+                    <Label FontFamily="Gotham-Book"
+                            TextTransform="None"
+                            TextColor="White"
+                            HorizontalOptions="End"
+                            FontSize="13"
+                           Padding="1"
+                            Margin="0">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="By creating an account you agree to our" />
+                                <Span Text=" Terms of Service and Privacy Policy"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </StackLayout>
+
+                <StackLayout Margin="20,0,20,40">
+                    <Button Text="Next"
+                        BackgroundColor="White"                        
+                        TextColor="#012550"
+                        Margin="0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"
+                        Clicked="OnCredentials_Clicked"/>
+                </StackLayout>
+
+            </StackLayout>
+
+            <!--<StackLayout
+                    IsVisible="{Binding IsRunning, Mode=OneWay}"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    BackgroundColor="Gray" Opacity="0.5">
+                <ActivityIndicator
+                        IsRunning="{Binding IsRunning, Mode=OneWay}"
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="CenterAndExpand"
+                        Color="Black"/>
+            </StackLayout>-->
+
+        </AbsoluteLayout>
+    </ContentPage>
+
+    <ContentPage Title="Tab 2" BackgroundColor="#1892D5">
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         Margin="20,0">
+
+                <RelativeLayout>
+                    <Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
+                                        RelativeLayout.WidthConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                       HeightRequest="260"/>
+
+                    <Grid RelativeLayout.WidthConstraint=
+                                "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                          Padding="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="80*"/>
+                            <ColumnDefinition Width="10*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <ImageButton Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="15,0,0,0"/>
+
+                        <Label Grid.Column="1" Text="Sign Up" 
+                                TextColor="#012550" 
+                                FontSize="18" 
+                                FontFamily="Gotham-Medium"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="0,0,15,0"/>
+
+                        <Label Grid.Row="1" Grid.Column="1" Text="Step 2 of 4" 
+                                TextColor="Red" 
+                                FontSize="15" 
+                                FontFamily="Gotham-Book"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <StackLayout Grid.Row="2" Grid.ColumnSpan="3" Padding="0,0,0,30">
+                            <Image Source="ollietheotter_swim_stand.png"
+                                   HeightRequest="250"/>
+                        </StackLayout>
+
+                    </Grid>
+                </RelativeLayout>
+
+                <StackLayout Margin="20,0">
+                    <Entry x:Name="Name" Placeholder="Name"
+                            MaxLength="50"
+                            FontSize="18"
+                            TextColor="White"
+                            PlaceholderColor="White"
+                            FontFamily="Gotham-Book"
+                            IsSpellCheckEnabled="false"
+                            IsTextPredictionEnabled="false">
+                    </Entry>
+
+                    <DatePicker x:Name="DOB"
+                            FontSize="18"
+                            TextColor="White"
+                            FontFamily="Gotham-Book">
+                    </DatePicker>
+
+
+                    <Picker x:Name="Gender"
+                            Grid.Row="0" Grid.Column="1" Title="Date of birth" 
+                            FontSize="18"
+                            TextColor="White"
+                            TitleColor="White"
+                            Margin="0"
+                            FontFamily="Gotham-Book" />
+
+                </StackLayout>
+
+                <StackLayout Margin="20,0,20,40">
+                    <Button Text="Sign Up"
+                        BackgroundColor="White"                        
+                        TextColor="#012550"
+                        Margin="0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"
+                        Clicked="OnValidateChild_Clicked"/>
+                </StackLayout>
+
+            </StackLayout>
+
+            <!--<StackLayout
+                    IsVisible="{Binding IsRunning, Mode=OneWay}"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    BackgroundColor="Gray" Opacity="0.5">
+                <ActivityIndicator
+                        IsRunning="{Binding IsRunning, Mode=OneWay}"
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="CenterAndExpand"
+                        Color="Black"/>
+            </StackLayout>-->
+
+        </AbsoluteLayout>
+    </ContentPage>
+
+    <ContentPage Title="Tab 3" >
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         Margin="20,0">
+
+                <RelativeLayout>
+                    <!--<Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
+                                        RelativeLayout.WidthConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                       HeightRequest="260"/>-->
+
+                    <Grid RelativeLayout.WidthConstraint=
+                                "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                          Padding="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="80*"/>
+                            <ColumnDefinition Width="10*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <ImageButton Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="15,0,0,0"/>
+
+                        <Label Grid.Column="1" Text="Create an account" 
+                                TextColor="#012550" 
+                                FontSize="16" 
+                                FontFamily="Gotham-Medium"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="0,0,15,0"/>
+
+                        <Label Grid.Row="1" Grid.Column="1" Text="Step 3 of 4" 
+                                TextColor="Red" 
+                                FontSize="15" 
+                                FontFamily="Gotham-Book"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <!--<StackLayout Grid.Row="2" Grid.ColumnSpan="3" Padding="0,0,0,30">
+                            <Image Source="ollietheotter_swim_stand.png"
+                                   HeightRequest="250"/>
+                        </StackLayout>-->
+
+                    </Grid>
+                </RelativeLayout>
+
+                <StackLayout Margin="20,0">
+                    <CollectionView ItemsSource="{Binding SwimLevels}"
+                                    SelectionMode="Single"                                    
+                                    SelectedItem="{Binding SelectedSwimLevel, Mode=TwoWay}"
+                                    SelectionChangedCommand="{Binding SwimLevelChangedCommand}"
+                                    SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedSwimLevel}"
+                                    Margin="0">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+
+                                    <Label Text="{Binding Name}" 
+                                            TextColor="#012550" 
+                                            FontSize="18" 
+                                            Padding="0,10,0,2"
+                                            FontFamily="Gotham-Medium"
+                                            VerticalOptions="Center"
+                                            VerticalTextAlignment="Center"
+                                            HorizontalTextAlignment="Start"/>
+
+                                    <Label Text="{Binding Description}" 
+                                            TextColor="#012550" 
+                                            FontSize="14" 
+                                            Padding="0,5"
+                                            FontFamily="Gotham-Book"
+                                            VerticalOptions="Center"
+                                            VerticalTextAlignment="Center"
+                                            HorizontalTextAlignment="Start"/>
+
+                                    <BoxView BackgroundColor="#d9d9d9" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </StackLayout>
+
+                <StackLayout Margin="20,0,20,40">
+                    <Button Text="Next"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"
+                        Clicked="OnSwimLevel_Clicked"/>
+                </StackLayout>
+
+            </StackLayout>
+
+            <!--<StackLayout
+                    IsVisible="{Binding IsRunning, Mode=OneWay}"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    BackgroundColor="Gray" Opacity="0.5">
+                <ActivityIndicator
+                        IsRunning="{Binding IsRunning, Mode=OneWay}"
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="CenterAndExpand"
+                        Color="Black"/>
+            </StackLayout>-->
+
+        </AbsoluteLayout>
+    </ContentPage>
+
+    <ContentPage Title="Tab 4">
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
+                         AbsoluteLayout.LayoutFlags="All"
+                         Margin="20,0">
+
+                <RelativeLayout>
+                    <!--<Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
+                                        RelativeLayout.WidthConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                       HeightRequest="260"/>-->
+
+                    <Grid RelativeLayout.WidthConstraint=
+                                "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                          Padding="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="80*"/>
+                            <ColumnDefinition Width="10*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <ImageButton Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="15,0,0,0"/>
+
+                        <Label Grid.Column="1" Text="Create an account" 
+                                TextColor="#012550" 
+                                FontSize="16" 
+                                FontFamily="Gotham-Medium"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="0,0,15,0"/>
+
+                        <Label Grid.Row="1" Grid.Column="1" Text="Step 4 of 4" 
+                                TextColor="Red" 
+                                FontSize="15" 
+                                FontFamily="Gotham-Book"
+                                VerticalOptions="Center"
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
+
+                        <!--<StackLayout Grid.Row="2" Grid.ColumnSpan="3" Padding="0,0,0,30">
+                            <Image Source="ollietheotter_swim_stand.png"
+                                   HeightRequest="250"/>
+                        </StackLayout>-->
+
+                    </Grid>
+                </RelativeLayout>
+
+                <StackLayout Margin="20,0">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="25*"/>
+                            <ColumnDefinition Width="25*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.ColumnSpan="3">
+                            <Label Grid.Column="1" Text="Pike 13" 
+                                    TextColor="#012550" 
+                                    FontSize="17" 
+                                    FontFamily="Gotham-Medium"
+                                    VerticalOptions="End"
+                                    VerticalTextAlignment="End"
+                                    HorizontalTextAlignment="Start"/>
+
+                            <Label Grid.Column="1" Text="Allow access to pike13" 
+                                    TextColor="#012550" 
+                                    FontSize="14" 
+                                    FontFamily="Gotham-Book"
+                                    VerticalOptions="Start"
+                                    VerticalTextAlignment="Start"
+                                    HorizontalTextAlignment="Start"/>
+                        </StackLayout>
+
+                        <Switch Grid.Column="3">
+                            
+                        </Switch>
+
+                        <Entry Grid.Row="1" Grid.ColumnSpan="4" x:Name="Parent" Placeholder="Parent / Guardian's Name"
+                                MaxLength="50"
+                                FontSize="14"
+                                TextColor="White"
+                                PlaceholderColor="White"
+                                FontFamily="Gotham-Book"
+                                IsSpellCheckEnabled="false"
+                                IsTextPredictionEnabled="false">
+                        </Entry>
+
+                        <Label Grid.Row="2" Grid.ColumnSpan="2" Text="Gender" 
+                                TextColor="#012550" 
+                                FontSize="14" 
+                                FontFamily="Gotham-Medium"
+                                VerticalOptions="End"
+                                VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Start"/>
+
+                        <Label Grid.Row="3" Grid.ColumnSpan="2" Text="Birth Date" 
+                                TextColor="#012550" 
+                                FontSize="14" 
+                                FontFamily="Gotham-Medium"
+                                VerticalOptions="End"
+                                VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Start"/>
+
+                        <DatePicker Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" x:Name="BirthDate"
+                                FontSize="14"
+                                TextColor="White"
+                                FontFamily="Gotham-Book">
+                        </DatePicker>
+
+                        <Entry Grid.Row="4" Grid.ColumnSpan="4" x:Name="ChildName" Placeholder="Child's Name"
+                                MaxLength="50"
+                                FontSize="14"
+                                TextColor="White"
+                                PlaceholderColor="White"
+                                FontFamily="Gotham-Book"
+                                IsSpellCheckEnabled="false"
+                                IsTextPredictionEnabled="false">
+                        </Entry>
+
+                        <Label Grid.Row="5" Grid.ColumnSpan="2" Text="Child's Birth Date" 
+                                TextColor="#012550" 
+                                FontSize="14" 
+                                FontFamily="Gotham-Medium"
+                                VerticalOptions="End"
+                                VerticalTextAlignment="End"
+                                HorizontalTextAlignment="Start"/>
+
+                        <DatePicker Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" x:Name="ChildBirthDate"
+                                FontSize="14"
+                                TextColor="White"
+                                FontFamily="Gotham-Book">
+                        </DatePicker>
+
+                    </Grid>
+
+                </StackLayout>
+
+                <StackLayout Margin="20,0,20,40">
+                    <Button Text="Next"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"/>
+                </StackLayout>
+
+            </StackLayout>
+
+            <!--<StackLayout
+                    IsVisible="{Binding IsRunning, Mode=OneWay}"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    BackgroundColor="Gray" Opacity="0.5">
+                <ActivityIndicator
+                        IsRunning="{Binding IsRunning, Mode=OneWay}"
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="CenterAndExpand"
+                        Color="Black"/>
+            </StackLayout>-->
+
+        </AbsoluteLayout>
+
+    </ContentPage>
+</TabbedPage>

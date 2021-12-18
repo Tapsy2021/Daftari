@@ -6,134 +6,107 @@
              xmlns:controls="clr-namespace:Daftari.Controls"
              xmlns:renderers="clr-namespace:Daftari.Renderers"
              mc:Ignorable="d"
-             x:Class="Daftari.Views.Auth.LoginPage">
+             x:Class="Daftari.Views.Auth.LoginPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#1892D5">
     <ContentPage.Content>
         <AbsoluteLayout>
             <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
                          AbsoluteLayout.LayoutFlags="All"
-                         Margin="30,0,30,0">
-                <!--<svg:Icon ResourceId="Dero.Content.Icons.logo_blue.svg" 
-                          WidthRequest="300" 
-                          HeightRequest="45" 
-                          HorizontalOptions="Center" 
-                          VerticalOptions="Center"
-                          Margin="0,90,0,52"/>-->
+                         Margin="20,0">
 
-                <StackLayout VerticalOptions="CenterAndExpand">
-                    <Frame BorderColor="#bdbdbd" 
-                           CornerRadius="10"
-                           Padding="10,3"
-                           Margin="0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90*"/>
-                                <ColumnDefinition Width="10*"/>
-                            </Grid.ColumnDefinitions>
+                <RelativeLayout>
+                    <Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
+                                        RelativeLayout.WidthConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                       HeightRequest="260"/>
 
-                            <renderers:CustomEntry x:Name="Email" Grid.Row="0" Grid.Column="0" Placeholder="Email"
-                                       MaxLength="50"
-                                       FontSize="18"
-                                       FontFamily="Gotham-Medium"
-                                       IsSpellCheckEnabled="false"
-                                       IsTextPredictionEnabled="false">
-                            </renderers:CustomEntry>
+                    <Grid RelativeLayout.WidthConstraint=
+                                "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                          Padding="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="80*"/>
+                            <ColumnDefinition Width="10*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
-                            <!--<svg:Icon Grid.Row="0" Grid.Column="1" ResourceId="Dero.Content.Icons.Span.at_icon.svg" 
-                                      WidthRequest="20" 
-                                      HeightRequest="20" 
-                                      HorizontalOptions="Center" 
-                                      VerticalOptions="Center"
-                                      Margin="0,0,0,0"/>-->
-                        </Grid>
-                    </Frame>
+                        <ImageButton Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="15,0,0,0"/>
 
-                    <Label x:Name="Email_Error"
-                           Text=""
-                           FontFamily="DIN-PRO"
-                           TextColor="Red"
-                           HorizontalOptions="Start"
-                           Margin="1,0,0,10"/>
-
-                    <Frame BorderColor="#bdbdbd" 
-                           CornerRadius="10"
-                           Padding="10,3"
-                           Margin="0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80*"/>
-                                <ColumnDefinition Width="20*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <renderers:CustomEntry x:Name="Password" Grid.Row="0" Grid.Column="0" Placeholder="Password"
-                                       MaxLength="25"   
-                                       Margin="0"
-                                       FontSize="18"
-                                       FontFamily="Gotham-Medium"
-                                       IsSpellCheckEnabled="false"
-                                       IsTextPredictionEnabled="false"
-                                       IsPassword="True"/>
-
-                            <!--<controls:Icon Grid.Row="0" Grid.Column="1" ResourceId="Daftari.Content.Icons.Span.password_view_icon.svg" 
-                                      WidthRequest="40" 
-                                      HeightRequest="40" 
-                                      HorizontalOptions="Center" 
-                                      VerticalOptions="Center"
-                                      Margin="0,0,0,0"/>-->
-                        </Grid>
-                    </Frame>
-                    <Label Text="Error span"
-                           FontFamily="DIN-PRO"
-                           TextColor="Transparent"
-                           HorizontalOptions="Start"                       
-                           Margin="1,0,0,10"/>
-                    <StackLayout Orientation="Horizontal"
-                                 VerticalOptions="Center"
-                                 HorizontalOptions="Center"
-                                 Margin="0">
-
-                        <!--<controls:Icon ResourceId="Dero.Content.Icons.Span.p_message_icon.svg" 
-                                WidthRequest="20" 
-                                HeightRequest="20" 
-                                HorizontalOptions="Center" 
+                        <Label Grid.Column="1" Text="Login" 
+                                TextColor="#012550" 
+                                FontSize="18" 
+                                FontFamily="Gotham-Medium"
                                 VerticalOptions="Center"
-                                Margin="0,0,0,0"/>-->
+                                VerticalTextAlignment="Center"
+                                HorizontalTextAlignment="Center"/>
 
-                    </StackLayout>
+                        <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
+                                    BackgroundColor="Transparent" 
+                                    Margin="0,0,15,0"/>
+
+                        <StackLayout Grid.Row="1" Grid.ColumnSpan="3" Padding="0,0,0,30">
+                            <Image Source="ollietheotter_swim_stand.png"
+                                   HeightRequest="250"/>
+                        </StackLayout>
+
+                    </Grid>
+                </RelativeLayout>
+
+                <StackLayout Margin="20,10">
+                    <Entry x:Name="Email" Grid.Row="0" Grid.Column="0" Placeholder="Email"
+                            MaxLength="50"
+                            FontSize="18"
+                            TextColor="White"
+                            PlaceholderColor="White"
+                            FontFamily="Gotham-Book"
+                            IsSpellCheckEnabled="false"
+                            IsTextPredictionEnabled="false">
+                    </Entry>
+
+                    <Entry x:Name="Password" Grid.Row="0" Grid.Column="0" Placeholder="Password"
+                            MaxLength="25"   
+                            Margin="0"
+                            FontSize="18"
+                            TextColor="White"
+                            PlaceholderColor="White"
+                            FontFamily="Gotham-Book"
+                            IsSpellCheckEnabled="false"
+                            IsTextPredictionEnabled="false"
+                            IsPassword="True"/>
+
+                    <Label Text="Forgot Password"
+                            FontFamily="Gotham-Book"
+                            TextTransform="None"
+                            TextColor="White"
+                            HorizontalOptions="End"
+                            FontSize="15"
+                            Margin="0,0,0,10"/>
                 </StackLayout>
-                <StackLayout Margin="0,0,0,40">
+
+                <StackLayout Margin="20,0,20,40">
                     <Button Text="Log In"
                         x:Name="Btn_Login"
-                        BackgroundColor="Red"                        
-                        TextColor="White"
-                        Margin="30,0"
-                        FontFamily="Gotham-Bold"
-                        CornerRadius="30"
-                        Clicked="OnLogIn_Clicked"/>
-
-                    <Label 
-                        Text="Don't have account?"
-                        FontFamily="Gotham-Medium"
-                        TextTransform="None"
+                        BackgroundColor="White"                        
                         TextColor="#012550"
+                        Margin="0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"/>
+
+                    <Label Text="Don't have account? Sign Up"
+                        FontFamily="Gotham-Book"
+                        TextTransform="None"
+                        TextColor="White"
                         HorizontalOptions="Center"
                         FontSize="16"
-                        Margin="0,5,0,0"/>
-
-                    <Button Text="Sign Up"
-                        x:Name="Btn_Sign_Up"
-                        BackgroundColor="Red"                        
-                        TextColor="White"
-                        Margin="30,0"
-                        FontFamily="Gotham-Bold"
-                        CornerRadius="30"
-                        Clicked="OnSignUp_Clicked"/>
+                        Margin="0,0,0,5"/>
                 </StackLayout>
+
             </StackLayout>
 
             <!--<StackLayout

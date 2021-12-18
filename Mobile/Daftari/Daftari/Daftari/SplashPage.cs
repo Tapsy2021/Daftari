@@ -1,4 +1,4 @@
-﻿using Daftari.Views.Intro;
+﻿using Daftari.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,7 +42,7 @@ namespace Daftari
                 SplashImage.ScaleTo(1, 500)
             );
 
-            Application.Current.MainPage = new NavigationPage(new IntroPage());
+            Application.Current.MainPage = new NavigationPage(new WelcomePage());
             
 
             //if (Application.Current.Properties.ContainsKey(Utils.Constants.Keys.Is_First_Launch) && !(bool)Application.Current.Properties[Utils.Constants.Keys.Is_First_Launch])

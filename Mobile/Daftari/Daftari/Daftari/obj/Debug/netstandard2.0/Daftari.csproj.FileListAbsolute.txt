@@ -23,3 +23,5 @@ C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\Communication\ContactUsPage.xaml.g.cs
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\Component\CustomNavigationPage.xaml.g.cs
 C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\XamlC.stamp
+C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\WelcomePage.xaml.g.cs
+C:\Projects\Lustercap\Daftari\Daftari\Daftari\Mobile\Daftari\Daftari\Daftari\obj\Debug\netstandard2.0\Views\Auth\SignUpPage.xaml.g.cs

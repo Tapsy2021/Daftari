@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Daftari.Views.WelcomePage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#1892D5">
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="Transparent">
+            <RelativeLayout>
+                <Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
+                                        RelativeLayout.WidthConstraint=
+                                        "{ConstraintExpression Type=RelativeToParent, Property=Width}"
+                       HeightRequest="260"/>
+
+                <Grid RelativeLayout.WidthConstraint=
+                                "{ConstraintExpression Type=RelativeToParent, Property=Width}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackLayout Padding="0,30,0,0">
+                        <Label Text="Welcome"
+                                            TextColor="Black"
+                                            FontSize="24"
+                                            FontFamily="Noteworthy-Bold"
+                                            HorizontalTextAlignment="Center"
+                                            VerticalTextAlignment="Center"
+                                            Margin="50,0"
+                                            HeightRequest="500"/>
+                    </StackLayout>
+
+                    <StackLayout Grid.Row="1" Padding="0,0,0,30">
+                        <Image HeightRequest="250"
+                                        Source="ollietheotter_swim_stand.png"/>
+                    </StackLayout>
+
+                </Grid>
+            </RelativeLayout>
+
+            <StackLayout Margin="0,0,0,40">
+                <Button Text="Log In"
+                        x:Name="Btn_Login"
+                        BackgroundColor="White"                        
+                        TextColor="#012550"
+                        Margin="40,0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"
+                        Clicked="OnLogin_Clicked"/>
+
+                <Label Text="Forgot Password"
+                        FontFamily="Gotham-Book"
+                        TextTransform="None"
+                        TextColor="White"
+                        HorizontalOptions="Center"
+                        FontSize="16"
+                        Margin="0,0,0,5"/>
+
+                <Label Text="Don't have account?"
+                        FontFamily="Gotham-Book"
+                        TextTransform="None"
+                        TextColor="White"
+                        HorizontalOptions="Center"
+                        FontSize="16"
+                        Margin="0,5,0,0"/>
+
+                <Button Text="Sign Up"
+                        x:Name="Btn_Sign_Up"
+                        BackgroundColor="Red"                        
+                        TextColor="White"
+                        Margin="40,0"
+                        FontFamily="Gotham-Bold"
+                        CornerRadius="30"
+                        Clicked="OnSignUp_Clicked"/>
+            </StackLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </StackLayout>
+
+    </ContentPage.Content>
+</ContentPage>
