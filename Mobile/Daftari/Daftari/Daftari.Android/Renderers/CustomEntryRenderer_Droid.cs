@@ -1,5 +1,8 @@
 ﻿using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.OS;
 using Android.Text;
 using Android.Text.Method;
 using Daftari.Renderers;
@@ -23,18 +26,10 @@ namespace Droid.Droid.Renderers
             base.OnElementChanged(e);
             if (Control != null)
             {
-                GradientDrawable gd = new GradientDrawable();
-                gd.SetColor(global::Android.Graphics.Color.Transparent);
-                Control.Background = gd;
-
-                if (Element is CustomEntry customEntry)
-                {
-                    var paddingLeft = (int)customEntry.Padding.Left;
-                    var paddingTop = (int)customEntry.Padding.Top;
-                    var paddingRight = (int)customEntry.Padding.Right;
-                    var paddingBottom = (int)customEntry.Padding.Bottom;
-                    this.Control.SetPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-                }
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    Control.BackgroundTintList = ColorStateList.ValueOf(Android.Graphics.Color.White);
+                else
+                    Control.Background.SetColorFilter(Android.Graphics.Color.White, PorterDuff.Mode.SrcAtop);
             }
         }
 

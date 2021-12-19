@@ -1,5 +1,8 @@
 ﻿using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.OS;
 using Daftari.Droid.Renderers;
 using Daftari.Renderers;
 using Xamarin.Forms;
@@ -19,9 +22,10 @@ namespace Daftari.Droid.Renderers
             base.OnElementChanged(e);
             if (Control != null)
             {
-                GradientDrawable gd = new GradientDrawable();
-                gd.SetColor(Android.Graphics.Color.Transparent);
-                Control.Background = gd;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    Control.BackgroundTintList = ColorStateList.ValueOf(Android.Graphics.Color.White);
+                else
+                    Control.Background.SetColorFilter(Android.Graphics.Color.White, PorterDuff.Mode.SrcAtop);
             }
         }
     }

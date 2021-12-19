@@ -63,6 +63,7 @@
     <Compile Include="Renderers\CustomFrameRender_Droid.cs" />
     <Compile Include="Renderers\CustomMapRenderer_Droid.cs" />
     <Compile Include="Renderers\CustomNavigationRenderer_Droid.cs" />
+    <Compile Include="Renderers\CustomDatePickerRenderer_Droid.cs" />
     <Compile Include="Renderers\CustomPickerRenderer_Droid.cs" />
     <Compile Include="Renderers\CustomSwitchRenderer_Droid.cs" />
     <Compile Include="Renderers\CustomTabbedRenderer.cs" />

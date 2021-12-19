@@ -66,43 +66,41 @@
                 </RelativeLayout>
 
                 <StackLayout Margin="20,0">
-                    <Entry x:Name="FullName" Grid.Row="0" Grid.Column="0" Placeholder="Full Name"
+                    <renderers:CustomEntry x:Name="FullName" Grid.Row="0" Grid.Column="0" Placeholder="Full Name"
                             MaxLength="50"
                             FontSize="18"
                             TextColor="White"
-                            PlaceholderColor="White"
+                            PlaceholderColor="#81c4eb"
                             FontFamily="Gotham-Book"
                             IsSpellCheckEnabled="false"
-                            IsTextPredictionEnabled="false">
-                    </Entry>
+                            IsTextPredictionEnabled="false"/>
 
-                    <Entry x:Name="Email" Grid.Row="0" Grid.Column="0" Placeholder="Email"
+                    <renderers:CustomEntry x:Name="Email" Grid.Row="0" Grid.Column="0" Placeholder="Email"
                             MaxLength="50"
                             FontSize="18"
                             TextColor="White"
-                            PlaceholderColor="White"
+                            PlaceholderColor="#81c4eb"
                             FontFamily="Gotham-Book"
                             IsSpellCheckEnabled="false"
-                            IsTextPredictionEnabled="false">
-                    </Entry>
+                            IsTextPredictionEnabled="false"/>
 
-                    <Entry x:Name="Password" Grid.Row="0" Grid.Column="0" Placeholder="Password"
+                    <renderers:CustomEntry x:Name="Password" Grid.Row="0" Grid.Column="0" Placeholder="Password"
                             MaxLength="25"   
                             Margin="0"
                             FontSize="18"
                             TextColor="White"
-                            PlaceholderColor="White"
+                            PlaceholderColor="#81c4eb"
                             FontFamily="Gotham-Book"
                             IsSpellCheckEnabled="false"
                             IsTextPredictionEnabled="false"
                             IsPassword="True"/>
 
-                    <Entry x:Name="ConfirmPassword" Grid.Row="0" Grid.Column="0" Placeholder="Confirm Password"
+                    <renderers:CustomEntry x:Name="ConfirmPassword" Grid.Row="0" Grid.Column="0" Placeholder="Confirm Password"
                             MaxLength="25"   
                             Margin="0"
                             FontSize="18"
                             TextColor="White"
-                            PlaceholderColor="White"
+                            PlaceholderColor="#81c4eb"
                             FontFamily="Gotham-Book"
                             IsSpellCheckEnabled="false"
                             IsTextPredictionEnabled="false"
@@ -210,28 +208,25 @@
                 </RelativeLayout>
 
                 <StackLayout Margin="20,0">
-                    <Entry x:Name="Name" Placeholder="Name"
+                    <renderers:CustomEntry x:Name="Name" Placeholder="Name"
                             MaxLength="50"
                             FontSize="18"
                             TextColor="White"
-                            PlaceholderColor="White"
+                            PlaceholderColor="#81c4eb"
                             FontFamily="Gotham-Book"
                             IsSpellCheckEnabled="false"
-                            IsTextPredictionEnabled="false">
-                    </Entry>
+                            IsTextPredictionEnabled="false"/>
 
-                    <DatePicker x:Name="DOB"
+                    <renderers:CustomDatePicker x:Name="DOB" Placeholder="Date of birth"
+                            FontSize="18"                            
+                            TextColor="White"
+                            PlaceholderColor="#81c4eb"
+                            FontFamily="Gotham-Book"/>
+
+                    <renderers:CustomPicker x:Name="Gender" Title="Gender" 
                             FontSize="18"
                             TextColor="White"
-                            FontFamily="Gotham-Book">
-                    </DatePicker>
-
-
-                    <Picker x:Name="Gender"
-                            Grid.Row="0" Grid.Column="1" Title="Date of birth" 
-                            FontSize="18"
-                            TextColor="White"
-                            TitleColor="White"
+                            TitleColor="#81c4eb"
                             Margin="0"
                             FontFamily="Gotham-Book" />
 
@@ -472,7 +467,7 @@
                         </StackLayout>
 
                         <Switch Grid.Column="3">
-                            
+
                         </Switch>
 
                         <Entry Grid.Row="1" Grid.ColumnSpan="4" x:Name="Parent" Placeholder="Parent / Guardian's Name"
@@ -559,6 +554,5 @@
             </StackLayout>-->
 
         </AbsoluteLayout>
-
     </ContentPage>
 </TabbedPage>
