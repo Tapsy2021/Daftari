@@ -268,7 +268,7 @@
                     </Grid>
                 </RelativeLayout>
 
-                <StackLayout Margin="20,0">
+                <StackLayout Margin="20,0,0,20">
                     <StackLayout>
                         <renderers:CustomEntry x:Name="Name" Placeholder="Name"
                                 MaxLength="50"
@@ -338,7 +338,6 @@
                                Padding="2,0"
                                IsVisible="False"/>
                     </StackLayout>
-
                 </StackLayout>
 
                 <StackLayout Margin="20,0,20,40">
@@ -350,7 +349,6 @@
                         CornerRadius="30"
                         Clicked="OnValidateChild_Clicked"/>
                 </StackLayout>
-
             </StackLayout>
 
             <!--<StackLayout
