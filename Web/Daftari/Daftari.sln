@@ -45,6 +45,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daftari.Forms", "Daftari.Fo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daftari.Forms.DAL", "Daftari.Forms.DAL\Daftari.Forms.DAL.csproj", "{D83FBCB2-5779-49C2-8EA2-08249EED64C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daftari.API", "Daftari.API\Daftari.API.csproj", "{867BE33C-CF1B-4BF4-A1CE-3864D051F659}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daftari.API.Tests", "Daftari.API.Tests\Daftari.API.Tests.csproj", "{D3B8260B-948E-46A1-98B9-71F80F1C1FC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +139,14 @@ Global
 		{D83FBCB2-5779-49C2-8EA2-08249EED64C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D83FBCB2-5779-49C2-8EA2-08249EED64C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D83FBCB2-5779-49C2-8EA2-08249EED64C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{867BE33C-CF1B-4BF4-A1CE-3864D051F659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{867BE33C-CF1B-4BF4-A1CE-3864D051F659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{867BE33C-CF1B-4BF4-A1CE-3864D051F659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{867BE33C-CF1B-4BF4-A1CE-3864D051F659}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3B8260B-948E-46A1-98B9-71F80F1C1FC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3B8260B-948E-46A1-98B9-71F80F1C1FC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3B8260B-948E-46A1-98B9-71F80F1C1FC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3B8260B-948E-46A1-98B9-71F80F1C1FC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
