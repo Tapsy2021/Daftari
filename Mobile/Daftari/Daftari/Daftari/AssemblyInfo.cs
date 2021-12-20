@@ -16,3 +16,9 @@ using Xamarin.Forms.Xaml;
 [assembly: ExportFont("QuicksandMedium.ttf", Alias = "Quicksand-Medium")]
 [assembly: ExportFont("QuicksandBold.ttf", Alias = "Quicksand-Bold")]
 [assembly: ExportFont("NoteworthyBold.ttf", Alias = "Noteworthy-Bold")]
+
+[assembly: ExportFont("RobotoRegular.ttf", Alias = "Roboto-Regular")]
+[assembly: ExportFont("RobotoMedium.ttf", Alias = "Roboto-Medium")]
+[assembly: ExportFont("RobotoMediumItalic.ttf", Alias = "Roboto-Medium-Italic")]
+[assembly: ExportFont("RobotoBold.ttf", Alias = "Roboto-Bold")]
+[assembly: ExportFont("RobotoBoldItalic.ttf", Alias = "Roboto-Bold-Italic")]

@@ -10,13 +10,14 @@ namespace Daftari.ViewModels
 {
     public class SignUpViewModel : ViewModelBase
     {
-        //public ObservableCollection<Gender> Genders { get; private set; }
+        public List<string> Genders { get; private set; }
         public List<SwimLevel> SwimLevels { get; set; }
         public SwimLevel SelectedSwimLevel { get; set; }
         public ICommand SwimLevelChangedCommand => new Command<SwimLevel>(SwimLevelChanged);
 
         public SignUpViewModel()
         {
+            Genders = new List<string> { "Male", "Female" };
             SwimLevels = new List<SwimLevel>
             {
                 new SwimLevel

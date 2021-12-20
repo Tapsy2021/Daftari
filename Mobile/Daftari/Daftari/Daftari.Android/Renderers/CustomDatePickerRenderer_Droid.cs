@@ -30,7 +30,7 @@ namespace Daftari.Droid.Renderers
             //Creating
             if (e.NewElement != null)
             {
-                _element = e.NewElement;
+                _element = e.NewElement as CustomDatePicker;
             }
 
             if (Control != null)
@@ -55,7 +55,7 @@ namespace Daftari.Droid.Renderers
             }
         }
 
-        protected Xamarin.Forms.DatePicker _element;
+        protected CustomDatePicker _element;
 
         protected override Android.App.DatePickerDialog CreateDatePickerDialog(int year, int month, int day)
         {
@@ -84,6 +84,7 @@ namespace Daftari.Droid.Renderers
                         Control.SetTextColor(Android.Graphics.Color.ParseColor(datePicker.PlaceholderColor));
                     }
                 }
+                _element.SelectedItem = null;
             }
             _element.Unfocus();
             //((FixedDatePicker) _element)?.CallOnCancel();
@@ -93,6 +94,7 @@ namespace Daftari.Droid.Renderers
             Control.SetTextColor(Android.Graphics.Color.White);
             //need to set date from native control manually now
             _element.Date = ((Android.App.DatePickerDialog)sender).DatePicker.DateTime;
+            _element.SelectedItem = _element.Date;
             _element.Unfocus();
             //((FixedDatePicker)_element)?.CallOnOk();
         }

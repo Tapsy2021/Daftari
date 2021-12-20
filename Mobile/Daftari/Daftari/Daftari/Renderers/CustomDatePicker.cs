@@ -21,5 +21,7 @@ namespace Daftari.Renderers
             get { return (string)this.GetValue(PlaceholderColorProperty); }
             set { this.SetValue(PlaceholderColorProperty, value); }
         }
+
+        public DateTime? SelectedItem { get; set; }
     }
 }

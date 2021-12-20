@@ -25,6 +25,11 @@
     <None Remove="Content\Fonts\QuicksandLight.ttf" />
     <None Remove="Content\Fonts\QuicksandMedium.ttf" />
     <None Remove="Content\Fonts\QuicksandRegular.ttf" />
+    <None Remove="Content\Fonts\RobotoBold.ttf" />
+    <None Remove="Content\Fonts\RobotoBoldItalic.ttf" />
+    <None Remove="Content\Fonts\RobotoMedium.ttf" />
+    <None Remove="Content\Fonts\RobotoMediumItalic.ttf" />
+    <None Remove="Content\Fonts\RobotoRegular.ttf" />
     <None Remove="Content\Icons\password_view_icon.svg" />
     <None Remove="Content\Icons\Span\password_view_icon.svg" />
   </ItemGroup>
@@ -44,6 +49,11 @@
     <EmbeddedResource Include="Content\Fonts\QuicksandLight.ttf" />
     <EmbeddedResource Include="Content\Fonts\QuicksandMedium.ttf" />
     <EmbeddedResource Include="Content\Fonts\QuicksandRegular.ttf" />
+    <EmbeddedResource Include="Content\Fonts\RobotoBold.ttf" />
+    <EmbeddedResource Include="Content\Fonts\RobotoBoldItalic.ttf" />
+    <EmbeddedResource Include="Content\Fonts\RobotoMedium.ttf" />
+    <EmbeddedResource Include="Content\Fonts\RobotoMediumItalic.ttf" />
+    <EmbeddedResource Include="Content\Fonts\RobotoRegular.ttf" />
     <EmbeddedResource Include="Content\Icons\Span\password_view_icon.svg" />
   </ItemGroup>
 
