@@ -1,12 +1,17 @@
 ﻿using LukeApps.AspIdentity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Jwt;
 using Owin;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace Daftari.API
@@ -45,6 +50,21 @@ namespace Daftari.API
             // Once you check this option, your second step of verification during the login process will be remembered on the device where you logged in from.
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
+
+            app.UseJwtBearerAuthentication(
+            new JwtBearerAuthenticationOptions
+            {
+                AuthenticationMode = AuthenticationMode.Active,
+                TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = ConfigurationManager.AppSettings["JwtIssuer"], //some string, normally web url,  
+                    ValidAudience = ConfigurationManager.AppSettings["JwtIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["JwtKey"]))
+                }
+            });
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
