@@ -38,7 +38,7 @@ namespace Daftari.Services.REST
             if (self.IsUserLoggedIn)
             {
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.Keys.Bearer, self.Identity.Token);
-                _client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
+                //_client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
             }
 
             try
@@ -76,7 +76,7 @@ namespace Daftari.Services.REST
             if (self.IsUserLoggedIn)
             {
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.Keys.Bearer, self.Identity.Token);
-                _client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
+                //_client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
             }
 
             try
@@ -115,7 +115,7 @@ namespace Daftari.Services.REST
             if (self.IsUserLoggedIn)
             {
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.Keys.Bearer, self.Identity.Token);
-                _client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
+                //_client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
             }
 
             List<T> list = null;
@@ -152,7 +152,7 @@ namespace Daftari.Services.REST
             if (self.IsUserLoggedIn)
             {
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.Keys.Bearer, self.Identity.Token);
-                _client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
+                //_client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
             }
 
             HttpContent fileStreamContent = new StreamContent(image);

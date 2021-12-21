@@ -1,21 +1,15 @@
-﻿using Daftari.Models;
+﻿//using Android.OS;
+using Daftari.Models;
+using Daftari.Services.Database;
 using Daftari.Utils;
 using Daftari.ViewModels;
 using Daftari.Views;
 using Daftari.Views.Intro;
 using System;
 using System.Globalization;
+//using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
-//using Android.OS;
-
-//using Dero.Services.Database;
-
-
-
-
-//using UIKit;
 //using static Android.Provider.Settings;
 
 namespace Daftari
@@ -33,6 +27,7 @@ namespace Daftari
             SetCultureToUSEnglish();
             InitializeComponent();
 
+            Identity = DbHelper.Instance.GetUser().Result;// sign in
             //DbHelper.Instance.SignOut();
 
             Settings = new SettingsViewModel(Current.Properties);

@@ -1,4 +1,5 @@
 ﻿using Daftari.Views;
+using Daftari.Views.Auth;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,25 +43,24 @@ namespace Daftari
                 SplashImage.ScaleTo(1, 500)
             );
 
-            Application.Current.MainPage = new NavigationPage(new WelcomePage());
-            
+            //Application.Current.MainPage = new NavigationPage(new WelcomePage());
 
-            //if (Application.Current.Properties.ContainsKey(Utils.Constants.Keys.Is_First_Launch) && !(bool)Application.Current.Properties[Utils.Constants.Keys.Is_First_Launch])
-            //{
-            //    if ((Application.Current as App).Identity == null)
-            //    {
-            //        Application.Current.MainPage = new NavigationPage(new LoginPage());
-            //    }
-            //    else
-            //    {
-            //        Application.Current.MainPage = new NavigationPage(new MenuPage());
-            //    }
-            //}
-            //else
-            //{
-            //    Application.Current.Properties[Utils.Constants.Keys.Is_First_Launch] = true;
-            //    Application.Current.MainPage = new NavigationPage(new IntroPage());
-            //}
+            if (Application.Current.Properties.ContainsKey(Utils.Constants.Keys.Is_First_Launch) && !(bool)Application.Current.Properties[Utils.Constants.Keys.Is_First_Launch])
+            {
+                if ((Application.Current as App).Identity == null)
+                {
+                    Application.Current.MainPage = new NavigationPage(new LoginPage());
+                }
+                else
+                {
+                    Application.Current.MainPage = new NavigationPage(new WelcomePage());
+                }
+            }
+            else
+            {
+                Application.Current.Properties[Utils.Constants.Keys.Is_First_Launch] = true;
+                Application.Current.MainPage = new NavigationPage(new IntroPage());
+            }
         }
     }
 }

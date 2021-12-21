@@ -14,12 +14,12 @@
             <Label Text="Home" TextColor="White" HorizontalTextAlignment="Center" FontSize="20" Margin="0, 0, 75, 0" />
         </StackLayout>
     </NavigationPage.TitleView>
-    <StackLayout BackgroundColor="Transparent" Padding="10">
+    <StackLayout BackgroundColor="Transparent" Padding="5,10">
         
-    <Frame BackgroundColor="White"
-           CornerRadius="20"
-           Margin="15,10"
-           VerticalOptions="FillAndExpand">
+        <Frame BackgroundColor="White"
+               CornerRadius="20"
+               Margin="15,0"
+               VerticalOptions="FillAndExpand">
             <StackLayout>
                 <tabview:TabViewControl
                 HeaderBackgroundColor="Transparent"
@@ -29,7 +29,7 @@
                 IsSwipeEnabled="True"
                 HeaderTabTextFontSize="18"
                 VerticalOptions="FillAndExpand"
-                HeaderTabTextFontFamily="Gotham-Bold">
+                HeaderTabTextFontFamily="Gotham-Medium">
                     <tabview:TabViewControl.ItemSource>
                         <tabview:TabItem HeaderText="Plans">
                             <StackLayout>
@@ -70,9 +70,9 @@
                                          Padding="0,10">
                                 <Frame CornerRadius="30" 
                                        Margin="1" 
-                                       Padding="1" 
+                                       Padding="12,1" 
                                        HasShadow="True" 
-                                       BackgroundColor="#ebebeb">
+                                       BackgroundColor="#fafafa">
                                     <StackLayout>
 
                                         <Grid>
@@ -147,16 +147,17 @@
                                             <CollectionView.ItemTemplate>
                                                 <DataTemplate>
                                                     <StackLayout Padding="1" Margin="0">
-                                                        <Frame HasShadow="True"
-                                                               CornerRadius="90"
-                                                               HeightRequest="35"
+                                                        <Frame CornerRadius="100"
+                                                               WidthRequest="27"
+                                                               HeightRequest="27"
+                                                               BackgroundColor="Transparent"
                                                                Padding="0">
                                                             <Label Text="{Binding Day}"
                                                                     FontSize="14"
                                                                     TextColor="{Binding TextColor}"
                                                                     VerticalOptions="Center"
                                                                     HorizontalOptions="Center"
-                                                                    FontFamily="Quicksand-Bold">
+                                                                    FontFamily="Gotham-Book">
                                                             </Label>
                                                         </Frame>
                                                     </StackLayout>

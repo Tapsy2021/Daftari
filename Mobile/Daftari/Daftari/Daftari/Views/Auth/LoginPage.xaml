@@ -30,25 +30,17 @@
                             <ColumnDefinition Width="10*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="30"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-
-                        <ImageButton Source="carousel_back_arrow.png"
-                                    BackgroundColor="Transparent" 
-                                    Margin="15,0,0,0"/>
 
                         <Label Grid.Column="1" Text="Login" 
                                 TextColor="#012550" 
                                 FontSize="18" 
-                                FontFamily="Gotham-Medium"
+                                FontFamily="Roboto-Medium"
                                 VerticalOptions="Center"
                                 VerticalTextAlignment="Center"
                                 HorizontalTextAlignment="Center"/>
-
-                        <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
-                                    BackgroundColor="Transparent" 
-                                    Margin="0,0,15,0"/>
 
                         <StackLayout Grid.Row="1" Grid.ColumnSpan="3" Padding="0,0,0,30">
                             <Image Source="ollietheotter_swim_stand.png"
@@ -111,26 +103,27 @@
                             TextTransform="None"
                             TextColor="White"
                             HorizontalOptions="End"
-                            FontSize="15"
-                            Margin="0,0,0,10"/>
+                            FontSize="14"
+                            Margin="0,0,0,20"/>
                 </StackLayout>
 
                 <StackLayout Margin="20,0,20,40">
                     <Button Text="Log In"
                         x:Name="Btn_Login"
                         BackgroundColor="White"                        
-                        TextColor="#012550"
+                        TextColor="#1E3565"
                         Margin="0"
+                        FontSize="16"
                         FontFamily="Gotham-Bold"
                         CornerRadius="30"
                         Clicked="OnLogIn_Clicked"/>
 
                     <Label Text="Don't have account? Sign Up"
-                        FontFamily="Gotham-Book"
+                        FontFamily="Roboto-Regular"
                         TextTransform="None"
                         TextColor="White"
                         HorizontalOptions="Center"
-                        FontSize="16"
+                        FontSize="14"
                         Margin="0,0,0,5"/>
                 </StackLayout>
 

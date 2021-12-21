@@ -27,6 +27,13 @@ namespace Daftari.Views
 
         class HomePageSideMenuVM : INotifyPropertyChanged
         {
+            public string FullName
+            {
+                get
+                {
+                    return $"{(Application.Current as App).Identity.FirstName}'s Daftari";
+                }
+            }
             public ObservableCollection<HomeMenuItem> MenuItems { get; set; }
 
             public HomePageSideMenuVM()

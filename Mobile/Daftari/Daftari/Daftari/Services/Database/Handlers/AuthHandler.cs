@@ -11,7 +11,7 @@ namespace Daftari.Services.Database
     {
         public Task<User> GetUserAsync()
         {
-            return Connection.Table<User>().Where(x => x.Is_Active).FirstOrDefaultAsync();
+            return Connection.Table<User>().FirstOrDefaultAsync();
         }
 
         public Task<int> SaveUserAsync(User user)
