@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Daftari.Services.REST.ViewModels
 {
-    public class ChildViewModel
+    public class ChildVM
     {
         public string FullName { get; set; }
         public DateTime DateOfBirth { get; set; }

@@ -62,6 +62,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Dependencies\MessageIOS.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Renderers\CustomEntryRenderer_IOS.cs" />
@@ -137,4 +138,5 @@
       <Name>Daftari</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
 </Project>

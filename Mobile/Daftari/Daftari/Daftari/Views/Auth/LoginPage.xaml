@@ -19,7 +19,7 @@
                     <Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
                                         RelativeLayout.WidthConstraint=
                                         "{ConstraintExpression Type=RelativeToParent, Property=Width}"
-                       HeightRequest="260"/>
+                       HeightRequest="240"/>
 
                     <Grid RelativeLayout.WidthConstraint=
                                 "{ConstraintExpression Type=RelativeToParent, Property=Width}"
@@ -59,26 +59,52 @@
                 </RelativeLayout>
 
                 <StackLayout Margin="20,10">
-                    <Entry x:Name="Email" Grid.Row="0" Grid.Column="0" Placeholder="Email"
-                            MaxLength="50"
-                            FontSize="18"
-                            TextColor="White"
-                            PlaceholderColor="White"
-                            FontFamily="Gotham-Book"
-                            IsSpellCheckEnabled="false"
-                            IsTextPredictionEnabled="false">
-                    </Entry>
+                    <StackLayout>
+                        <renderers:CustomEntry x:Name="Username" Grid.Row="0" Grid.Column="0" Placeholder="Username"
+                                MaxLength="50"
+                                FontSize="16"
+                                TextColor="White"
+                                PlaceholderColor="#81c4eb"
+                                FontFamily="Gotham-Book"
+                                IsSpellCheckEnabled="false"
+                                IsTextPredictionEnabled="false"
+                                TextChanged="OnUsername_TextChanged">
+                        </renderers:CustomEntry>
 
-                    <Entry x:Name="Password" Grid.Row="0" Grid.Column="0" Placeholder="Password"
-                            MaxLength="25"   
-                            Margin="0"
-                            FontSize="18"
-                            TextColor="White"
-                            PlaceholderColor="White"
-                            FontFamily="Gotham-Book"
-                            IsSpellCheckEnabled="false"
-                            IsTextPredictionEnabled="false"
-                            IsPassword="True"/>
+                        <Label x:Name="Username_Error"
+                               Text=""
+                               FontSize="13"
+                               FontFamily="Quicksand-Regular"
+                               TextColor="Red"
+                               HorizontalOptions="Start"
+                               Margin="0,-15,0,-7"
+                               Padding="2,0"
+                               IsVisible="False"/>
+                    </StackLayout>
+
+                    <StackLayout>
+                        <renderers:CustomEntry x:Name="Password" Placeholder="Password"
+                                MaxLength="25"   
+                                Margin="0"
+                                FontSize="16"
+                                TextColor="White"
+                                PlaceholderColor="#81c4eb"
+                                FontFamily="Gotham-Book"
+                                IsSpellCheckEnabled="false"
+                                IsTextPredictionEnabled="false"
+                                IsPassword="True"
+                                TextChanged="OnPassword_TextChanged"/>
+
+                        <Label x:Name="Password_Error"
+                               Text=""
+                               FontSize="13"
+                               FontFamily="Quicksand-Regular"
+                               TextColor="Red"
+                               HorizontalOptions="Start"
+                               Margin="0,-15,0,-7"
+                               Padding="2,0"
+                               IsVisible="False"/>
+                    </StackLayout>
 
                     <Label Text="Forgot Password"
                             FontFamily="Gotham-Book"
@@ -96,7 +122,8 @@
                         TextColor="#012550"
                         Margin="0"
                         FontFamily="Gotham-Bold"
-                        CornerRadius="30"/>
+                        CornerRadius="30"
+                        Clicked="OnLogIn_Clicked"/>
 
                     <Label Text="Don't have account? Sign Up"
                         FontFamily="Gotham-Book"
@@ -109,7 +136,7 @@
 
             </StackLayout>
 
-            <!--<StackLayout
+            <StackLayout
                     IsVisible="{Binding IsRunning, Mode=OneWay}"
                     AbsoluteLayout.LayoutBounds="0,0,1,1"
                     AbsoluteLayout.LayoutFlags="All"
@@ -119,7 +146,7 @@
                         HorizontalOptions="CenterAndExpand"
                         VerticalOptions="CenterAndExpand"
                         Color="Black"/>
-            </StackLayout>-->
+            </StackLayout>
 
         </AbsoluteLayout>
     </ContentPage.Content>

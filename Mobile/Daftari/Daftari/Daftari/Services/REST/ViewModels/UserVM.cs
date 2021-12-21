@@ -4,15 +4,15 @@ using System.Text;
 
 namespace Daftari.Services.REST.ViewModels
 {
-    public class UserViewModel
+    public class UserVM
     {
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public List<ChildViewModel> Children { get; set; }
-        public UserViewModel()
+        public List<ChildVM> Children { get; set; }
+        public UserVM()
         {
-            Children = new List<ChildViewModel>();
+            Children = new List<ChildVM>();
         }
     }
 }

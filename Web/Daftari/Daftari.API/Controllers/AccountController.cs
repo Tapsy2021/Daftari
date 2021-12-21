@@ -100,42 +100,42 @@ namespace Daftari.API.Controllers
             return null;
         }
 
-        [HttpPost]
-        [Route("api/account/getname1")]
-        public string GetName1()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    IEnumerable<Claim> claims = identity.Claims;
-                }
-                return "Valid";
-            }
-            else
-            {
-                return "Invalid";
-            }
-        }
+        //[HttpPost]
+        //[Route("api/account/getname1")]
+        //public string GetName1()
+        //{
+        //    if (User.Identity.IsAuthenticated)
+        //    {
+        //        var identity = User.Identity as ClaimsIdentity;
+        //        if (identity != null)
+        //        {
+        //            IEnumerable<Claim> claims = identity.Claims;
+        //        }
+        //        return "Valid";
+        //    }
+        //    else
+        //    {
+        //        return "Invalid";
+        //    }
+        //}
 
-        [Authorize]
-        [HttpPost]
-        [Route("api/account/getname2")]
-        public object GetName2()
-        {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                IEnumerable<Claim> claims = identity.Claims;
-                var name = claims.Where(p => p.Type == "name").FirstOrDefault()?.Value;
-                return new
-                {
-                    data = name
-                };
+        //[Authorize]
+        //[HttpPost]
+        //[Route("api/account/getname2")]
+        //public object GetName2()
+        //{
+        //    var identity = User.Identity as ClaimsIdentity;
+        //    if (identity != null)
+        //    {
+        //        IEnumerable<Claim> claims = identity.Claims;
+        //        var name = claims.Where(p => p.Type == "name").FirstOrDefault()?.Value;
+        //        return new
+        //        {
+        //            data = name
+        //        };
 
-            }
-            return null;
-        }
+        //    }
+        //    return null;
+        //}
     }
 }

@@ -15,13 +15,13 @@ namespace Daftari.Views.Auth
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SignUpPage : TabbedPage
     {
-        private UserViewModel user { get; set; }
+        private UserVM user { get; set; }
         public SignUpPage()
         {
             InitializeComponent();
 
-            user = new UserViewModel();
-            user.Children.Add(new ChildViewModel());
+            user = new UserVM();
+            user.Children.Add(new ChildVM());
             DOB.MaximumDate = DateTime.Today.AddDays(-1);
             // This hides the navigation page's navigation bar as it is not needed
             NavigationPage.SetHasNavigationBar(this, false);
@@ -141,60 +141,61 @@ namespace Daftari.Views.Auth
 
         private void OnCredentials_Clicked(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    if (!Validations.IsValidText(FullName, new TextChangedEventArgs(null, FullName.Text ?? "")))
-            //    {
-            //        try
-            //        {
-            //            var parent = FullName.Parent as StackLayout;
-            //            var error = (Label)parent.Children[1];
+            try
+            {
+                if (!Validations.IsValidText(FullName, new TextChangedEventArgs(null, FullName.Text ?? "")))
+                {
+                    try
+                    {
+                        var parent = FullName.Parent as StackLayout;
+                        var error = (Label)parent.Children[1];
 
-            //            error.Text = "Full Name is required*";
-            //            error.IsVisible = true;
-            //        }
-            //        catch { }
-            //        //Toast?
-            //        FullName.Focus();
-            //        return;
-            //    }
-            //    if (!Validations.IsValidEmail(Email, new TextChangedEventArgs(null, Email.Text ?? "")))
-            //    {
-            //        try
-            //        {
-            //            var parent = Email.Parent as StackLayout;
-            //            var error = (Label)parent.Children[1];
+                        error.Text = "Full Name is required*";
+                        error.IsVisible = true;
+                    }
+                    catch { }
+                    //Toast?
+                    FullName.Focus();
+                    return;
+                }
+                if (!Validations.IsValidEmail(Email, new TextChangedEventArgs(null, Email.Text ?? "")))
+                {
+                    try
+                    {
+                        var parent = Email.Parent as StackLayout;
+                        var error = (Label)parent.Children[1];
 
-            //            error.Text = "Invalid Email*";
-            //            error.IsVisible = true;                        
-            //        }
-            //        catch { }
-            //        //Toast?
-            //        Email.Focus();
-            //        return;
-            //    }
+                        error.Text = "Invalid Email*";
+                        error.IsVisible = true;
+                    }
+                    catch { }
+                    //Toast?
+                    Email.Focus();
+                    return;
+                }
 
-            //    if (!Validations.IsValidPassword(Password, new TextChangedEventArgs(null, Password.Text ?? "")))
-            //    {
-            //        Password_Error.Text = "Password should include a Capital letter, Special Character and a number.";
-            //        Password.Focus();
-            //        return;
-            //    }
-            //    Password_Error.Text = "";
+                if (!Validations.IsValidPassword(Password, new TextChangedEventArgs(null, Password.Text ?? "")))
+                {
+                    Password_Error.Text = "Password should include a Capital letter, Special Character and a number.";
+                    Password.Focus();
+                    return;
+                }
+                Password_Error.Text = "";
 
-            //    if (!Validations.IsPasswordMatch(ConfirmPassword, Password))
-            //    {
-            //        ConfirmPassword_Error.Text = "Confirmation does not match password";
-            //        ConfirmPassword.Focus();
-            //        return;
-            //    }
+                if (!Validations.IsPasswordMatch(ConfirmPassword, Password))
+                {
+                    ConfirmPassword_Error.Text = "Confirmation does not match password";
+                    ConfirmPassword.Focus();
+                    return;
+                }
 
-            //    ConfirmPassword_Error.Text = "";                
+                ConfirmPassword_Error.Text = "";
 
-            //    user.FullName = FullName.Text.Trim();
-            //    user.Email = Email.Text;
-            //    user.Password = Password.Text.Trim();
-            //} catch { }
+                user.FullName = FullName.Text.Trim();
+                user.Email = Email.Text;
+                user.Password = Password.Text.Trim();
+            }
+            catch { }
             NextTab();
         }
 
