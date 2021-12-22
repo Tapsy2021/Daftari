@@ -140,6 +140,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\Pike13AccessController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -152,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -164,6 +166,26 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Daftari.AquaCards.DAL\Daftari.AquaCards.DAL.csproj">
+      <Project>{2CEA84EF-B717-4A06-909D-D44525BE9D42}</Project>
+      <Name>Daftari.AquaCards.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Daftari.AquaCards\Daftari.AquaCards.csproj">
+      <Project>{09f502d6-a6bd-43b5-a32c-c7cd0da06820}</Project>
+      <Name>Daftari.AquaCards</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Daftari.Pike13Api.DAL\Daftari.Pike13Api.DAL.csproj">
+      <Project>{2A052E3D-3DCB-4D90-BB6C-BED431512C9E}</Project>
+      <Name>Daftari.Pike13Api.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Daftari.Pike13Api.Services\Daftari.Pike13Api.Services.csproj">
+      <Project>{98E95318-1217-4D93-99F1-7CC7BC5A708C}</Project>
+      <Name>Daftari.Pike13Api.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Daftari.Pike13Api\Daftari.Pike13Api.csproj">
+      <Project>{071B28D3-3013-42CB-A6BD-18DD108DA7C6}</Project>
+      <Name>Daftari.Pike13Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Daftari.SMSHandling\Daftari.SMSHandling.csproj">
       <Project>{CB1D5354-6962-4618-9979-47961FD2784A}</Project>
       <Name>Daftari.SMSHandling</Name>
@@ -172,9 +194,33 @@
       <Project>{6F447961-C449-47D1-9A48-8F1A6E9EE365}</Project>
       <Name>LukeApps.AspIdentity</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LukeApps.BeginCollectionItem\LukeApps.BeginCollectionItem.csproj">
+      <Project>{cf17966c-80c2-4abe-bd0b-f58aef0ddb05}</Project>
+      <Name>LukeApps.BeginCollectionItem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LukeApps.BugsTracker\LukeApps.BugsTracker.csproj">
+      <Project>{ad862e79-9893-4fa8-8e1a-3aa58a94131b}</Project>
+      <Name>LukeApps.BugsTracker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LukeApps.EmailHandling\LukeApps.EmailHandling.csproj">
       <Project>{18D250E8-F370-4A7F-8283-82E26A0E5F51}</Project>
       <Name>LukeApps.EmailHandling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LukeApps.TrackerEnabledDbContext.Common\LukeApps.TrackerEnabledDbContext.Common.csproj">
+      <Project>{AC9808CC-8932-40AE-8F26-3FBA558A5549}</Project>
+      <Name>LukeApps.TrackerEnabledDbContext.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LukeApps.TrackerEnabledDbContext\LukeApps.TrackerEnabledDbContext.csproj">
+      <Project>{BDE8FEB8-3A4F-491D-9AAD-426C355AAC76}</Project>
+      <Name>LukeApps.TrackerEnabledDbContext</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LukeApps.TrackingExtended\LukeApps.TrackingExtended.csproj">
+      <Project>{FABF8841-798F-4F4F-868A-5A6DBF4787A7}</Project>
+      <Name>LukeApps.TrackingExtended</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LukeApps.Utilities\LukeApps.Utilities.csproj">
+      <Project>{96E1D590-7C1E-4835-92A0-C31EC8876DD1}</Project>
+      <Name>LukeApps.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

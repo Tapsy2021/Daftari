@@ -530,7 +530,7 @@ namespace Daftari.Controllers
 
             using (AquaCardsEntities db = new AquaCardsEntities(System.Web.HttpContext.Current.User.Identity.Name))
             {
-                customers = await db.GetCustomers().Where(x => all_customers.Contains(x.ExternalReference)).ToListAsync();
+                customers = await db.Customers.Where(x => x.SubDomain == sd && all_customers.Contains(x.ExternalReference)).ToListAsync();
             }
 
             var TotalRecords = (from visit in visits

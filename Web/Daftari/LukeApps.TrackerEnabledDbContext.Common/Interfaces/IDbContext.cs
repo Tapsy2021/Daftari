@@ -23,7 +23,7 @@ namespace TrackerEnabledDbContext.Common.Interfaces
         int SaveChanges();
         Task<int> SaveChangesAsync();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-        DbSet Set(Type entityType);
-        DbSet<TEntity> Set<TEntity>() where TEntity : class;
+        //DbSet Set(Type entityType);
+        //DbSet<TEntity> Set<TEntity>() where TEntity : class;
     }
 }
