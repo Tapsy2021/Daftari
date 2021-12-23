@@ -13,23 +13,22 @@
                 <Image Source="ollietheotter_swim_stand_background.png" Opacity="0.9" Scale="2.2"
                                         RelativeLayout.WidthConstraint=
                                         "{ConstraintExpression Type=RelativeToParent, Property=Width}"
-                       HeightRequest="260"/>
+                       HeightRequest="240"/>
 
                 <Grid RelativeLayout.WidthConstraint=
                                 "{ConstraintExpression Type=RelativeToParent, Property=Width}">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="70"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <StackLayout Padding="0,30,0,0">
                         <Label Text="Welcome"
-                                            TextColor="Black"
-                                            FontSize="24"
-                                            FontFamily="Noteworthy-Bold"
-                                            HorizontalTextAlignment="Center"
-                                            VerticalTextAlignment="Center"
-                                            Margin="50,0"
-                                            HeightRequest="500"/>
+                                TextColor="Black"
+                                FontSize="24"
+                                FontFamily="Noteworthy-Bold"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center"
+                                Margin="50,0"/>
                     </StackLayout>
 
                     <StackLayout Grid.Row="1" Padding="0,0,0,30">
@@ -43,7 +42,8 @@
             <StackLayout Margin="0,0,0,40">
                 <Button Text="Log In"
                         x:Name="Btn_Login"
-                        BackgroundColor="White"                        
+                        BackgroundColor="White"
+                        TextTransform="None"
                         TextColor="#012550"
                         Margin="40,0"
                         FontFamily="Gotham-Bold"
@@ -56,7 +56,7 @@
                         TextColor="White"
                         HorizontalOptions="Center"
                         FontSize="16"
-                        Margin="0,0,0,5"/>
+                        Margin="0,0,0,7"/>
 
                 <Label Text="Don't have account?"
                         FontFamily="Gotham-Book"
@@ -70,6 +70,7 @@
                         x:Name="Btn_Sign_Up"
                         BackgroundColor="Red"                        
                         TextColor="White"
+                        TextTransform="None"
                         Margin="40,0"
                         FontFamily="Gotham-Bold"
                         CornerRadius="30"

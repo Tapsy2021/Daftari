@@ -1,4 +1,6 @@
-﻿using Daftari.Views.Auth;
+﻿using Daftari.Utils;
+using Daftari.Views;
+using Daftari.Views.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +67,8 @@ namespace Daftari
             }
             else
             {
-                Application.Current.MainPage = new NavigationPage(new LoginPage());
+                Application.Current.Properties[Constants.Keys.Is_First_Launch] = false;
+                Application.Current.MainPage = new NavigationPage(new WelcomePage());
             }
         }
 

@@ -77,33 +77,49 @@
 
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="20*"/>
-                                                <ColumnDefinition Width="60*"/>
-                                                <ColumnDefinition Width="20*"/>
+                                                <ColumnDefinition Width="10*"/>
+                                                <ColumnDefinition Width="80*"/>
+                                                <ColumnDefinition Width="10*"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="40"/>
                                             </Grid.RowDefinitions>
-           
+
+                                            <Image Source="tab_back_arrow.png"
+                                                        BackgroundColor="Transparent"
+                                                        Margin="0,20,0,0">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding TapCommand}" CommandParameter="Calendar_Back" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
+
                                             <StackLayout Grid.Column="1">
-                                                <renderers:CustomLabel Text="{Binding Month}"
+                                                <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:yyyy}'}"
+                                                        Padding="0"
+                                                        Margin="0"
+                                                        FontSize="17"
+                                                        TextColor="#1E3565"
+                                                        VerticalOptions="Center"
+                                                        HorizontalOptions="Center"                                                        
+                                                        FontFamily="Roboto-Medium"/>
+                                                
+                                                <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:MMMM}'}"
                                                         Padding="0"
                                                         Margin="0"
                                                         FontSize="18"
                                                         TextColor="#012550"
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"
-                                                        FontFamily="Quicksand-Bold"/>
-
-                                                <renderers:CustomLabel Text="{Binding Year}"
-                                                        Padding="0"
-                                                        Margin="0"
-                                                        FontSize="17"
-                                                        TextColor="#1E3565"
-                                                        VerticalOptions="Center"
-                                                        HorizontalOptions="Center"
-                                                        FontFamily="Quicksand-Regular"/>
+                                                        FontFamily="Roboto-Regular"/>
                                             </StackLayout>
+
+                                            <Image Grid.Column="2" Source="tab_forward_arrow.png"
+                                                        BackgroundColor="Transparent" 
+                                                        Margin="0,20,0,0">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding TapCommand}" CommandParameter="Calendar_Forward" />
+                                                </Image.GestureRecognizers>
+                                            </Image>
                                         </Grid>
                                         
                                         <CollectionView ItemsSource="{Binding Week_Codes}"

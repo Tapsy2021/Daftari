@@ -42,7 +42,7 @@
                                 VerticalTextAlignment="Center"
                                 HorizontalTextAlignment="Center"/>
 
-                        <StackLayout Grid.Row="1" Grid.ColumnSpan="3" Padding="0,0,0,30">
+                        <StackLayout Grid.Row="1" Grid.ColumnSpan="3" Padding="0,12,0,30">
                             <Image Source="ollietheotter_swim_stand.png"
                                    HeightRequest="250"/>
                         </StackLayout>
@@ -112,6 +112,7 @@
                         x:Name="Btn_Login"
                         BackgroundColor="White"                        
                         TextColor="#1E3565"
+                        TextTransform="None"
                         Margin="0"
                         FontSize="16"
                         FontFamily="Gotham-Bold"

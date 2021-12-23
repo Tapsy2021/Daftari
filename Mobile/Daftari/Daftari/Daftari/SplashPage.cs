@@ -49,11 +49,11 @@ namespace Daftari
             {
                 if ((Application.Current as App).Identity == null)
                 {
-                    Application.Current.MainPage = new NavigationPage(new LoginPage());
+                    Application.Current.MainPage = new NavigationPage(new WelcomePage());
                 }
                 else
                 {
-                    Application.Current.MainPage = new NavigationPage(new WelcomePage());
+                    Application.Current.MainPage = new NavigationPage(new MasterHomePage());
                 }
             }
             else
