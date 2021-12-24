@@ -13,6 +13,7 @@ namespace Daftari.Utils
             public static readonly string Login = "account/login";
 
             public static readonly string Get_Dependants = "customers/dependants";
+            public static readonly string Get_Visits = "pike13access/getschedule";
         }
 
         public static class Keys

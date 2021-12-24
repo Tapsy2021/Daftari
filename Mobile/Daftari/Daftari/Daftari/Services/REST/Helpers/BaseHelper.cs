@@ -5,7 +5,7 @@ namespace Daftari.Services.REST.Helpers
 {
     public class BaseHelper
     {
-        public static string GetQueryString(object obj)
+        protected static string GetQueryString(object obj)
         {
             if (obj == null)
             {

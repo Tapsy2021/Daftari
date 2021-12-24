@@ -23,8 +23,21 @@ namespace Daftari.ViewModels
         public Customer SelectedDependant { get; set; }
 
         public ObservableCollection<CalendarDate> Calendar_Dates { get; private set; }
+        private List<CalendarDate> _calendar_dates { get; set; }
+        private List<Visit> _visits { get; set; } = new List<Visit>();
+        public List<Visit> Visits
+        {
+            get => _visits;
+            set
+            {
+                _visits = value;
+                OnPropertyChanged("Visits");
+            }
+        }
+
         public List<string> Week_Codes { get; set; }
         public CalendarDate SelectedDate { get; set; }
+        private CancellationTokenSource _visit_ct { get; set; } = new CancellationTokenSource();
         //Filter Date
         private DateTime _startAt { get; set; }
         public DateTime StartAt 
@@ -48,11 +61,14 @@ namespace Daftari.ViewModels
             OnPropertyChanged("SelectedDependant");
             //open right tab (requires listener in ui)
             _Context.OpenSchedule();
+            //FetchVisits();
+            SimulateVisits();
 
         });
         public HomeViewModel(IHomeBindingContextListener Context)
         {
             _Context = Context;
+            //_visit_ct = new CancellationTokenSource();
             //_dependants = GetDependants();
             //DbHelper.Instance.SaveDependants(_dependants);
             //Calendar_Dates = new List<CalendarDate>(); 
@@ -60,10 +76,10 @@ namespace Daftari.ViewModels
             Dependants = new ObservableCollection<Customer>(_dependants);
 
             StartAt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var c_dates = GetCalendarDates(StartAt);
-            Calendar_Dates = new ObservableCollection<CalendarDate>(c_dates);
+            _calendar_dates = GetCalendarDates(StartAt);
+            Calendar_Dates = new ObservableCollection<CalendarDate>(_calendar_dates);
 
-            //SelectedDate = Calendar_Dates[11];
+            SelectedDate = _calendar_dates.FirstOrDefault(x => x.StartAt == DateTime.Today);
         }
 
         public void FetchDependants()
@@ -113,6 +129,10 @@ namespace Daftari.ViewModels
 
         public void FetchVisits()
         {
+            if (SelectedDependant == null)
+                return;
+            if (!_visit_ct.IsCancellationRequested)
+                _visit_ct.Cancel();
             //IF NO DEPENDANTS YET THEN USE LOADING / GIF
             //if (IsRunning)
             //{
@@ -120,40 +140,59 @@ namespace Daftari.ViewModels
             //}
             //IsRunning = true;
             //OnPropertyChanged("IsRunning");
-
-            _dependants = CustomerHelper.GetDependantsAsync(new CancellationTokenSource()).Result?.OrderBy(x => x.CustomerID).ToList();
-
-            var a1 = _dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
-            var a2 = Dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
-
-            if (!a1.SequenceEqual(a2) && _dependants != null && _dependants.Any())
+            try
             {
-                DbHelper.Instance.SaveDependants(_dependants);
-                if (Dependants.Any())
-                    Dependants.Clear();
+                var startAt = StartAt;
+                var _visits_data = Pike13AccessHelper.GetVisitsAsync(new { StartAt.Year, StartAt.Month, SelectedDependant.PersonID }, _visit_ct).Result?.OrderBy(x => x.StartAt).ToList();
 
-                Device.BeginInvokeOnMainThread(() =>
+                if (startAt == StartAt && (_visits_data?.Any() ?? false))
                 {
-                    try
+                    Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
+                    var visits = _visits_data.GroupBy(x => x.StartAt.Value.Date).ToList();
+
+                    foreach (var obj in Calendar_Dates)
                     {
-                        _dependants.ForEach(obj =>
+                        var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
+                        if (date_visit.Any())
                         {
-                            Dependants.Add(obj);
-                        });
+                            obj.Visits = date_visit;
+                            if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
+                            {
+                                obj.OnNotify("Visits");
+                            }
+                            obj.HasEvent = true;
+                        }
                     }
-                    catch (Exception ex)
-                    {
+                }
 
-                    }
-                });
+                if (_visits_data == null)
+                {
+                    DependencyService.Get<IMessage>().LongAlert("Failed to fetch visits..");
+                }
             }
-
-            if ((_dependants == null || !_dependants.Any()) && !Dependants.Any())
-            {
-                DependencyService.Get<IMessage>().LongAlert("Failed to fetch dependants..");
-            }
+            catch { }
             //IsRunning = false;
             //OnPropertyChanged("IsRunning");
+        }
+
+        void SimulateVisits()
+        {
+            var _visits_data = GetVisits();
+            Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
+            var visits = _visits_data.GroupBy(x => x.StartAt.Value.Date).ToList();
+            foreach (var obj in Calendar_Dates)
+            {
+                var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
+                if (date_visit.Any())
+                {
+                    obj.Visits = date_visit;
+                    if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
+                    {
+                        obj.OnNotify("Visits");
+                    }
+                    obj.HasEvent = true;
+                }
+            }
         }
 
         private List<CalendarDate> GetCalendarDates(DateTime startDate)
@@ -270,33 +309,37 @@ namespace Daftari.ViewModels
             {
                 case "Calendar_Back":
                     StartAt = StartAt.AddMonths(-1);
+                    //Calendar_Dates.Clear();
+                    var prev_month = GetCalendarDates(StartAt);
                     Calendar_Dates.Clear();
-                    var month_data = GetCalendarDates(StartAt);
-
-                    month_data.ForEach(obj => Calendar_Dates.Add(obj));
+                    prev_month.ForEach(obj => Calendar_Dates.Add(obj));
+                    SimulateVisits();
+                    //FetchVisits();
                     //do sync
-                    var visits = GetVisits().GroupBy(x => x.StartAt.Value.Date).ToList();
-                    month_data.ForEach(obj =>
-                    {
-                        var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
-                        if (date_visit.Any())
-                        {
-                            obj.Visits = date_visit;
-                            if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
-                            {
-                                obj.OnNotify("Visits");
-                            }
-                            obj.HasEvent = true;
-                        }
-                    });
+                    //var visits = GetVisits().GroupBy(x => x.StartAt.Value.Date).ToList();
+                    //month_data.ForEach(obj =>
+                    //{
+                    //    var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
+                    //    if (date_visit.Any())
+                    //    {
+                    //        obj.Visits = date_visit;
+                    //        if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
+                    //        {
+                    //            obj.OnNotify("Visits");
+                    //        }
+                    //        obj.HasEvent = true;
+                    //    }
+                    //});
 
                     //OnPropertyChanged("StartAt");
                     break;
                 case "Calendar_Forward":
-                    StartAt = StartAt.AddMonths(1);
+                    StartAt = StartAt.AddMonths(1);                    
+                    var next_month = GetCalendarDates(StartAt);
                     Calendar_Dates.Clear();
-                    GetCalendarDates(StartAt).ForEach(obj => Calendar_Dates.Add(obj));
-                    //OnPropertyChanged("StartAt");
+                    next_month.ForEach(obj => Calendar_Dates.Add(obj));
+                    SimulateVisits();
+                    //FetchVisits();
                     break;
             }
         }

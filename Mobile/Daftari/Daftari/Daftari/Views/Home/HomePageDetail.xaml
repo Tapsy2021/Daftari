@@ -140,27 +140,27 @@
                                        HasShadow="True" 
                                        BackgroundColor="#fafafa">
                                     <StackLayout>
+                                        <StackLayout x:Name="Calendar_Layout">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="10*"/>
+                                                    <ColumnDefinition Width="80*"/>
+                                                    <ColumnDefinition Width="10*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="40"/>
+                                                </Grid.RowDefinitions>
 
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="10*"/>
-                                                <ColumnDefinition Width="80*"/>
-                                                <ColumnDefinition Width="10*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="40"/>
-                                            </Grid.RowDefinitions>
-
-                                            <Image Source="tab_back_arrow.png"
+                                                <Image Source="tab_back_arrow.png"
                                                         BackgroundColor="Transparent"
                                                         Margin="0,20,0,0">
-                                                <Image.GestureRecognizers>
-                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding TapCommand}" CommandParameter="Calendar_Back" />
-                                                </Image.GestureRecognizers>
-                                            </Image>
+                                                    <Image.GestureRecognizers>
+                                                        <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding TapCommand}" CommandParameter="Calendar_Back" />
+                                                    </Image.GestureRecognizers>
+                                                </Image>
 
-                                            <StackLayout Grid.Column="1">
-                                                <renderers:CustomLabel
+                                                <StackLayout Grid.Column="1">
+                                                    <renderers:CustomLabel
                                                         Padding="0"
                                                         Margin="0"
                                                         FontSize="17"
@@ -168,14 +168,14 @@
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"                                                        
                                                         FontFamily="Quicksand-Bold">
-                                                    <Label.FormattedText>
-                                                        <FormattedString>
-                                                            <Span Text="{Binding SelectedDependant.FirstName}" />
-                                                            <Span Text="'s Daftari"/>
-                                                        </FormattedString>
-                                                    </Label.FormattedText>
-                                                </renderers:CustomLabel>
-                                                <!--<renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:yyyy}'}"
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span Text="{Binding SelectedDependant.FirstName}" />
+                                                                <Span Text="'s Daftari"/>
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </renderers:CustomLabel>
+                                                    <!--<renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:yyyy}'}"
                                                         Padding="0"
                                                         Margin="0"
                                                         FontSize="17"
@@ -183,8 +183,8 @@
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"                                                        
                                                         FontFamily="Roboto-Medium"/>-->
-                                                
-                                                <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:MMMM yyyy}'}"
+
+                                                    <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:MMMM yyyy}'}"
                                                         Padding="0"
                                                         Margin="0,-7,0,0"
                                                         FontSize="16"
@@ -192,75 +192,203 @@
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"
                                                         FontFamily="Roboto-Regular"/>
-                                            </StackLayout>
+                                                </StackLayout>
 
-                                            <Image Grid.Column="2" Source="tab_forward_arrow.png"
+                                                <Image Grid.Column="2" Source="tab_forward_arrow.png"
                                                         BackgroundColor="Transparent" 
                                                         Margin="0,20,0,0">
-                                                <Image.GestureRecognizers>
-                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding TapCommand}" CommandParameter="Calendar_Forward" />
-                                                </Image.GestureRecognizers>
-                                            </Image>
-                                        </Grid>
-                                        
-                                        <CollectionView ItemsSource="{Binding Week_Codes}"
+                                                    <Image.GestureRecognizers>
+                                                        <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding TapCommand}" CommandParameter="Calendar_Forward" />
+                                                    </Image.GestureRecognizers>
+                                                </Image>
+                                            </Grid>
+
+                                            <CollectionView ItemsSource="{Binding Week_Codes}"
                                                         SelectionMode="None"
                                                         HeightRequest="25"
                                                         Margin="0,10,0,0">
-                                            <CollectionView.ItemsLayout>
-                                                <GridItemsLayout Orientation="Vertical" Span="7"/>
-                                            </CollectionView.ItemsLayout>
-                                            <CollectionView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackLayout Padding="1,0" Margin="0">
-                                                        <Frame 
+                                                <CollectionView.ItemsLayout>
+                                                    <GridItemsLayout Orientation="Vertical" Span="7"/>
+                                                </CollectionView.ItemsLayout>
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackLayout Padding="1,0" Margin="0">
+                                                            <Frame 
                                                                Padding="0"
                                                                HasShadow="False">
-                                                            <Label Text="{Binding .}"
+                                                                <Label Text="{Binding .}"
                                                                     FontSize="16"
                                                                     TextColor="#1E3565"
                                                                     VerticalOptions="Center"
                                                                     HorizontalOptions="Center"
                                                                     FontFamily="Quicksand-Regular">
-                                                            </Label>
-                                                        </Frame>
-                                                    </StackLayout>
-                                                </DataTemplate>
-                                            </CollectionView.ItemTemplate>
-                                        </CollectionView>
-                                
-                                        <BoxView BackgroundColor="#1E3565" Margin="0" HeightRequest="1" VerticalOptions="End" HorizontalOptions="Fill"/>
+                                                                </Label>
+                                                            </Frame>
+                                                        </StackLayout>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
 
-                                        <CollectionView ItemsSource="{Binding Calendar_Dates}"
+                                            <BoxView BackgroundColor="#1E3565" Margin="0" HeightRequest="1" VerticalOptions="End" HorizontalOptions="Fill"/>
+
+                                            <CollectionView ItemsSource="{Binding Calendar_Dates}"
                                                         SelectionMode="Single"
                                                         SelectedItem="{Binding SelectedDate, Mode=TwoWay}"
                                                         SelectionChangedCommand="{Binding DateChangedCommand}"
                                                         SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedDate}"
                                                         x:Name="Calendar_Dates_Collection"
                                                         VerticalOptions="Fill">
-                                            <CollectionView.ItemsLayout>
-                                                <GridItemsLayout Orientation="Vertical" Span="7" />
-                                            </CollectionView.ItemsLayout>
-                                            <CollectionView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackLayout Padding="1" Margin="0">
-                                                        <Frame CornerRadius="100"
+                                                <CollectionView.ItemsLayout>
+                                                    <GridItemsLayout Orientation="Vertical" Span="7" />
+                                                </CollectionView.ItemsLayout>
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackLayout Padding="1" Margin="0">
+                                                            <Frame CornerRadius="100"
                                                                WidthRequest="27"
                                                                HeightRequest="27"
                                                                BackgroundColor="{Binding DateColor}"
                                                                Padding="0">
-                                                            <Label Text="{Binding Day}"
+                                                                <Label Text="{Binding Day}"
                                                                     FontSize="14"
                                                                     TextColor="{Binding TextColor}"
                                                                     VerticalOptions="Center"
                                                                     HorizontalOptions="Center"
                                                                     FontFamily="Gotham-Book">
-                                                            </Label>
-                                                        </Frame>
-                                                    </StackLayout>
-                                                </DataTemplate>
-                                            </CollectionView.ItemTemplate>
-                                        </CollectionView>
+                                                                </Label>
+                                                            </Frame>
+                                                        </StackLayout>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+
+                                            <Button Text="See All"
+                                                BackgroundColor="Transparent"                        
+                                                TextColor="Black"
+                                                Margin="0"
+                                                Padding="0"
+                                                TextTransform="None"
+                                                HorizontalOptions="End"
+                                                FontFamily="Gotham-Bold"
+                                                Clicked="OnFullScheduleExpand_Clicked"/>
+                                        </StackLayout>
+
+                                        <StackLayout x:Name="FullSchedule_Layout">
+                                            <Label Text="Full Schedule"
+                                                    FontSize="18"                                                    
+                                                    TextColor="Red"
+                                                    Margin="0,16,0,5"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="Center"
+                                                    HorizontalTextAlignment="Center"
+                                                    FontFamily="Gotham-Bold"/>
+                                            <CollectionView ItemsSource="{Binding Visits}"
+                                                    SelectionMode="None"
+                                                    Margin="0">
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackLayout Margin="0,3">
+                                                            <Frame Padding="0" Margin="0" BackgroundColor="Transparent">
+                                                                <StackLayout>
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="65*"/>
+                                                                            <ColumnDefinition Width="35*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <StackLayout>
+                                                                            <StackLayout Orientation="Horizontal">
+                                                                                <Label Text="{Binding WeekName}"
+                                                                                        FontSize="12"
+                                                                                        TextColor="#1E3565"
+                                                                                        VerticalOptions="Center"
+                                                                                        HorizontalOptions="Start"
+                                                                                        FontFamily="Gotham-Book"/>
+
+                                                                                <Frame CornerRadius="50" 
+                                                                                       Margin="1" 
+                                                                                       Padding="3,1" 
+                                                                                       HasShadow="True" 
+                                                                                       BackgroundColor="#ff4a4a">
+                                                                                    <Label Text="{Binding Day}"
+                                                                                        FontSize="13"
+                                                                                        Padding="4"
+                                                                                        TextColor="#1E3565"
+                                                                                        VerticalOptions="Center"
+                                                                                        HorizontalOptions="Center"
+                                                                                        FontFamily="Gotham-Medium"/>
+
+                                                                                </Frame>
+
+                                                                                <Label Text="{Binding Month}"
+                                                                                        FontSize="12"
+                                                                                        TextColor="#1E3565"
+                                                                                        VerticalOptions="Center"
+                                                                                        HorizontalOptions="End"
+                                                                                        FontFamily="Gotham-Book"/>
+                                                                            </StackLayout>
+
+                                                                            <StackLayout Orientation="Horizontal">
+                                                                                <Image Source="{Binding LevelImage}"
+                                                                                       HorizontalOptions="Start"
+                                                                                       HeightRequest="18"/>
+                                                                                <Label Text="{Binding StartAt, StringFormat='{0:h:mm tt}'}"
+                                                                                        FontSize="13"                                                    
+                                                                                        TextColor="#1E3565"
+                                                                                        VerticalOptions="Center"
+                                                                                        HorizontalOptions="End"
+                                                                                        HorizontalTextAlignment="End"
+                                                                                        FontFamily="Gotham-Book"/>
+                                                                            </StackLayout>
+
+                                                                            <Label FontSize="10"                                                    
+                                                                                    TextColor="Red"
+                                                                                    VerticalOptions="Center"
+                                                                                    HorizontalOptions="Start"
+                                                                                    HorizontalTextAlignment="End"
+                                                                                    FontFamily="Gotham-Medium">
+                                                                                <Label.FormattedText>
+                                                                                    <FormattedString>
+                                                                                        <Span Text="Skill Set - " />
+                                                                                        <Span Text="{Binding ServiceName}"/>
+                                                                                    </FormattedString>
+                                                                                </Label.FormattedText>
+                                                                            </Label>
+                                                                        </StackLayout>
+                                                                        <StackLayout Grid.Column="1">
+                                                                            <Label Text="Trainer"
+                                                                                    FontSize="14"                                                    
+                                                                                    TextColor="#1E3565"
+                                                                                    VerticalOptions="Center"
+                                                                                    HorizontalOptions="End"
+                                                                                    HorizontalTextAlignment="End"
+                                                                                    FontFamily="Gotham-Medium"/>
+                                                                            <Label Text="{Binding StaffMembers}"
+                                                                                    FontSize="13"                                                    
+                                                                                    TextColor="Red"
+                                                                                    VerticalOptions="Center"
+                                                                                    HorizontalOptions="End"
+                                                                                    HorizontalTextAlignment="End"
+                                                                                    FontFamily="Gotham-Medium"/>
+                                                                        </StackLayout>
+                                                                    </Grid>
+                                                                    <BoxView BackgroundColor="#5e6066" Margin="0" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                                                                </StackLayout>
+                                                            </Frame>
+                                                        </StackLayout>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+
+                                            <Button Text="Back To Calendar"
+                                                BackgroundColor="Transparent"                        
+                                                TextColor="Black"
+                                                Margin="0"
+                                                Padding="0"
+                                                TextTransform="None"
+                                                HorizontalOptions="Start"
+                                                FontFamily="Gotham-Bold"
+                                                Clicked="OnBackToCalendar_Clicked"/>
+                                        </StackLayout>
                                     </StackLayout>
                                 </Frame>
 
@@ -269,9 +397,10 @@
                                        Padding="1" 
                                        HasShadow="True" 
                                        IsVisible="{Binding SelectedDate.HasEvent}"
-                                       BackgroundColor="#fafafa">
+                                       PropertyChanged="SelectedDateFrame_PropertyChanged"
+                                       BackgroundColor="#fafafa"
+                                       x:Name="SelectedDateFrame">
                                     <StackLayout>
-
                                         <Grid Padding="13,4">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="40*"/>
@@ -355,25 +484,7 @@
                                                     </DataTemplate>
                                                 </CollectionView.ItemTemplate>
                                             </CollectionView>
-
-                                            <!--<Image Grid.Row="1" Grid.ColumnSpan="2" Source="{Binding SelectedDate.LevelImage}"
-                                                   HorizontalOptions="Start"/>
-
-                                            <Label Grid.Row="1" Grid.Column="2" Text="{Binding SelectedDate.StartAt, StringFormat='{0:h:mm tt}'}"
-                                                    FontSize="14"                                                    
-                                                    TextColor="#1E3565"
-                                                    VerticalOptions="Center"
-                                                    HorizontalOptions="End"
-                                                    FontFamily="Gotham-Bold"/>
-
-                                            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding SelectedDate.ServiceName}"
-                                                    FontSize="13"
-                                                    TextColor="#1E3565"
-                                                    VerticalOptions="Start"
-                                                    HorizontalOptions="Start"
-                                                    FontFamily="Noteworthy-Bold"/>-->
                                         </Grid>
-
                                     </StackLayout>
                                 </Frame>
 

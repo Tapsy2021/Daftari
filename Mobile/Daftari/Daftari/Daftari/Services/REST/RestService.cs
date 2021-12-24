@@ -121,6 +121,7 @@ namespace Daftari.Services.REST
             try
             {
                 var response = await _client.GetAsync(URL);
+                ct.ThrowIfCancellationRequested();
                 if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
                     var content = await response.Content.ReadAsStringAsync();

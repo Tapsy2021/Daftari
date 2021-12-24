@@ -1,5 +1,5 @@
 ﻿using Daftari.ViewModels;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using static Daftari.ViewModels.HomeViewModel;
@@ -13,6 +13,8 @@ namespace Daftari.Views.Home
         {
             InitializeComponent();
 
+            FullSchedule_Layout.ScaleY = 0;
+            FullSchedule_Layout.IsVisible = false;
             BindingContext = new HomeViewModel(this);
         }
 
@@ -20,6 +22,42 @@ namespace Daftari.Views.Home
         {
             tab_schedule.SelectedTabIndex = 1;
             //throw new System.NotImplementedException();
+        }
+
+        private void SelectedDateFrame_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != "IsVisible") return;
+            var viewModel = (Frame)sender;
+            if (!viewModel.IsVisible)
+            {
+                SelectedDateFrame.ScaleY = 0;
+            }
+            else
+            {
+                SelectedDateFrame.ScaleYTo(1, 200);
+            }
+        }
+
+        private async void OnFullScheduleExpand_Clicked(object sender, System.EventArgs e)
+        {
+            //await Task.WhenAll(
+            //    Calendar_Layout.ScaleYTo(0, 100, Easing.SinOut),
+            //    FullSchedule_Layout.ScaleYTo(1, 140, Easing.SinInOut)
+            //);
+            await Calendar_Layout.ScaleYTo(0, 100, Easing.SinOut);
+            Calendar_Layout.IsVisible = false;
+            //SelectedDateFrame_StackLayout.IsVisible = false;
+            FullSchedule_Layout.IsVisible = true;
+            await FullSchedule_Layout.ScaleYTo(1, 140, Easing.SinInOut);
+        }
+
+        private async void OnBackToCalendar_Clicked(object sender, System.EventArgs e)
+        {
+            await FullSchedule_Layout.ScaleYTo(0, 100, Easing.SinOut);
+            FullSchedule_Layout.IsVisible = false;
+            //SelectedDateFrame_StackLayout.IsVisible = true;
+            Calendar_Layout.IsVisible = true;
+            await Calendar_Layout.ScaleYTo(1, 140, Easing.SinInOut);
         }
     }
 }
