@@ -16,6 +16,7 @@ namespace Daftari.Services.Database
         {
             _database = new SQLiteAsyncConnection(DATABASE_PATH);
             _database.CreateTableAsync<User>().Wait();
+            _database.CreateTableAsync<Customer>().Wait();
         }
 
         protected SQLiteAsyncConnection Connection

@@ -118,7 +118,6 @@ namespace Daftari.Services.REST
                 //_client.DefaultRequestHeaders.Add(Constants.Keys.Device_Id, self.DeviceId);
             }
 
-            List<T> list = null;
             try
             {
                 var response = await _client.GetAsync(URL);
@@ -128,22 +127,16 @@ namespace Daftari.Services.REST
                     var results = JsonConvert.DeserializeObject<DaftariResult>(content);
                     if (results.IsSuccess)
                     {
-                        list = JsonConvert.DeserializeObject<List<T>>(results.Body.ToString());
+                        return JsonConvert.DeserializeObject<List<T>>(results.Body.ToString());
                     }
-                    //list = JsonConvert.DeserializeObject<List<T>>(content);
                 }
-                // Other Status (System.Net.HttpStatusCode.Unauthorized-401)
-                //if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                //{
-                //    throw new AuthorizationException("Unauthorized");
-                //}
             }
             catch (Exception ex)
             {
                 var g = ex.Message;
             }
 
-            return list;
+            return null;
         }
 
         public async Task<bool> UploadAsync(App self, string URL, Stream image, string FileName, CancellationToken ct)

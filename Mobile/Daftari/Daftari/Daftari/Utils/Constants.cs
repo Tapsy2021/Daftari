@@ -11,6 +11,8 @@ namespace Daftari.Utils
             public const string BaseURL = "http://muntumidev.com:8003/api/";
 
             public static readonly string Login = "account/login";
+
+            public static readonly string Get_Dependants = "customers/dependants";
         }
 
         public static class Keys

@@ -1,4 +1,7 @@
 ﻿using Daftari.Models;
+using Daftari.Services.Database;
+using Daftari.Services.Depedencies;
+using Daftari.Services.REST.Helpers;
 using Daftari.Utils;
 using System;
 using System.Collections.Generic;
@@ -6,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -13,77 +17,143 @@ namespace Daftari.ViewModels
 {
     public class HomeViewModel : ViewModelBase
     {
+        private IHomeBindingContextListener _Context;
+        public ObservableCollection<Customer> Dependants { get; set; }
+        private List<Customer> _dependants { get; set; }
+        public Customer SelectedDependant { get; set; }
+
         public ObservableCollection<CalendarDate> Calendar_Dates { get; private set; }
         public List<string> Week_Codes { get; set; }
-        public CalendarDate SelectedItem { get; set; }
+        public CalendarDate SelectedDate { get; set; }
         //Filter Date
-        public DateTime StartAt { get; set; }
-        //public int _Year { get; set; }
-        //public int _Month { get; set; }
+        private DateTime _startAt { get; set; }
+        public DateTime StartAt 
+        {
+            get => _startAt;
+            set
+            {
+                _startAt = value;
+                OnPropertyChanged("StartAt");
+            }
+        }
+
         public bool IsRunning { get; set; }
         public ICommand TapCommand => new Command<string>(ButtonPressed);
-        public ICommand ItemChangedCommand => new Command<CalendarDate>(ItemChanged);
-        public HomeViewModel()
+        public ICommand DateChangedCommand => new Command<CalendarDate>((item) =>
         {
+            OnPropertyChanged("SelectedDate");
+        });
+        public ICommand DependantChangedCommand => new Command<Customer>((item) =>
+        {
+            OnPropertyChanged("SelectedDependant");
+            //open right tab (requires listener in ui)
+            _Context.OpenSchedule();
+
+        });
+        public HomeViewModel(IHomeBindingContextListener Context)
+        {
+            _Context = Context;
+            //_dependants = GetDependants();
+            //DbHelper.Instance.SaveDependants(_dependants);
             //Calendar_Dates = new List<CalendarDate>(); 
+            _dependants = DbHelper.Instance.GetDependants().Result.OrderBy(x => x.CustomerID).ToList();
+            Dependants = new ObservableCollection<Customer>(_dependants);
 
             StartAt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             var c_dates = GetCalendarDates(StartAt);
             Calendar_Dates = new ObservableCollection<CalendarDate>(c_dates);
 
-            //var start = new DateTime(StartAt.Year, StartAt.Month, 1);
-            //var end = start.AddMonths(1).AddDays(-1);
+            //SelectedDate = Calendar_Dates[11];
+        }
 
-            //foreach (var date in start.To(end))
+        public void FetchDependants()
+        {
+            //IF NO DEPENDANTS YET THEN USE LOADING / GIF
+            //if (IsRunning)
             //{
-            //    // Map to event occurrences
-            //    //Insert
-            //    Calendar_Dates.Add(new CalendarDate
-            //    {
-            //        StartAt = date,
-            //        EndAt = date,
-            //        HasEvent = date.Day == 11,
-            //        ServiceName = date.Day == 11 ? "4 - Seahorses" : ""
-            //    });
+            //    return;
             //}
+            //IsRunning = true;
+            //OnPropertyChanged("IsRunning");
 
-            //try
+            _dependants = CustomerHelper.GetDependantsAsync(new CancellationTokenSource()).Result?.OrderBy(x => x.CustomerID).ToList();
+
+            var a1 = _dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
+            var a2 = Dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
+
+            if (!a1.SequenceEqual(a2) && _dependants != null && _dependants.Any())
+            {
+                DbHelper.Instance.SaveDependants(_dependants);
+                if (Dependants.Any())
+                    Dependants.Clear();
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        _dependants.ForEach(obj =>
+                        {
+                            Dependants.Add(obj);
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                });
+            }
+
+            if ((_dependants == null || !_dependants.Any()) && !Dependants.Any())
+            {
+                DependencyService.Get<IMessage>().LongAlert("Failed to fetch dependants..");
+            }
+            //IsRunning = false;
+            //OnPropertyChanged("IsRunning");
+        }
+
+        public void FetchVisits()
+        {
+            //IF NO DEPENDANTS YET THEN USE LOADING / GIF
+            //if (IsRunning)
             //{
-            //    //Week_Codes = new List<string> { "S", "M", "T", "W", "T", "F", "S" };
-            //    var culture = CultureInfo.CurrentCulture;
-            //    var firstDayOfWeek = culture.DateTimeFormat.FirstDayOfWeek;
+            //    return;
+            //}
+            //IsRunning = true;
+            //OnPropertyChanged("IsRunning");
 
-            //    var first_start_date_of_week = Calendar_Dates.Where(x => x.StartAt.DayOfWeek == firstDayOfWeek).Min(x => x.StartAt);
-            //    Week_Codes = Calendar_Dates.Where(x => x.StartAt >= first_start_date_of_week).Take(7).Select(x => culture.DateTimeFormat.GetAbbreviatedDayName(x.StartAt.DayOfWeek)[0].ToString()).ToList();
+            _dependants = CustomerHelper.GetDependantsAsync(new CancellationTokenSource()).Result?.OrderBy(x => x.CustomerID).ToList();
 
-            //    //Saturate
-            //    var first_day_of_week = (int)start.DayOfWeek;
-            //    var prev_end = start.AddDays(-first_day_of_week);
+            var a1 = _dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
+            var a2 = Dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
 
-            //    Calendar_Dates.InsertRange(0, prev_end.To(start.AddDays(-1)).Select(date => new CalendarDate
-            //    {
-            //        StartAt = date,
-            //        EndAt = date,
-            //        TextColor = "#BFBFBF"
-            //    }));
+            if (!a1.SequenceEqual(a2) && _dependants != null && _dependants.Any())
+            {
+                DbHelper.Instance.SaveDependants(_dependants);
+                if (Dependants.Any())
+                    Dependants.Clear();
 
-            //    var last_day_of_week = (int)end.DayOfWeek;
-            //    var next_end = end.AddDays(6 - last_day_of_week);
-            //    if ((next_end.Subtract(prev_end).Days + 1) / 7 < 6)
-            //    {
-            //        next_end = next_end.AddDays(7);
-            //    }
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        _dependants.ForEach(obj =>
+                        {
+                            Dependants.Add(obj);
+                        });
+                    }
+                    catch (Exception ex)
+                    {
 
-            //    Calendar_Dates.AddRange(end.AddDays(1).To(next_end).Select(date => new CalendarDate
-            //    {
-            //        StartAt = date,
-            //        EndAt = date,
-            //        TextColor = "#BFBFBF"
-            //    }));
+                    }
+                });
+            }
 
-            //} catch { }
-
-            SelectedItem = Calendar_Dates[11];
+            if ((_dependants == null || !_dependants.Any()) && !Dependants.Any())
+            {
+                DependencyService.Get<IMessage>().LongAlert("Failed to fetch dependants..");
+            }
+            //IsRunning = false;
+            //OnPropertyChanged("IsRunning");
         }
 
         private List<CalendarDate> GetCalendarDates(DateTime startDate)
@@ -145,6 +215,33 @@ namespace Daftari.ViewModels
             return calendar_dates;
         }
 
+        private List<Customer> GetDependants() => new List<Customer>
+        {
+            new Customer
+            {
+                CustomerID = Guid.Parse("f71ff2ad-8911-eb11-a942-976f80566d55"),
+                PersonID = 4234126,
+                FirstName = "Safanah",
+                LastName = "Al Habsi",
+                PhotoMD = "https://d1nqv8xdwxria6.cloudfront.net/uploads/profile_photo/image/6a39b8cc-caa0-4516-9725-6d9d29e2f495/image_profile_x200.jpg"
+            },
+            new Customer
+            {
+                CustomerID = Guid.Parse("f81ff2ad-8911-eb11-a942-976f80566d55"),
+                PersonID = 4234129,
+                FirstName = "Samayah",
+                LastName = "Al Habsi",
+                PhotoMD = "https://d1nqv8xdwxria6.cloudfront.net/uploads/profile_photo/image/67f74ec6-d876-43ed-8f54-861d5d6ef654/image_profile_x200.jpg"
+            },
+            new Customer
+            {
+                CustomerID = Guid.Parse("1b82bf67-b930-eb11-a942-976f80566d55"),
+                PersonID = 6385202,
+                FirstName = "Saja",
+                LastName = "Al Habsi",
+                PhotoMD = "https://d1nqv8xdwxria6.cloudfront.net/uploads/profile_photo/image/bc52be14-7e9c-4137-aac0-cd41dc84461c/image_profile_x200.jpg"
+            }
+        }.ToList();
         //public int Year
         //{
         //    get { return _Year; }
@@ -174,31 +271,81 @@ namespace Daftari.ViewModels
                 case "Calendar_Back":
                     StartAt = StartAt.AddMonths(-1);
                     Calendar_Dates.Clear();
-                    GetCalendarDates(StartAt).ForEach(obj => Calendar_Dates.Add(obj));
-                    OnPropertyChanged("StartAt");
+                    var month_data = GetCalendarDates(StartAt);
+
+                    month_data.ForEach(obj => Calendar_Dates.Add(obj));
+                    //do sync
+                    var visits = GetVisits().GroupBy(x => x.StartAt.Value.Date).ToList();
+                    month_data.ForEach(obj =>
+                    {
+                        var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
+                        if (date_visit.Any())
+                        {
+                            obj.Visits = date_visit;
+                            if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
+                            {
+                                obj.OnNotify("Visits");
+                            }
+                            obj.HasEvent = true;
+                        }
+                    });
+
+                    //OnPropertyChanged("StartAt");
                     break;
                 case "Calendar_Forward":
                     StartAt = StartAt.AddMonths(1);
                     Calendar_Dates.Clear();
                     GetCalendarDates(StartAt).ForEach(obj => Calendar_Dates.Add(obj));
-                    OnPropertyChanged("StartAt");
+                    //OnPropertyChanged("StartAt");
                     break;
             }
         }
 
-        void ItemChanged(CalendarDate item)
+        private List<Visit> GetVisits() => new List<Visit>
         {
-            OnPropertyChanged("SelectedItem");
-            if (item != null)
+            new Visit
             {
-                //var page = Application.Current.MainPage.Navigation?.NavigationStack.Last() ?? Application.Current.MainPage;
-                //var target = (IChapterClickListener)page;
-                //_Context.OnChapterClick(item);
-
-                //SelectedItem = null;
-                //OnPropertyChanged("SelectedItem");
+                ServiceName = "5 - Starfish",
+                StaffMembers = "Rufaro Jena",
+                StartAt = new DateTime(2021, 12, 2).AddHours(4),
+                EndAt = new DateTime(2021, 12, 11).AddHours(4).AddMinutes(30)
+            },
+            new Visit
+            {
+                ServiceName = "5 - Starfish",
+                StaffMembers = "Rufaro Jena",
+                StartAt = new DateTime(2021, 12, 7).AddHours(6),
+                EndAt = new DateTime(2021, 12, 11).AddHours(6).AddMinutes(30)
+            },
+            new Visit
+            {
+                ServiceName = "5 - Starfish",
+                StaffMembers = "Rufaro Jena",
+                StartAt = new DateTime(2021, 12, 15).AddHours(8),
+                EndAt = new DateTime(2021, 12, 11).AddHours(8).AddMinutes(30)
+            },
+            new Visit
+            {
+                ServiceName = "5 - Starfish",
+                StaffMembers = "Rufaro Jena",
+                StartAt = new DateTime(2021, 12, 28).AddHours(14),
+                EndAt = new DateTime(2021, 12, 11).AddHours(14).AddMinutes(30)
             }
-        }
+        };
+
+        //void ItemChanged(CalendarDate item)
+        //{
+        //    OnPropertyChanged("SelectedDate");
+        //    if (item != null)
+        //    {
+        //        //var page = Application.Current.MainPage.Navigation?.NavigationStack.Last() ?? Application.Current.MainPage;
+        //        //var target = (IChapterClickListener)page;
+        //        //_Context.OnChapterClick(item);
+
+        //        //SelectedDate = null;
+        //        //OnPropertyChanged("SelectedDate");
+        //    }
+        //}
 
         //public List<Calendar_Date> GetCalendar_Dates(int Start, int Max) => (new List<Calendar_Date>
         //{
@@ -223,5 +370,10 @@ namespace Daftari.ViewModels
                 StartAt = DateTime.Today.AddDays(1)
             }
         });
+
+        public interface IHomeBindingContextListener
+        {
+            void OpenSchedule();
+        }
     }
 }

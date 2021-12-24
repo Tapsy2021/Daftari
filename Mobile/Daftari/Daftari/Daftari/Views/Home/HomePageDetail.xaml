@@ -29,7 +29,8 @@
                 IsSwipeEnabled="True"
                 HeaderTabTextFontSize="18"
                 VerticalOptions="FillAndExpand"
-                HeaderTabTextFontFamily="Gotham-Medium">
+                HeaderTabTextFontFamily="Gotham-Medium"
+                x:Name="tab_schedule">
                     <tabview:TabViewControl.ItemSource>
                         <tabview:TabItem HeaderText="Plans">
                             <StackLayout>
@@ -46,29 +47,94 @@
                                 <BoxView BackgroundColor="#1E3565" Margin="50,0" HeightRequest="1" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
 
                                 <Label Text="Unlimited Visits"
-                                    FontSize="15"
-                                    FontFamily="Gotham-Light-Italic"
-                                    HorizontalTextAlignment="Center"
-                                    HorizontalOptions="Center"                                    
-                                    Margin="0,20,0,0"
-                                    TextColor="#1E3565"
-                                    VerticalOptions="Center" />
+                                        FontSize="15"
+                                        FontFamily="Gotham-Light-Italic"
+                                        HorizontalTextAlignment="Center"
+                                        HorizontalOptions="Center"                                    
+                                        Margin="0,20,0,0"
+                                        TextColor="#1E3565"
+                                        VerticalOptions="Center" />
 
                                 <Label Text="Expires on December 15, 2021"
-                                    FontSize="15"
-                                    FontFamily="Gotham-Medium-Italic"
-                                    HorizontalTextAlignment="Center"
-                                    HorizontalOptions="Center"                                    
-                                    Margin="0,10,0,0"
-                                    TextColor="#1E3565"
-                                    VerticalOptions="Center" />
+                                        FontSize="15"
+                                        FontFamily="Gotham-Medium-Italic"
+                                        HorizontalTextAlignment="Center"
+                                        HorizontalOptions="Center"                                    
+                                        Margin="0,10,0,20"
+                                        TextColor="#1E3565"
+                                        VerticalOptions="Center" />
+
+                                <renderers:CustomLabel Text="Dependants"
+                                                        Padding="0"
+                                                        Margin="0"
+                                                        FontSize="17"
+                                                        TextColor="#1E3565"
+                                                        VerticalOptions="Center"
+                                                        HorizontalOptions="Center"                                                        
+                                                        FontFamily="Roboto-Medium"/>
+
+                                <CollectionView ItemsSource="{Binding Dependants}"
+                                                SelectionMode="Single"
+                                                SelectedItem="{Binding SelectedDependant, Mode=TwoWay}"
+                                                SelectionChangedCommand="{Binding DependantChangedCommand}"
+                                                SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedDependant}"
+                                    Margin="0">
+                                    <CollectionView.EmptyView>
+                                        <ContentView>
+                                            <StackLayout>
+
+                                                <Image Source="collection_view_loading.gif"
+                                                       IsAnimationPlaying="True"
+                                                        BackgroundColor="Transparent" 
+                                                        Margin="0,20,0,0"/>
+                                            </StackLayout>
+                                        </ContentView>
+                                    </CollectionView.EmptyView>
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackLayout Margin="0,3">
+                                                <Frame Padding="3" HasShadow="True" Margin="2" BackgroundColor="#fafafa" CornerRadius="7">
+                                                    <StackLayout Orientation="Horizontal">
+                                                        <Image Source="{Binding PhotoMD}"
+                                                                 HeightRequest="50" 
+                                                                 WidthRequest="50"
+                                                                 VerticalOptions="Center">
+                                                            <Image.Clip>
+                                                                <EllipseGeometry
+                                                                Center="25,25"
+                                                                RadiusX="25"
+                                                                RadiusY="25"/>
+                                                            </Image.Clip>
+                                                        </Image>
+                                                        <renderers:CustomLabel
+                                                                    Padding="0"
+                                                                    Margin="0"
+                                                                    FontSize="17"
+                                                                    TextColor="#1E3565"
+                                                                    VerticalOptions="Center"
+                                                                    HorizontalOptions="Center"                                                        
+                                                                    FontFamily="Roboto-Regular">
+                                                            <Label.FormattedText>
+                                                                <FormattedString>
+                                                                    <Span Text="{Binding FirstName}" />
+                                                                    <Span Text=" "/>
+                                                                    <Span Text="{Binding LastName}"/>
+                                                                </FormattedString>
+                                                            </Label.FormattedText>
+                                                        </renderers:CustomLabel>
+                                                    </StackLayout>
+                                                </Frame>
+                                            </StackLayout>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
 
                             </StackLayout>
                         </tabview:TabItem>
                         <tabview:TabItem HeaderText="Schedule">
                             <StackLayout Margin="0,10"
                                          Padding="0,10">
-                                <Frame CornerRadius="30" 
+                                <Frame CornerRadius="20" 
                                        Margin="1" 
                                        Padding="12,1" 
                                        HasShadow="True" 
@@ -94,19 +160,34 @@
                                             </Image>
 
                                             <StackLayout Grid.Column="1">
-                                                <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:yyyy}'}"
+                                                <renderers:CustomLabel
                                                         Padding="0"
                                                         Margin="0"
                                                         FontSize="17"
                                                         TextColor="#1E3565"
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"                                                        
-                                                        FontFamily="Roboto-Medium"/>
-                                                
-                                                <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:MMMM}'}"
+                                                        FontFamily="Quicksand-Bold">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="{Binding SelectedDependant.FirstName}" />
+                                                            <Span Text="'s Daftari"/>
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </renderers:CustomLabel>
+                                                <!--<renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:yyyy}'}"
                                                         Padding="0"
                                                         Margin="0"
-                                                        FontSize="18"
+                                                        FontSize="17"
+                                                        TextColor="#1E3565"
+                                                        VerticalOptions="Center"
+                                                        HorizontalOptions="Center"                                                        
+                                                        FontFamily="Roboto-Medium"/>-->
+                                                
+                                                <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:MMMM yyyy}'}"
+                                                        Padding="0"
+                                                        Margin="0,-7,0,0"
+                                                        FontSize="16"
                                                         TextColor="#012550"
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"
@@ -152,9 +233,9 @@
 
                                         <CollectionView ItemsSource="{Binding Calendar_Dates}"
                                                         SelectionMode="Single"
-                                                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                                                        SelectionChangedCommand="{Binding ItemChangedCommand}"
-                                                        SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                                                        SelectedItem="{Binding SelectedDate, Mode=TwoWay}"
+                                                        SelectionChangedCommand="{Binding DateChangedCommand}"
+                                                        SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedDate}"
                                                         x:Name="Calendar_Dates_Collection"
                                                         VerticalOptions="Fill">
                                             <CollectionView.ItemsLayout>
@@ -166,7 +247,7 @@
                                                         <Frame CornerRadius="100"
                                                                WidthRequest="27"
                                                                HeightRequest="27"
-                                                               BackgroundColor="Transparent"
+                                                               BackgroundColor="{Binding DateColor}"
                                                                Padding="0">
                                                             <Label Text="{Binding Day}"
                                                                     FontSize="14"
@@ -183,11 +264,12 @@
                                     </StackLayout>
                                 </Frame>
 
-                                <Frame CornerRadius="30" 
+                                <Frame CornerRadius="20" 
                                        Margin="1" 
                                        Padding="1" 
                                        HasShadow="True" 
-                                       BackgroundColor="#ebebeb">
+                                       IsVisible="{Binding SelectedDate.HasEvent}"
+                                       BackgroundColor="#fafafa">
                                     <StackLayout>
 
                                         <Grid Padding="13,4">
@@ -198,11 +280,10 @@
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="45"/>
-                                                <RowDefinition Height="25"/>
-                                                <RowDefinition Height="30"/>
+                                                <RowDefinition/>
                                             </Grid.RowDefinitions>
 
-                                            <Label Text="{Binding SelectedItem.WeekName}"
+                                            <Label Text="{Binding SelectedDate.WeekName}"
                                                     FontSize="15"
                                                     TextColor="#1E3565"
                                                     VerticalOptions="Center"
@@ -215,7 +296,7 @@
                                                    Padding="1" 
                                                    HasShadow="True" 
                                                    BackgroundColor="#FFD330">
-                                                <Label Text="{Binding SelectedItem.Day}"
+                                                <Label Text="{Binding SelectedDate.Day}"
                                                     FontSize="22"
                                                     Padding="4"
                                                     TextColor="#1E3565"
@@ -225,29 +306,72 @@
 
                                             </Frame>
 
-                                            <Label Grid.Column="2" Text="{Binding SelectedItem.Month}"
+                                            <Label Grid.Column="2" Text="{Binding SelectedDate.Month}"
                                                     FontSize="15"
                                                     TextColor="#1E3565"
                                                     VerticalOptions="Center"
                                                     HorizontalOptions="End"
                                                     FontFamily="Noteworthy-Bold"/>
 
-                                            <Image Grid.Row="1" Grid.ColumnSpan="2" Source="{Binding SelectedItem.LevelImage}"
+                                            <CollectionView Grid.Row="1" Grid.ColumnSpan="4" ItemsSource="{Binding SelectedDate.Visits}"
+                                                    SelectionMode="None"
+                                                    Margin="0">
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackLayout Margin="0,3">
+                                                            <Frame Padding="3" Margin="2" BackgroundColor="Transparent" CornerRadius="2">
+                                                                <StackLayout>
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="50*"/>
+                                                                            <ColumnDefinition Width="50*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="25"/>
+                                                                            <RowDefinition Height="30"/>
+                                                                        </Grid.RowDefinitions>
+
+                                                                        <Image Source="{Binding LevelImage}"
+                                                                                HorizontalOptions="Start"/>
+
+                                                                        <Label Grid.Column="1" Text="{Binding StartAt, StringFormat='{0:h:mm tt}'}"
+                                                                                FontSize="14"                                                    
+                                                                                TextColor="#1E3565"
+                                                                                VerticalOptions="Center"
+                                                                                HorizontalOptions="End"
+                                                                                HorizontalTextAlignment="End"
+                                                                                FontFamily="Gotham-Bold"/>
+
+                                                                        <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding ServiceName}"
+                                                                                FontSize="13"
+                                                                                TextColor="#1E3565"
+                                                                                VerticalOptions="Start"
+                                                                                HorizontalOptions="Start"
+                                                                                FontFamily="Noteworthy-Bold"/>
+                                                                    </Grid>
+                                                                </StackLayout>
+                                                            </Frame>
+                                                        </StackLayout>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+
+                                            <!--<Image Grid.Row="1" Grid.ColumnSpan="2" Source="{Binding SelectedDate.LevelImage}"
                                                    HorizontalOptions="Start"/>
 
-                                            <Label Grid.Row="1" Grid.Column="2" Text="{Binding SelectedItem.StartAt, StringFormat='{0:h:mm tt}'}"
-                                                    FontSize="14"
+                                            <Label Grid.Row="1" Grid.Column="2" Text="{Binding SelectedDate.StartAt, StringFormat='{0:h:mm tt}'}"
+                                                    FontSize="14"                                                    
                                                     TextColor="#1E3565"
                                                     VerticalOptions="Center"
                                                     HorizontalOptions="End"
                                                     FontFamily="Gotham-Bold"/>
 
-                                            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding SelectedItem.ServiceName}"
+                                            <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding SelectedDate.ServiceName}"
                                                     FontSize="13"
                                                     TextColor="#1E3565"
                                                     VerticalOptions="Start"
                                                     HorizontalOptions="Start"
-                                                    FontFamily="Noteworthy-Bold"/>
+                                                    FontFamily="Noteworthy-Bold"/>-->
                                         </Grid>
 
                                     </StackLayout>

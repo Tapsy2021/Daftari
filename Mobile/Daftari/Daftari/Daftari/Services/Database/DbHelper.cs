@@ -1,4 +1,5 @@
 ﻿using Daftari.Models;
+using Daftari.Services.Database.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,6 +45,16 @@ namespace Daftari.Services.Database
         public void SignOut()
         {
             new AuthHandler().SignOut();
+        }
+
+        public Task<List<Customer>> GetDependants()
+        {
+            return new CustomerHandler().GetDependantsAsync();
+        }
+
+        public void SaveDependants(List<Customer> dependants)
+        {
+            new CustomerHandler().SaveDependants(dependants);
         }
     }
 }

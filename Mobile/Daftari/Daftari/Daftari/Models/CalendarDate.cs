@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Daftari.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
 namespace Daftari.Models
 {
-    public class CalendarDate
+    public class CalendarDate : ViewModelBase
     {
         public DateTime StartAt { get; set; }
         public DateTime EndAt { get; set; }
@@ -18,11 +19,27 @@ namespace Daftari.Models
 
         public string TextColor { get; set; }
 
-        public bool HasEvent { get; set; }
+        private bool _hasEvent;
+        public bool HasEvent 
+        {
+            get => _hasEvent;
+            set
+            {
+                _hasEvent = value;
+                OnPropertyChanged("HasEvent");
+                OnPropertyChanged("DateColor");
+            }
+        }
 
+        public string DateColor
+        {
+            get => HasEvent ? "#ff4a4a" : "transparent";
+        }
+        public List<Visit> Visits { get; set; }
         public CalendarDate()
         {
             TextColor = "#1E3565";
+            Visits = new List<Visit>();
         }
 
         public string WeekName
@@ -35,10 +52,9 @@ namespace Daftari.Models
             get { return StartAt.ToString("MMMM"); }
         }
 
-        public string LevelImage
+        public void OnNotify(string PropertyName)
         {
-            //get { return $"level_4_seahorses.png"; }
-            get { return $"level_{ServiceName?.Replace(" ", "").Replace("-", "_")}.png".ToLower(); }
+            OnPropertyChanged(PropertyName);
         }
     }
 }
