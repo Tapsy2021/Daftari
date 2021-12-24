@@ -29,17 +29,17 @@ namespace Daftari.Views.Home
             if (e.PropertyName != "IsVisible") return;
             var viewModel = (Frame)sender;
             if (!viewModel.IsVisible)
-            {
                 SelectedDateFrame.ScaleY = 0;
-            }
             else
-            {
-                SelectedDateFrame.ScaleYTo(1, 200);
-            }
+                SelectedDateFrame.ScaleYTo(1, 100);
         }
 
         private async void OnFullScheduleExpand_Clicked(object sender, System.EventArgs e)
         {
+            if (SelectedDateFrame.IsVisible){
+                Calendar_Dates_Collection.SelectedItem = null;
+                System.Threading.Thread.Sleep(50);
+            }
             //await Task.WhenAll(
             //    Calendar_Layout.ScaleYTo(0, 100, Easing.SinOut),
             //    FullSchedule_Layout.ScaleYTo(1, 140, Easing.SinInOut)

@@ -391,15 +391,23 @@
                                         </StackLayout>
                                     </StackLayout>
                                 </Frame>
-
+                                <!--IsVisible="{Binding SelectedDate.HasEvent}"-->
                                 <Frame CornerRadius="20" 
                                        Margin="1" 
                                        Padding="1" 
                                        HasShadow="True" 
-                                       IsVisible="{Binding SelectedDate.HasEvent}"
+                                       IsVisible="{Binding SelectedDate.HasEvent, FallbackValue = false}"
                                        PropertyChanged="SelectedDateFrame_PropertyChanged"
                                        BackgroundColor="#fafafa"
                                        x:Name="SelectedDateFrame">
+                                    <!--<Frame.IsVisible>
+                                        <Binding Path="SelectedDate.HasEvent"
+                                            Converter="{app1:IsIntGreaterThanConverter}">
+                                            <Binding.ConverterParameter>
+                                                <x:Int32>0</x:Int32>
+                                            </Binding.ConverterParameter>
+                                        </Binding>
+                                    </Frame.IsVisible>-->
                                     <StackLayout>
                                         <Grid Padding="13,4">
                                             <Grid.ColumnDefinitions>
@@ -417,7 +425,14 @@
                                                     TextColor="#1E3565"
                                                     VerticalOptions="Center"
                                                     HorizontalOptions="Start"
-                                                    FontFamily="Noteworthy-Bold"/>
+                                                    FontFamily="Noteworthy-Bold">
+                                                <!--<Binding Path="SelectedDate.WeekName"
+                                                        Converter="{app1:IsIntGreaterThanConverter}">
+                                                    <Binding.ConverterParameter>
+                                                        <x:Int32>0</x:Int32>
+                                                    </Binding.ConverterParameter>
+                                                </Binding>-->
+                                            </Label>
 
                                             <Frame Grid.Column="1" 
                                                    CornerRadius="30" 
