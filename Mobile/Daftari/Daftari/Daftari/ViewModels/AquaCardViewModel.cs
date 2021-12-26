@@ -13,10 +13,32 @@ namespace Daftari.ViewModels
         public ObservableCollection<StudentCard> Cards { get; private set; } = new ObservableCollection<StudentCard>();
         public List<StudentCard> source;
         public StudentCard CurrentItem { get; set; }
+
+        private SkillDifficultyDetailViewModel _prevDifficulty;
         public int Position { get; set; }
         public int Skill_Position { get; set; }
         public ICommand TapCommand => new Command<string>(ButtonPressed);
         public ICommand ItemChangedCommand => new Command<StudentCard>(ItemChanged);
+        public ICommand ExpandCollapseCommand => new Command<SkillDifficultyDetailViewModel>((item) =>
+        {
+            if (_prevDifficulty == item)
+            {
+                // click twice on the same item will hide it
+                item.Expanded = !item.Expanded;
+            }
+            else
+            {
+                if (_prevDifficulty != null)
+                {
+                    // hide previous selected item
+                    _prevDifficulty.Expanded = false;
+                }
+                // show selected item
+                item.Expanded = true;
+            }
+
+            _prevDifficulty = item;
+        });
         public AquaCardViewModel()
         {
             source = new List<StudentCard>

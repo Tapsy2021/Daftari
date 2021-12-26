@@ -45,14 +45,15 @@ namespace Daftari.Models
         }
 
         public int Position { get; set; }
-        private List<SkillDifficultyDetail> _DifficultyDetails;
-        public List<SkillDifficultyDetail> DifficultyDetails
+
+        private List<SkillDifficultyDetailViewModel> _DifficultyDetails;
+        public List<SkillDifficultyDetailViewModel> DifficultyDetails
         {
             get
             {
                 if (_DifficultyDetails == null)
                 {
-                    _DifficultyDetails = Enum.GetValues(typeof(SkillDifficulty)).Cast<SkillDifficulty>().Select(x => new SkillDifficultyDetail
+                    _DifficultyDetails = Enum.GetValues(typeof(SkillDifficulty)).Cast<SkillDifficulty>().Select(x => new SkillDifficultyDetailViewModel(new SkillDifficultyDetail
                     {
                         DifficultyName = x.GetDisplay(),
                         Color = Colors[(int)x],
@@ -63,7 +64,7 @@ namespace Daftari.Models
                             SetName = sk.Key,
                             IsComplete = sk.All(sks => sks.IsComplete)
                         }).ToList()
-                    }).ToList();
+                    })).ToList();
                 }
 
                 return _DifficultyDetails;

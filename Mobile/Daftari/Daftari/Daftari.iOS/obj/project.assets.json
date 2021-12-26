@@ -58,6 +58,18 @@
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
+      "Refractored.MvvmHelpers/1.6.2": {
+        "type": "package",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
+        }
+      },
       "SkiaSharp/2.80.3": {
         "type": "package",
         "compile": {
@@ -402,6 +414,7 @@
         "dependencies": {
           "Microcharts.Forms": "0.9.5.9",
           "Newtonsoft.Json": "13.0.1",
+          "Refractored.MvvmHelpers": "1.6.2",
           "SkiaSharp.Extended": "1.60.0",
           "SkiaSharp.Svg": "1.60.0",
           "SkiaSharp.Views.Forms": "2.80.3",
@@ -474,6 +487,18 @@
         },
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Refractored.MvvmHelpers/1.6.2": {
+        "type": "package",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
         }
       },
       "SkiaSharp/2.80.3": {
@@ -802,6 +827,7 @@
         "dependencies": {
           "Microcharts.Forms": "0.9.5.9",
           "Newtonsoft.Json": "13.0.1",
+          "Refractored.MvvmHelpers": "1.6.2",
           "SkiaSharp.Extended": "1.60.0",
           "SkiaSharp.Svg": "1.60.0",
           "SkiaSharp.Views.Forms": "2.80.3",
@@ -874,6 +900,18 @@
         },
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Refractored.MvvmHelpers/1.6.2": {
+        "type": "package",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
         }
       },
       "SkiaSharp/2.80.3": {
@@ -1205,6 +1243,7 @@
         "dependencies": {
           "Microcharts.Forms": "0.9.5.9",
           "Newtonsoft.Json": "13.0.1",
+          "Refractored.MvvmHelpers": "1.6.2",
           "SkiaSharp.Extended": "1.60.0",
           "SkiaSharp.Svg": "1.60.0",
           "SkiaSharp.Views.Forms": "2.80.3",
@@ -1277,6 +1316,18 @@
         },
         "runtime": {
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Refractored.MvvmHelpers/1.6.2": {
+        "type": "package",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/MvvmHelpers.dll": {}
         }
       },
       "SkiaSharp/2.80.3": {
@@ -1608,6 +1659,7 @@
         "dependencies": {
           "Microcharts.Forms": "0.9.5.9",
           "Newtonsoft.Json": "13.0.1",
+          "Refractored.MvvmHelpers": "1.6.2",
           "SkiaSharp.Extended": "1.60.0",
           "SkiaSharp.Svg": "1.60.0",
           "SkiaSharp.Views.Forms": "2.80.3",
@@ -1707,6 +1759,27 @@
         "newtonsoft.json.13.0.1.nupkg.sha512",
         "newtonsoft.json.nuspec",
         "packageIcon.png"
+      ]
+    },
+    "Refractored.MvvmHelpers/1.6.2": {
+      "sha512": "pXiyT0ad3QI7IzZSSjVNliyhyyAe7lmNPdfAEgSrtjhF9twrYoKbBlTd58IJc67Fw8QmHEur8F9eBA4rj+BZAg==",
+      "type": "package",
+      "path": "refractored.mvvmhelpers/1.6.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "lib/net461/MvvmHelpers.dll",
+        "lib/net461/MvvmHelpers.pdb",
+        "lib/net461/MvvmHelpers.xml",
+        "lib/netstandard1.0/MvvmHelpers.dll",
+        "lib/netstandard1.0/MvvmHelpers.pdb",
+        "lib/netstandard1.0/MvvmHelpers.xml",
+        "lib/netstandard2.0/MvvmHelpers.dll",
+        "lib/netstandard2.0/MvvmHelpers.pdb",
+        "lib/netstandard2.0/MvvmHelpers.xml",
+        "refractored.mvvmhelpers.1.6.2.nupkg.sha512",
+        "refractored.mvvmhelpers.nuspec"
       ]
     },
     "SkiaSharp/2.80.3": {

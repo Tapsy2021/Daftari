@@ -27,8 +27,9 @@ namespace Daftari
             SetCultureToUSEnglish();
             InitializeComponent();
 
+            //MainPage = new Views.AquaCard.CardsPage();
             Identity = DbHelper.Instance.GetUser().Result;// sign in
-            //DbHelper.Instance.SignOut();
+            ////DbHelper.Instance.SignOut();
 
             Settings = new SettingsViewModel(Current.Properties);
 
@@ -41,7 +42,7 @@ namespace Daftari
 
         protected override void OnSleep()
         {
-            Settings.SaveState(Current.Properties);
+            //Settings.SaveState(Current.Properties);
         }
 
         protected override void OnResume()
