@@ -24,10 +24,7 @@ namespace Daftari.Models
         public string Level { get; set; }
         public string Focus { get; set; }
         public List<SkillCompletion> SkillCompletions { get; set; } = new List<SkillCompletion>();
-        //public SkillDifficultyDetail()
-        //{
-        //    SkillCompletions = new List<SkillCompletion>();
-        //}
+
         private bool _expanded;
         public bool Expanded
         {
@@ -46,15 +43,6 @@ namespace Daftari.Models
         public string StateIcon
         {
             get => Expanded ? "arrow_a.png" : "arrow_b.png";
-            //get
-            //{
-            //    if (Expanded)
-            //    {
-            //        return "arrow_a.png";
-            //    }
-            //    else
-            //    { return "arrow_b.png"; }
-            //}
         }
     }
 
@@ -62,6 +50,7 @@ namespace Daftari.Models
     {
         public string SetName { get; set; }
         public bool IsComplete { get; set; }
+        public string Color { get; set; }
     }
 
     public class SkillDifficultyDetailViewModel : ObservableRangeCollection<SkillCompletionViewModel>, INotifyPropertyChanged
@@ -78,7 +67,7 @@ namespace Daftari.Models
             {
                 SkillCompletions.Add(new SkillCompletionViewModel(c));
             }
-            // ContinentViewModel add a range with CountryViewModel
+
             if (expanded)
                 this.AddRange(SkillCompletions);
         }
@@ -88,9 +77,14 @@ namespace Daftari.Models
             get => _skillDifficulty.DifficultyName;
         }
 
+        public string Color
+        {
+            get => _skillDifficulty.Color;
+        }
+
         public string StateIcon
         {
-            get => Expanded ? "arrow_a.png" : "arrow_b.png";
+            get => Expanded ? "up_arrow_white.png" : "down_arrow_white.png";
         }
 
         private bool _expanded;
@@ -133,6 +127,11 @@ namespace Daftari.Models
         public bool IsComplete
         {
             get => _skillCompletion.IsComplete;
+        }
+
+        public string Color
+        {
+            get => _skillCompletion.Color;
         }
     }
 }

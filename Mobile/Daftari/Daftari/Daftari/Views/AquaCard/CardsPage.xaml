@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:forms="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
+             xmlns:renderers="clr-namespace:Daftari.Renderers"
              mc:Ignorable="d"
              x:Class="Daftari.Views.AquaCard.CardsPage"
              NavigationPage.HasNavigationBar="False"
@@ -43,38 +44,66 @@
                                 <forms:ChartView Chart="{Binding Chart}"
                                                  VerticalOptions="Start" 
                                                  HorizontalOptions="Center" 
-                                                 HeightRequest="350" 
-                                                 WidthRequest="350"/>
+                                                 HeightRequest="300" 
+                                                 WidthRequest="300"/>
 
                                 <Image Source="{Binding LevelImage}"
-                                       HeightRequest="45"/>
+                                       HeightRequest="28"/>
+
+                                <Label VerticalOptions="Center"
+                                        FontFamily="Roboto-Medium"
+                                        Text="SKILL SET"
+                                        TextColor="Red"
+                                        FontSize="16"
+                                        Margin="17,0"
+                                        VerticalTextAlignment="Center" />
+
+                                <Label TextColor="#012550" 
+                                        FontSize="16" 
+                                        FontFamily="Gotham-Medium"
+                                        Padding="17,0"
+                                        VerticalOptions="Center"
+                                        VerticalTextAlignment="Center"
+                                        HorizontalTextAlignment="Start">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="The focus of Level " />
+                                            <Span Text="{Binding LevelNumber}"/>
+                                            <Span Text=" is "/>
+                                            <Span TextColor="{Binding Focus_Color}" Text="{Binding Focus}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
 
                                 <ListView BackgroundColor="White"
                                             IsGroupingEnabled="True"
-                                            IsPullToRefreshEnabled="true"
+                                            IsPullToRefreshEnabled="False"
+                                            SeparatorVisibility="None"
+                                            HasUnevenRows="True"
                                             ItemsSource="{Binding DifficultyDetails}">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <ViewCell>
-                                                <StackLayout Orientation="Horizontal"  VerticalOptions="Center">
+                                            <renderers:CustomViewCell>
+                                                <Grid Padding="17,0" BackgroundColor="{Binding .Color}"  VerticalOptions="FillAndExpand">
                                                     <Label VerticalOptions="Center"
-                                                            FontAttributes="Bold"
-                                                            FontSize="Medium"
+                                                            FontFamily="Roboto-Medium"
                                                             Text="{Binding .SetName}"
-                                                            TextColor="Black"
+                                                            TextColor="White"
+                                                            FontSize="12"
+                                                            Margin="0,5"
                                                             VerticalTextAlignment="Center" />
-                                                </StackLayout>
-                                            </ViewCell>
+                                                </Grid>
+                                            </renderers:CustomViewCell>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                     <ListView.GroupHeaderTemplate>
                                         <DataTemplate>
                                             <ViewCell>
-                                                <Grid Padding="15,10">
-                                                    <Label FontAttributes="Bold"
-                                                            FontSize="Small"
-                                                            Text="{Binding DifficultyName}"
-                                                            TextColor="Gray"
+                                                <Grid Padding="17,10" BackgroundColor="{Binding Color}">
+                                                    <Label Text="{Binding DifficultyName}"
+                                                            FontFamily="Gotham-Bold"
+                                                            TextColor="White"
+                                                            FontSize="16"
                                                             VerticalTextAlignment="Center" />
                                                     <Image x:Name="ImgA" Source="{Binding StateIcon}"  Margin="0,0,5,0" HeightRequest="20" WidthRequest="20" HorizontalOptions="End"/>
                                                     <Grid.GestureRecognizers>

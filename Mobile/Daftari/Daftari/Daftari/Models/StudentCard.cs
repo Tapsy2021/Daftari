@@ -14,13 +14,11 @@ namespace Daftari.Models
     {
         private const string White_Color = "#FFFFFF";
         private const string Primary_Color = "#0CBA70";
-        private List<string> Colors
-        {
-            get
-            {
-                return new List<string> { "#F61C24", "#359DDA", "#30A253" };
-            }
-        }
+        //Beginer/Intermediate/advace
+        private List<string> Colors => new List<string> { "#F61C24", "#359DDA", "#30A253", "#000000", "#000000", "#000000", "#000000" };
+        //Water/Boundaries/Comfort/Control/Independence/Tempo/Technique/Proficiency
+        private List<string> Focus_Colors => new List<string> { "#f58220", "#ed1c24", "#8dc63f", "#006f45", "#004023", "#007db6", "#002f67", "#2e2d64", "#000000", "#000000", "#000000" };
+
         public string Initial { get; set; }
 
         [Display(Name = "Last Name")]
@@ -32,6 +30,7 @@ namespace Daftari.Models
         public DateTime? BirthDate { get; set; }
 
         public SkillLevel Level { get; set; }
+
         public List<StudentCardDetail> StudentCardDetails { get; set; }
 
         public string LevelImage
@@ -62,6 +61,7 @@ namespace Daftari.Models
                         SkillCompletions = StudentCardDetails.Where(sk => sk.Skill.SkillDifficulty == x).GroupBy(s => s.Skill.SetName).Select(sk => new SkillCompletion
                         {
                             SetName = sk.Key,
+                            Color = Colors[(int)x],
                             IsComplete = sk.All(sks => sks.IsComplete)
                         }).ToList()
                     })).ToList();
@@ -122,5 +122,10 @@ namespace Daftari.Models
 
             return (int)(completed / total * 100m);
         }
+
+        public string LevelNumber => (1 + (int)Level).ToString().PadLeft(2, '0');
+
+        public string Focus => Level.GetDescription().ToUpper();
+        public string Focus_Color => Focus_Colors[(int)Level];
     }
 }
