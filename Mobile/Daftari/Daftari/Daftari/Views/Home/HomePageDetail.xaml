@@ -178,6 +178,7 @@
 
                                                 <StackLayout Grid.Column="1">
                                                     <renderers:CustomLabel
+                                                        IsVisible="{Binding IsDependantSelected}"
                                                         Padding="0"
                                                         Margin="0"
                                                         FontSize="17"
@@ -192,14 +193,6 @@
                                                             </FormattedString>
                                                         </Label.FormattedText>
                                                     </renderers:CustomLabel>
-                                                    <!--<renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:yyyy}'}"
-                                                        Padding="0"
-                                                        Margin="0"
-                                                        FontSize="17"
-                                                        TextColor="#1E3565"
-                                                        VerticalOptions="Center"
-                                                        HorizontalOptions="Center"                                                        
-                                                        FontFamily="Roboto-Medium"/>-->
 
                                                     <renderers:CustomLabel Text="{Binding StartAt, StringFormat='{0:MMMM yyyy}'}"
                                                         Padding="0"
@@ -306,14 +299,31 @@
                                         </StackLayout>
 
                                         <StackLayout x:Name="FullSchedule_Layout">
-                                            <Label Text="Full Schedule"
+                                            <renderers:CustomLabel
+                                                        IsVisible="{Binding IsDependantSelected}"
+                                                        Padding="0"
+                                                        Margin="0,16,0,5"
+                                                        FontSize="17"
+                                                        TextColor="Red"
+                                                        VerticalOptions="Center"
+                                                        HorizontalOptions="Center"                                                        
+                                                        FontFamily="Gotham-Bold">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding SelectedDependant.FirstName}" />
+                                                        <Span Text="'s Full Schedule"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </renderers:CustomLabel>
+                                            
+                                            <!--<Label Text="Full Schedule"
                                                     FontSize="18"                                                    
                                                     TextColor="Red"
                                                     Margin="0,16,0,5"
                                                     VerticalOptions="Center"
                                                     HorizontalOptions="Center"
                                                     HorizontalTextAlignment="Center"
-                                                    FontFamily="Gotham-Bold"/>
+                                                    FontFamily="Gotham-Bold"/>-->
                                             <CollectionView ItemsSource="{Binding Visits}"
                                                     SelectionMode="None"
                                                     Margin="0">

@@ -21,7 +21,22 @@ namespace Daftari.ViewModels
         private IHomeBindingContextListener _Context;
         public ObservableCollection<Customer> Dependants { get; set; }
         private List<Customer> _dependants { get; set; }
-        public Customer SelectedDependant { get; set; }
+        public Customer _selectedDependant { get; set; }
+        public Customer SelectedDependant 
+        {
+            get => _selectedDependant;
+            set
+            {
+                _selectedDependant = value;
+                OnPropertyChanged("SelectedDependant");
+                OnPropertyChanged("IsDependantSelected");
+            }
+        }
+
+        public bool IsDependantSelected
+        {
+            get => _selectedDependant != null;
+        }
 
         public ObservableCollection<CalendarDate> Calendar_Dates { get; private set; }
         private List<CalendarDate> _calendar_dates { get; set; }
@@ -71,7 +86,6 @@ namespace Daftari.ViewModels
         });
         public ICommand DependantChangedCommand => new Command<Customer>((item) =>
         {
-            OnPropertyChanged("SelectedDependant");
             //open right tab (requires listener in ui)
             _Context.OpenSchedule();
             LoadScheduleCommand.Execute(null);
@@ -184,6 +198,10 @@ namespace Daftari.ViewModels
                             //}
                             obj.HasEvent = true;                            
                         }
+                        //else
+                        //{
+                        //    obj.HasEvent = false;
+                        //}
                     }
                 }
 
