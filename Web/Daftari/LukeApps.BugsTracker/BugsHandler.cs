@@ -2,7 +2,10 @@
 using LukeApps.DAL;
 using LukeApps.TrackingExtended;
 using System;
+using System.Net;
+using System.Net.Http;
 using System.Web;
+using System.Web.Http.Filters;
 
 namespace LukeApps.BugsTracker
 {
@@ -15,6 +18,15 @@ namespace LukeApps.BugsTracker
             url = cb.Request.Url.OriginalString;
             reportedBy = cb.User.Identity.Name;
             errorCode = cb.Response.StatusCode;
+        }
+
+        public BugsHandler(HttpActionExecutedContext ac)
+        {
+            exception = ac.Exception;
+            filePath = ac.Request.RequestUri.LocalPath;
+            url = ac.Request.RequestUri.OriginalString;
+            reportedBy = ac.Request.GetRequestContext().Principal.Identity.Name;
+            errorCode = (int)(ac.Response?.StatusCode ?? HttpStatusCode.InternalServerError);
         }
 
         public BugsHandler(Exception ex, string reportedBy, int errorCode = 0, string filePath = null, string url = null)

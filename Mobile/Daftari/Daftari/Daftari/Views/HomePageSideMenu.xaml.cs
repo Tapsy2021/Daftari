@@ -64,6 +64,7 @@ namespace Daftari.Views
 
         private void OnLogOut_Tapped(object sender, EventArgs e)
         {
+            Services.Database.DbHelper.Instance.SignOut();
             Application.Current.MainPage = new NavigationPage(new Auth.LoginPage());
         }
     }

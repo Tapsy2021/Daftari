@@ -23,6 +23,7 @@ namespace Daftari.Services.Database
 
         public Task<int> SignOut()
         {
+            Connection.DeleteAllAsync<Customer>();
             return Connection.DeleteAllAsync<User>();
             //var exists = Connection.Table<User>().Where(x => x.Is_Active).ToListAsync().Result;
             //foreach (var obj in exists)

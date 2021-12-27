@@ -8,7 +8,7 @@ namespace Daftari.Utils
     {
         public static class URLs
         {
-            public const string BaseURL = "http://muntumidev.com:8003/api/";
+            public const string BaseURL = "https://api.daftari.app/api/";
 
             public static readonly string Login = "account/login";
 

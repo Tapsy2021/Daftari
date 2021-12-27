@@ -55,7 +55,7 @@
                         TextTransform="None"
                         TextColor="White"
                         HorizontalOptions="Center"
-                        FontSize="16"
+                        FontSize="15"
                         Margin="0,0,0,7"/>
 
                 <Label Text="Don't have account?"
@@ -63,7 +63,7 @@
                         TextTransform="None"
                         TextColor="White"
                         HorizontalOptions="Center"
-                        FontSize="16"
+                        FontSize="15"
                         Margin="0,5,0,0"/>
 
                 <Button Text="Sign Up"

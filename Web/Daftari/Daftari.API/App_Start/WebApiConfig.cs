@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using LukeApps.BugsTracker;
 using Microsoft.Owin.Security.OAuth;
 
 namespace Daftari.API
@@ -13,6 +14,7 @@ namespace Daftari.API
             // Web API configuration and services
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+            config.Filters.Add(new LukeApiExceptionFilter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();

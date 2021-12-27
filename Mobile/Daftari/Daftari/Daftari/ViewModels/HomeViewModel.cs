@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -65,8 +66,10 @@ namespace Daftari.ViewModels
             SimulateVisits();
 
         });
+        public ICommand LoadDependantsCommand { get; private set; }
         public HomeViewModel(IHomeBindingContextListener Context)
         {
+            LoadDependantsCommand = new Command(async () => await FetchDependants());
             _Context = Context;
             //_visit_ct = new CancellationTokenSource();
             //_dependants = GetDependants();
@@ -82,7 +85,7 @@ namespace Daftari.ViewModels
             SelectedDate = _calendar_dates.FirstOrDefault(x => x.StartAt == DateTime.Today);
         }
 
-        public void FetchDependants()
+        public async Task FetchDependants()
         {
             //IF NO DEPENDANTS YET THEN USE LOADING / GIF
             //if (IsRunning)
@@ -92,7 +95,7 @@ namespace Daftari.ViewModels
             //IsRunning = true;
             //OnPropertyChanged("IsRunning");
 
-            _dependants = CustomerHelper.GetDependantsAsync(new CancellationTokenSource()).Result?.OrderBy(x => x.CustomerID).ToList();
+            _dependants = await CustomerHelper.GetDependantsAsync(new CancellationTokenSource());//?.OrderBy(x => x.CustomerID).ToList();
 
             var a1 = _dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
             var a2 = Dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
@@ -107,6 +110,7 @@ namespace Daftari.ViewModels
                 {
                     try
                     {
+                        _dependants = _dependants.OrderBy(x => x.CustomerID).ToList();
                         _dependants.ForEach(obj =>
                         {
                             Dependants.Add(obj);

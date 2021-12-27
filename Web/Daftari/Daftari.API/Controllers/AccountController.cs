@@ -4,16 +4,12 @@ using Microsoft.AspNet.Identity.Owin;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Daftari.API.Services;
 using Daftari.API.ViewModels;
-using System.Security.Claims;
-using System.Collections.Generic;
 using System.Linq;
+using Daftari.Pike13Api.Services;
+using Microsoft.Owin.Security;
+using Microsoft.AspNet.Identity;
 
 namespace Daftari.API.Controllers
 {
@@ -57,6 +53,14 @@ namespace Daftari.API.Controllers
             }
         }
 
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return Request.GetOwinContext().Authentication;
+            }
+        }
+
 
         [HttpPost]
         [Route("api/account/login")]
@@ -75,8 +79,12 @@ namespace Daftari.API.Controllers
                 {
                     case SignInStatus.Success:
                         var user = await UserManager.FindByNameAsync(model.Username);
-                        var token = new AuthService().GetSecurityToken(model.Username, user.Id, "User");
-                        return Ok(new DaftariResult<LoginResult>() { Body = new LoginResult() { AccessToken = token, FirstName = user.FirstName, LastName = user.LastName, Message = "Logged in" }, IsSuccess = true });
+                        var token = new AuthService().GetSecurityToken(user.UserName, user.Id, "User");
+                        var person = TokenProvider.GetProvider().GetUserData(user.UserName);
+                        var FirstName = person.PersonName?.Split(' ').FirstOrDefault() ?? user.FirstName;
+                        var LastName = person.PersonName?.Split(' ').LastOrDefault() ?? user.LastName;
+
+                        return Ok(new DaftariResult<LoginResult>() { Body = new LoginResult() { AccessToken = token, FirstName = FirstName, LastName = LastName, Message = "Logged in" }, IsSuccess = true });
                         //    CookieHelper.StoreInCookie("Session", null, "TimezoneOffset", model.TimezoneOffset?.ToString(), System.DateTime.Today.AddYears(10));
                         //    return RedirectToLocal(returnUrl);
 
@@ -87,17 +95,24 @@ namespace Daftari.API.Controllers
                         //    CookieHelper.StoreInCookie("Session", null, "TimezoneOffset", model.TimezoneOffset?.ToString(), System.DateTime.Today.AddYears(10));
                         //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
 
-                        //case SignInStatus.Failure:
-                        //default:
-                        //    ModelState.AddModelError("", "Invalid login attempt.");
-                        //    return View(model);
+                        case SignInStatus.Failure:
+                        default:
+                        return Ok(new DaftariResult<string> { Body = "Invalid login attempt.", IsSuccess = false });
                 }
             }
             else
             {
                 return BadRequest("Missing login details.");
             }
-            return null;
+        }
+
+        [Authorize]
+        [Route("api/account/logoff")]
+        public IHttpActionResult LogOff()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+            return Ok(new DaftariResult<string> { Body = "Logged out.", IsSuccess = true });
         }
 
         //[HttpPost]

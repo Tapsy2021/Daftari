@@ -9,13 +9,19 @@ namespace Daftari.Views.Home
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HomePageDetail : ContentPage, IHomeBindingContextListener
     {
+        private HomeViewModel ViewModel
+        {
+            get { return (HomeViewModel)BindingContext; }
+            set { BindingContext = value; }
+        }
+
         public HomePageDetail()
         {
             InitializeComponent();
-
+           
             FullSchedule_Layout.ScaleY = 0;
             FullSchedule_Layout.IsVisible = false;
-            BindingContext = new HomeViewModel(this);
+            ViewModel = new HomeViewModel(this);
         }
 
         public void OpenSchedule()
@@ -58,6 +64,13 @@ namespace Daftari.Views.Home
             //SelectedDateFrame_StackLayout.IsVisible = true;
             Calendar_Layout.IsVisible = true;
             await Calendar_Layout.ScaleYTo(1, 140, Easing.SinInOut);
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            ViewModel.LoadDependantsCommand.Execute(null);
         }
     }
 }
