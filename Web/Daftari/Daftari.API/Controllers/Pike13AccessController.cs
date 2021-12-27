@@ -71,33 +71,12 @@ namespace Daftari.API.Controllers
                     ServiceName = x.EventOccurrance.Name,
                     x.EventOccurrance.StartAt,
                     x.EventOccurrance.EndAt,
+                    level = cards.Where(card => card.ExternalReferenceID == x.PersonID).Select(lvl => (int?)lvl.Level).FirstOrDefault(),
                     Name = customers.Where(cr => cr.ExternalReference == x.PersonID).Select(cr => $"{cr.FirstName} {cr.LastName}").FirstOrDefault(),
                     StaffMembers = string.Join(",", customers
                                     .Where(cr => !string.IsNullOrEmpty(x.EventOccurrance.StaffMembers))
                                     .Where(cr => (x.EventOccurrance.StaffMembers?.Split(',') ?? new string[0]).Contains(cr.ExternalReference.ToString()))
                                     .Select(cr => $"{cr.FirstName} {cr.LastName}").ToList())
-                    //person = (from customer in customers
-                    //          where customer.ExternalReference == x.PersonID
-                    //          join card in cards on customer.ExternalReference equals card.ExternalReferenceID into _card
-                    //          from card in _card.DefaultIfEmpty()
-                    //          select new
-                    //          {
-                    //              id = customer.ExternalReference,
-                    //              name = customer != null ? $"{customer.FirstName} {customer.LastName}" : "Not Synced",
-                    //              level = card?.Level.GetDisplay(),
-                    //              lastOpenDateTime = card?.LastOpenDate.ToUniversalTime()
-                    //          }).FirstOrDefault() ?? new { id = 0L, name = "Not Synced", level = "", lastOpenDateTime = (DateTime?)null },
-
-                    //Staff_Members = (from id in (x.EventOccurrance.StaffMembers?.Split(',') ?? new string[0])
-                    //                 join staff in customers on id equals staff.ExternalReference.ToString() into _staff
-                    //                 from staff in _staff.DefaultIfEmpty()
-                    //                 where !string.IsNullOrEmpty(x.EventOccurrance.StaffMembers)
-                    //                 select new
-                    //                 {
-                    //                     id = staff?.ExternalReference ?? 0,
-                    //                     name = staff != null ? $"{staff.FirstName} {staff.LastName}" : "Not Synced",
-                    //                     email = staff?.EmailAddress
-                    //                 }).ToList()
                 }).Where(x => x.Status != VisitStatus.Late_Cancel.GetDisplay()).ToList();
 
                 return Ok(new DaftariResult<object>() { Body = data, IsSuccess = true });

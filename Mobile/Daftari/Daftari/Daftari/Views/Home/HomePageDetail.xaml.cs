@@ -35,9 +35,10 @@ namespace Daftari.Views.Home
             if (e.PropertyName != "IsVisible") return;
             var viewModel = (Frame)sender;
             if (!viewModel.IsVisible)
-                SelectedDateFrame.ScaleY = 0;
+                //SelectedDateFrame.ScaleY = 0;
+                SelectedDateFrame.ScaleYTo(0, 200);
             else
-                SelectedDateFrame.ScaleYTo(1, 100);
+                SelectedDateFrame.ScaleYTo(1, 250);
         }
 
         private async void OnFullScheduleExpand_Clicked(object sender, System.EventArgs e)

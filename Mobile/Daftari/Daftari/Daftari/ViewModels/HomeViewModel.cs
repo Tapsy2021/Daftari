@@ -52,6 +52,18 @@ namespace Daftari.ViewModels
         }
 
         public bool IsRunning { get; set; }
+
+        private bool _calendarRunning { get; set; }
+        public bool CalendarRunning
+        {
+            get => _calendarRunning;
+            set
+            {
+                _calendarRunning = value;
+                OnPropertyChanged("CalendarRunning");
+            }
+        }
+        
         public ICommand TapCommand => new Command<string>(ButtonPressed);
         public ICommand DateChangedCommand => new Command<CalendarDate>((item) =>
         {
@@ -62,14 +74,17 @@ namespace Daftari.ViewModels
             OnPropertyChanged("SelectedDependant");
             //open right tab (requires listener in ui)
             _Context.OpenSchedule();
+            LoadScheduleCommand.Execute(null);
             //FetchVisits();
-            SimulateVisits();
+            //SimulateVisits();
 
         });
         public ICommand LoadDependantsCommand { get; private set; }
+        public ICommand LoadScheduleCommand { get; private set; }
         public HomeViewModel(IHomeBindingContextListener Context)
         {
             LoadDependantsCommand = new Command(async () => await FetchDependants());
+            LoadScheduleCommand = new Command(async () => await FetchVisits());
             _Context = Context;
             //_visit_ct = new CancellationTokenSource();
             //_dependants = GetDependants();
@@ -131,12 +146,14 @@ namespace Daftari.ViewModels
             //OnPropertyChanged("IsRunning");
         }
 
-        public void FetchVisits()
+        public async Task FetchVisits()
         {
             if (SelectedDependant == null)
                 return;
             if (!_visit_ct.IsCancellationRequested)
                 _visit_ct.Cancel();
+            _visit_ct = new CancellationTokenSource();
+            CalendarRunning = true;
             //IF NO DEPENDANTS YET THEN USE LOADING / GIF
             //if (IsRunning)
             //{
@@ -147,8 +164,8 @@ namespace Daftari.ViewModels
             try
             {
                 var startAt = StartAt;
-                var _visits_data = Pike13AccessHelper.GetVisitsAsync(new { StartAt.Year, StartAt.Month, SelectedDependant.PersonID }, _visit_ct).Result?.OrderBy(x => x.StartAt).ToList();
-
+                var _visits_data = await Pike13AccessHelper.GetVisitsAsync(new { StartAt.Year, StartAt.Month, SelectedDependant.PersonID }, _visit_ct);//.Result?.OrderBy(x => x.StartAt).ToList();
+                CalendarRunning = false;
                 if (startAt == StartAt && (_visits_data?.Any() ?? false))
                 {
                     Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
@@ -160,11 +177,12 @@ namespace Daftari.ViewModels
                         if (date_visit.Any())
                         {
                             obj.Visits = date_visit;
-                            if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
-                            {
-                                obj.OnNotify("Visits");
-                            }
-                            obj.HasEvent = true;
+                            //obj.OnNotify("Visits");
+                            //if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
+                            //{
+                            //    obj.OnNotify("Visits");
+                            //}
+                            obj.HasEvent = true;                            
                         }
                     }
                 }
@@ -174,7 +192,10 @@ namespace Daftari.ViewModels
                     DependencyService.Get<IMessage>().LongAlert("Failed to fetch visits..");
                 }
             }
-            catch { }
+            catch 
+            {
+                CalendarRunning = false;
+            }
             //IsRunning = false;
             //OnPropertyChanged("IsRunning");
         }
@@ -317,7 +338,8 @@ namespace Daftari.ViewModels
                     var prev_month = GetCalendarDates(StartAt);
                     Calendar_Dates.Clear();
                     prev_month.ForEach(obj => Calendar_Dates.Add(obj));
-                    SimulateVisits();
+                    LoadScheduleCommand.Execute(null);
+                    //SimulateVisits();
                     //FetchVisits();
                     //do sync
                     //var visits = GetVisits().GroupBy(x => x.StartAt.Value.Date).ToList();
@@ -342,7 +364,8 @@ namespace Daftari.ViewModels
                     var next_month = GetCalendarDates(StartAt);
                     Calendar_Dates.Clear();
                     next_month.ForEach(obj => Calendar_Dates.Add(obj));
-                    SimulateVisits();
+                    LoadScheduleCommand.Execute(null);
+                    //SimulateVisits();
                     //FetchVisits();
                     break;
             }

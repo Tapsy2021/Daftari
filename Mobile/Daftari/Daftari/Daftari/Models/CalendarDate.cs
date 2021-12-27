@@ -35,7 +35,17 @@ namespace Daftari.Models
         {
             get => HasEvent ? "#ff4a4a" : "transparent";
         }
-        public List<Visit> Visits { get; set; }
+
+        private List<Visit> _visits;
+        public List<Visit> Visits 
+        {
+            get => _visits;
+            set
+            {
+                _visits = value; 
+                OnPropertyChanged("Visits");
+            }
+        }
         public CalendarDate()
         {
             TextColor = "#1E3565";
