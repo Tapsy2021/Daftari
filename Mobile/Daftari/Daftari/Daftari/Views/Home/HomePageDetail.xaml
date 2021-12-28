@@ -375,7 +375,7 @@
                                                                                 <Image Source="{Binding LevelImage}"
                                                                                        HorizontalOptions="Start"
                                                                                        HeightRequest="18"/>
-                                                                                <Label Text="{Binding StartAt, StringFormat='{0:h:mm tt}'}"
+                                                                                <Label Text="{Binding LocalStartAt, StringFormat='{0:h:mm tt}'}"
                                                                                         FontSize="13"                                                    
                                                                                         TextColor="#1E3565"
                                                                                         VerticalOptions="Center"
@@ -511,7 +511,7 @@
                                                                         <Image Source="{Binding LevelImage}"
                                                                                 HorizontalOptions="Start"/>
 
-                                                                        <Label Grid.Column="1" Text="{Binding StartAt, StringFormat='{0:h:mm tt}'}"
+                                                                        <Label Grid.Column="1" Text="{Binding LocalStartAt, StringFormat='{0:h:mm tt}'}"
                                                                                 FontSize="14"                                                    
                                                                                 TextColor="#1E3565"
                                                                                 VerticalOptions="Center"

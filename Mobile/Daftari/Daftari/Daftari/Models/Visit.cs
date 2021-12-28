@@ -18,6 +18,8 @@ namespace Daftari.Models
         public string ServiceName { get; set; }
         public DateTime? StartAt { get; set; }
         public DateTime? EndAt { get; set; }
+        public DateTime? LocalStartAt => StartAt?.ToLocalTime();
+        public DateTime? LocalEndAt => EndAt?.ToLocalTime();
         public string Name { get; set; }
         public string StaffMembers { get; set; }
 
