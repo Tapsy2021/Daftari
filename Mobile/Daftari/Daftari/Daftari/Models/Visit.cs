@@ -1,4 +1,5 @@
 ﻿using Daftari.Utils;
+using Daftari.ViewModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace Daftari.Models
 {
-    public class Visit
+    public class Visit : ViewModelBase
     {
         public long VisitID { get; set; }
         public long? EventOccurrenceID { get; set; }
@@ -50,6 +51,18 @@ namespace Daftari.Models
         public string Month => StartAt?.ToString("MMM");
 
         public int? Level { get; set; }
+
+
+        private bool _isVisible;
+        public bool IsVisible 
+        { 
+            get => _isVisible;
+            set
+            {
+                _isVisible = value;
+                OnPropertyChanged("IsVisible");
+            }
+        }
 
         //public string AlternativeLevelImage => Level.HasValue ? $"level_{((SkillLevel)Level.Value).GetDisplay().Replace(" ", "").Replace("-", "_")}.png".ToLower() : "";
     }

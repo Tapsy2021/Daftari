@@ -14,6 +14,7 @@ namespace Daftari.Utils
 
             public static readonly string Get_Dependants = "customers/dependants";
             public static readonly string Get_Visits = "pike13access/getschedule";
+            public static readonly string Cancel_Visit = "pike13access/cancelvisit";
         }
 
         public static class Keys

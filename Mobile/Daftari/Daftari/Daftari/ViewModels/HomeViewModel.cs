@@ -40,14 +40,31 @@ namespace Daftari.ViewModels
 
         public ObservableCollection<CalendarDate> Calendar_Dates { get; private set; }
         private List<CalendarDate> _calendar_dates { get; set; }
+        
         private List<Visit> _visits { get; set; } = new List<Visit>();
-        public List<Visit> Visits
+        public ObservableCollection<Visit> Visits { get; private set; } = new ObservableCollection<Visit>();
+        //public List<Visit> Visits
+        //{
+        //    get => _visits;
+        //    set
+        //    {
+        //        _visits = value;
+        //        OnPropertyChanged("Visits");
+        //    }
+        //}    
+        //Used by Full Schedule Action Buttons
+
+        private Visit PrevVisit { get; set; }
+
+        //public Visit SelectedVisit { get; set; }
+        public Visit _selectedVisit { get; set; }
+        public Visit SelectedVisit
         {
-            get => _visits;
+            get => _selectedVisit;
             set
             {
-                _visits = value;
-                OnPropertyChanged("Visits");
+                _selectedVisit = value;
+                OnPropertyChanged("SelectedVisit");
             }
         }
 
@@ -66,7 +83,16 @@ namespace Daftari.ViewModels
             }
         }
 
-        public bool IsRunning { get; set; }
+        private bool _isRunning { get; set; }
+        public bool IsRunning 
+        {
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                OnPropertyChanged("IsRunning");
+            }
+        }
 
         private bool _calendarRunning { get; set; }
         public bool CalendarRunning
@@ -93,6 +119,42 @@ namespace Daftari.ViewModels
             //SimulateVisits();
 
         });
+
+        public ICommand VisitChangedCommand => new Command<Visit>((item) => 
+        {
+            if (SelectedVisit != null)
+            {
+                if (PrevVisit == SelectedVisit)
+                {
+                    SelectedVisit.IsVisible = !SelectedVisit.IsVisible;
+                }
+                else
+                {
+                    if (PrevVisit != null)
+                    {
+                        PrevVisit.IsVisible = false;
+                    }
+                    SelectedVisit.IsVisible = true;
+                }
+                PrevVisit = SelectedVisit;
+                SelectedVisit = null;
+            }            
+        });
+
+        public ICommand OnCancelCommand => new Command<Visit>(async (item) =>
+        {
+            if (item != null)
+            {
+                var message = $"Cancel {SelectedDependant?.FirstName}'s Class for {item.LocalStartAt?.ToString("dd MMMM")} at {item.LocalStartAt?.ToString("h:mm tt")}?";
+                bool answer = await Application.Current.MainPage.DisplayAlert("Cancel Session", message, "Yes", "No");
+                if (answer)
+                {
+                    await CancelSession(item);
+                }
+                //action
+            }
+        });
+
         public ICommand LoadDependantsCommand { get; private set; }
         public ICommand LoadScheduleCommand { get; private set; }
         public HomeViewModel(IHomeBindingContextListener Context)
@@ -182,7 +244,12 @@ namespace Daftari.ViewModels
                 CalendarRunning = false;
                 if (startAt == StartAt && (_visits_data?.Any() ?? false))
                 {
-                    Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
+                    Visits.Clear();
+                    foreach (var obj in _visits_data.OrderBy(x => x.StartAt))
+                    {
+                        Visits.Add(obj);
+                    }
+                    //Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
                     var visits = _visits_data.GroupBy(x => x.StartAt.Value.Date).ToList();
 
                     foreach (var obj in Calendar_Dates)
@@ -191,17 +258,8 @@ namespace Daftari.ViewModels
                         if (date_visit.Any())
                         {
                             obj.Visits = date_visit;
-                            //obj.OnNotify("Visits");
-                            //if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
-                            //{
-                            //    obj.OnNotify("Visits");
-                            //}
                             obj.HasEvent = true;                            
                         }
-                        //else
-                        //{
-                        //    obj.HasEvent = false;
-                        //}
                     }
                 }
 
@@ -218,25 +276,64 @@ namespace Daftari.ViewModels
             //OnPropertyChanged("IsRunning");
         }
 
-        void SimulateVisits()
+        public async Task CancelSession(Visit item)
         {
-            var _visits_data = GetVisits();
-            Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
-            var visits = _visits_data.GroupBy(x => x.StartAt.Value.Date).ToList();
-            foreach (var obj in Calendar_Dates)
+            try
             {
-                var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
-                if (date_visit.Any())
+                IsRunning = true;
+                var response = await Pike13AccessHelper.CancelVisit(new { item.VisitID }, new CancellationTokenSource());
+                IsRunning = false;
+
+                if (response.IsSuccess)
                 {
-                    obj.Visits = date_visit;
-                    if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
+                    //Visits.RemoveAll(x => x.VisitID == item.VisitID);
+                    Visits.Remove(item);
+                    OnPropertyChanged("Visits");
+                    foreach (var obj in Calendar_Dates)
                     {
-                        obj.OnNotify("Visits");
+                        if ((obj.Visits?.Any() ?? false) && obj.Visits.Contains(item))
+                        {
+                            obj.Visits.Remove(item);
+                            if (!obj.Visits.Any())
+                            {
+                                obj.HasEvent = false;
+                            }
+                            //obj.Visits.RemoveAll(x => x.VisitID == item.VisitID);
+                            break;
+                        }
                     }
-                    obj.HasEvent = true;
                 }
+                //else
+                //{
+                //    DependencyService.Get<IMessage>().LongAlert(response.Message);
+                //}
+                DependencyService.Get<IMessage>().LongAlert(response.Message);
+
+            } catch (Exception ex)
+            {
+
             }
+            //check in invest (Dero)
         }
+        //void SimulateVisits()
+        //{
+        //    var _visits_data = GetVisits();
+        //    Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
+        //    var visits = _visits_data.GroupBy(x => x.StartAt.Value.Date).ToList();
+        //    foreach (var obj in Calendar_Dates)
+        //    {
+        //        var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
+        //        if (date_visit.Any())
+        //        {
+        //            obj.Visits = date_visit;
+        //            if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
+        //            {
+        //                obj.OnNotify("Visits");
+        //            }
+        //            obj.HasEvent = true;
+        //        }
+        //    }
+        //}
 
         private List<CalendarDate> GetCalendarDates(DateTime startDate)
         {

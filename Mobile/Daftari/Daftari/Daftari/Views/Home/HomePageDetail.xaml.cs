@@ -73,5 +73,15 @@ namespace Daftari.Views.Home
 
             ViewModel.LoadDependantsCommand.Execute(null);
         }
+
+        private void SelectedVisitGrid_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != "IsVisible") return;
+            var viewModel = (Grid)sender;
+            if (!viewModel.IsVisible)
+                viewModel.ScaleY = 0;
+            else
+                viewModel.ScaleYTo(1, 250);
+        }
     }
 }

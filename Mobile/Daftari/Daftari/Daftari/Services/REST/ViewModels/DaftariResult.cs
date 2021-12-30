@@ -11,4 +11,9 @@ namespace Daftari.Services.REST.ViewModels
 
         public bool IsSuccess { get; set; }
     }
+
+    public class ErrorResult
+    {
+        public string Message { get; set; }
+    }
 }

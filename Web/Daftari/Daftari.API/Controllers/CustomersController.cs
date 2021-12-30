@@ -35,5 +35,6 @@ namespace Daftari.API.Controllers
                 return Ok(new DaftariResult<object>() { Body = data, IsSuccess = true });
             }
         }
+
     }
 }

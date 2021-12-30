@@ -23,7 +23,7 @@ namespace Daftari.API.Controllers
         [Authorize]
         [HttpGet]
         [Route("api/pike13access/getschedule")]
-        public async Task<IHttpActionResult> GetSchedule(int Year, int Month, int PersonID)//(DateTime from, DateTime to, long? staff_member_ids)
+        public async Task<IHttpActionResult> GetSchedule(int Year, int Month, int PersonID)
         {
             var visits = new List<Visit>();
 
@@ -81,6 +81,70 @@ namespace Daftari.API.Controllers
 
                 return Ok(new DaftariResult<object>() { Body = data, IsSuccess = true });
             }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("api/pike13access/cancelvisit")]
+        public async Task<IHttpActionResult> CancelVisit([FromBody]VisitVM model)
+        {
+            try
+            {
+                using (Pike13ApiContext db = new Pike13ApiContext())
+                {
+                    var visit = await db.Visits.FindAsync(model.VisitID);
+                    if (visit == null || visit.State == VisitState.Late_Canceled.GetDisplay() || visit.State != VisitState.Registered.GetDisplay())
+                        return Ok(new DaftariResult<string>() { Body = "Visit successfully cancelled", IsSuccess = true });
+
+                    var user = TokenProvider.GetProvider().GetUserData(User.Identity.Name);
+                    var dependants = new List<long?>();
+                    ////get by username
+                    using (AquaCardsEntities _db = new AquaCardsEntities())
+                    {
+                        var _customer = await _db.Customers.Where(x => x.SubDomain == user.Subdomain && x.ExternalReference == user.PersonID).Select(x => x.Dependants).ToListAsync();
+                        dependants = _customer.Select(c => c?.Split(',')).SelectMany(c => c).Where(c => !string.IsNullOrEmpty(c)).Select(c => (long?)long.Parse(c)).ToList();
+                    }
+
+                    if (!dependants.Contains(visit.PersonID))
+                    {
+                        return Content(HttpStatusCode.BadRequest, new DaftariResult<string>() { Body = "Invalid Dependant", IsSuccess = false });
+                        //return BadRequest("Invalid Dependant");
+                    }
+
+                    var new_visit = await new Pike13ApiRepo(User.Identity.Name).PutVisitAsync(model.VisitID, "late_cancel");
+
+                    if ((new_visit?.Any() ?? false) && new_visit[0].state != visit.State)
+                    {
+                        var pike_visit = new_visit.First();
+
+                        visit.CancelledAt = pike_visit.cancelled_at;
+                        visit.CompletedAt = pike_visit.completed_at;
+                        visit.Paid = pike_visit.paid;
+                        visit.PaidForBy = pike_visit.paid_for_by;
+                        visit.PersonID = pike_visit.person_id;
+                        visit.PunchID = pike_visit.punch_id;
+                        visit.State = pike_visit.state;
+                        visit.Status = pike_visit.status;
+                        visit.UpdatedAt = pike_visit.updated_at;
+                        visit.AuditDetail.LastModifiedDate = DateTime.Now;
+                        db.Entry(visit).State = EntityState.Modified;
+                        await db.SaveChangesAsync();                        
+                    }
+                    return Ok(new DaftariResult<string>() { Body = "Visit successfully cancelled", IsSuccess = true });
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.Message.Contains("404")) // not found
+                    return Ok(new DaftariResult<string>() { Body = "Visit successfully cancelled", IsSuccess = true });
+            }
+            //catch (Exception)
+            //{
+            //    return BadRequest();
+            //}
+
+            return Content(HttpStatusCode.BadRequest, new DaftariResult<string>() { Body = "Failed to cancel class", IsSuccess = false });
+            //return BadRequest("Internal Server Error");
         }
     }
 }
