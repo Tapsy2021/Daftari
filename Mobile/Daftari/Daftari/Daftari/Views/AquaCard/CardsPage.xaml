@@ -11,174 +11,203 @@
              BackgroundColor="White"
              x:Name="currentPage">
     <ContentPage.Content>
-        <StackLayout>
-            <AbsoluteLayout>
-                <Image Source="aqua_cards_title.png" 
-                       HeightRequest="110"
-                       Aspect="Fill"></Image>
-                <Label Text="Aqua Cards" 
-                       TextColor="#1E3565" 
-                       FontSize="22" 
-                       FontFamily="Gotham-Medium"
-                       VerticalOptions="Center"
-                       VerticalTextAlignment="Start"
-                       HorizontalTextAlignment="Start"
-                       AbsoluteLayout.LayoutFlags="PositionProportional"
-                       AbsoluteLayout.LayoutBounds="1.0,0,250,70"/>
-                <Image Source="black_arrow.png" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.07,0.14,20,20"/>
-            </AbsoluteLayout>
-            <IndicatorView x:Name="indicatorView"
-                           IndicatorsShape="Circle"
-                           IndicatorColor="#A8D0E6"
-                           SelectedIndicatorColor="#e9f2f7"
-                           IndicatorSize="10"
-                           HorizontalOptions="Center" />
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
+                        AbsoluteLayout.LayoutFlags="All"
+                        BackgroundColor="Transparent" Padding="0">
+                <AbsoluteLayout>
+                    <Image Source="aqua_cards_title.png" 
+                           HeightRequest="100"
+                           Aspect="Fill"/>
+                    <Label Text="Aqua Cards" 
+                           TextColor="#1E3565" 
+                           FontSize="22" 
+                           FontFamily="Gotham-Medium"
+                           VerticalOptions="Center"
+                           VerticalTextAlignment="Start"
+                           HorizontalTextAlignment="Start"
+                           AbsoluteLayout.LayoutFlags="PositionProportional"
+                           AbsoluteLayout.LayoutBounds="1.0,0,250,70"/>
+                    <Image Source="black_arrow.png" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.05,0.27,20,20">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding TapCommand}" CommandParameter="Back" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </AbsoluteLayout>
+                <IndicatorView x:Name="indicatorView"
+                               IndicatorsShape="Circle"
+                               IndicatorColor="#A8D0E6"
+                               SelectedIndicatorColor="#e9f2f7"
+                               IndicatorSize="10"
+                               HorizontalOptions="Center" />
             
-            <CarouselView ItemsSource="{Binding Cards}" Position="{Binding Position, Mode=TwoWay}"
-                          IndicatorView="indicatorView"
-                          BackgroundColor="Transparent">
-                <CarouselView.ItemTemplate>
-                    <DataTemplate>
-                        <StackLayout BackgroundColor="Transparent">
-                            <StackLayout>
-                                <forms:ChartView Chart="{Binding Chart}"
-                                                 VerticalOptions="Start" 
-                                                 HorizontalOptions="Center" 
-                                                 HeightRequest="300" 
-                                                 WidthRequest="300"/>
+                <CarouselView ItemsSource="{Binding Cards}" Position="{Binding Position, Mode=TwoWay}"
+                              IndicatorView="indicatorView"
+                              BackgroundColor="Transparent">
+                    <CarouselView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout BackgroundColor="Transparent">
+                                <StackLayout>
+                                    <StackLayout IsVisible="{Binding IsChartVisible}"
+                                                 PropertyChanged="ChartView_PropertyChanged">
+                                        <forms:ChartView Chart="{Binding Chart}"                                                 
+                                                     VerticalOptions="Start" 
+                                                     HorizontalOptions="Center" 
+                                                     HeightRequest="220" 
+                                                     WidthRequest="220"/>
+                                    </StackLayout>
+                                    <StackLayout Margin="0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="10*"/>
+                                                <ColumnDefinition Width="80*"/>
+                                                <ColumnDefinition Width="10*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="23"/>
+                                            </Grid.RowDefinitions>
 
-                                <Image Source="{Binding LevelImage}"
-                                       HeightRequest="28"/>
+                                            <ImageButton Source="tab_back_arrow.png"
+                                                         BackgroundColor="Transparent" 
+                                                         Padding="15,0,0,0"
+                                                         Clicked="OnSkillBack_Clicked"/>
 
-                                <Label VerticalOptions="Center"
-                                        FontFamily="Roboto-Medium"
-                                        Text="SKILL SET"
-                                        TextColor="Red"
-                                        FontSize="16"
-                                        Margin="17,0"
-                                        VerticalTextAlignment="Center" />
+                                            <Label Grid.Column="1" 
+                                                   Text="{Binding StudentName}" 
+                                                   FontSize="20" 
+                                                   FontFamily="Gotham-Medium"
+                                                   VerticalOptions="Center"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Center"/>
 
-                                <Label TextColor="#012550" 
-                                        FontSize="16" 
-                                        FontFamily="Gotham-Medium"
-                                        Padding="17,0"
-                                        VerticalOptions="Center"
-                                        VerticalTextAlignment="Center"
-                                        HorizontalTextAlignment="Start">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="The focus of Level " />
-                                            <Span Text="{Binding LevelNumber}"/>
-                                            <Span Text=" is "/>
-                                            <Span TextColor="{Binding Focus_Color}" Text="{Binding Focus}"/>
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
+                                            <ImageButton Grid.Column="2" 
+                                                         Source="tab_forward_arrow.png"
+                                                         BackgroundColor="Transparent" 
+                                                         Margin="0"
+                                                         Padding="0,0,15,0"
+                                                         Clicked="OnSkillNext_Clicked"/>
+                                        </Grid>
 
-                                <ListView BackgroundColor="White"
-                                            IsGroupingEnabled="True"
-                                            IsPullToRefreshEnabled="False"
-                                            SeparatorVisibility="None"
-                                            HasUnevenRows="True"
-                                            ItemsSource="{Binding DifficultyDetails}">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <renderers:CustomViewCell>
-                                                <Grid Padding="17,0" BackgroundColor="{Binding .Color}"  VerticalOptions="FillAndExpand">
-                                                    <Label VerticalOptions="Center"
-                                                            FontFamily="Roboto-Medium"
-                                                            Text="{Binding .SetName}"
-                                                            TextColor="White"
-                                                            FontSize="12"
-                                                            Margin="0,5"
-                                                            VerticalTextAlignment="Center" />
-                                                </Grid>
-                                            </renderers:CustomViewCell>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                    <ListView.GroupHeaderTemplate>
-                                        <DataTemplate>
-                                            <ViewCell>
-                                                <Grid Padding="17,10" BackgroundColor="{Binding Color}">
-                                                    <Label Text="{Binding DifficultyName}"
-                                                            FontFamily="Gotham-Bold"
-                                                            TextColor="White"
-                                                            FontSize="16"
-                                                            VerticalTextAlignment="Center" />
-                                                    <Image x:Name="ImgA" Source="{Binding StateIcon}"  Margin="0,0,5,0" HeightRequest="20" WidthRequest="20" HorizontalOptions="End"/>
-                                                    <Grid.GestureRecognizers>
-                                                        <TapGestureRecognizer Command="{Binding Source={x:Reference currentPage}, Path=BindingContext.ExpandCollapseCommand}"  NumberOfTapsRequired="1" CommandParameter="{Binding .}"/>
-                                                    </Grid.GestureRecognizers>
-                                                </Grid>
-                                            </ViewCell>
-                                        </DataTemplate>
-                                    </ListView.GroupHeaderTemplate>
-                                </ListView>
+                                        <Image Source="{Binding LevelImage}"
+                                               HeightRequest="25"/>
 
-                                <!--<CarouselView ItemsSource="{Binding DifficultyDetails}" Position="{Binding Position, Mode=TwoWay}"  
-                                              IsSwipeEnabled="False"
-                                              BackgroundColor="Transparent">
-                                    <CarouselView.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackLayout BackgroundColor="Transparent">
+                                        <Label VerticalOptions="Center"
+                                                FontFamily="Roboto-Medium"
+                                                Text="SKILL SET"
+                                                TextColor="Red"
+                                                FontSize="14"
+                                                Margin="17,0"
+                                                VerticalTextAlignment="Center" />
 
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="10*"/>
-                                                        <ColumnDefinition Width="80*"/>
-                                                        <ColumnDefinition Width="10*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="23"/>
-                                                    </Grid.RowDefinitions>
+                                        <Label TextColor="#012550" 
+                                                FontSize="14" 
+                                                FontFamily="Gotham-Medium"
+                                                Padding="17,0,0,0"
+                                                VerticalOptions="Center"
+                                                VerticalTextAlignment="Center"
+                                                HorizontalTextAlignment="Start">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="The focus of Level " />
+                                                    <Span Text="{Binding LevelNumber}"/>
+                                                    <Span Text=" is "/>
+                                                    <Span TextColor="{Binding Focus_Color}" Text="{Binding Focus}"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
 
-                                                    <ImageButton Source="carousel_back_arrow.png"
-                                                                 BackgroundColor="Transparent" 
-                                                                 Margin="15,0,0,0"
-                                                                 Clicked="OnSkillBack_Clicked"/>
+                                        <ListView BackgroundColor="White"
+                                                    IsGroupingEnabled="True"
+                                                    IsPullToRefreshEnabled="False"
+                                                    SeparatorVisibility="None"
+                                                    HasUnevenRows="True"
+                                                    ItemsSource="{Binding DifficultyDetails}">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <renderers:CustomViewCell>
+                                                        <Grid Padding="17,0" BackgroundColor="{Binding .Color}"  VerticalOptions="FillAndExpand">
+                                                            <Label VerticalOptions="Center"
+                                                                    FontFamily="Roboto-Medium"
+                                                                    Text="{Binding .SetName}"
+                                                                    TextColor="White"
+                                                                    FontSize="12"
+                                                                    Margin="0,5"
+                                                                    VerticalTextAlignment="Center" />
+                                                        </Grid>
+                                                    </renderers:CustomViewCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                            <ListView.GroupHeaderTemplate>
+                                                <DataTemplate>
+                                                    <ViewCell Height="50">
+                                                        <Grid Padding="17,10" BackgroundColor="{Binding Color}">
+                                                            <Label Text="{Binding DifficultyName}"
+                                                                    FontFamily="Gotham-Bold"
+                                                                    TextColor="White"
+                                                                    FontSize="16"
+                                                                    VerticalTextAlignment="Center" />
+                                                            <Image x:Name="ImgA" Source="{Binding StateIcon}"  Margin="0,0,5,0" HeightRequest="20" WidthRequest="20" HorizontalOptions="End"/>
+                                                            <Grid.GestureRecognizers>
+                                                                <TapGestureRecognizer Command="{Binding Source={x:Reference currentPage}, Path=BindingContext.ExpandCollapseCommand}"  NumberOfTapsRequired="1" CommandParameter="{Binding .}"/>
+                                                            </Grid.GestureRecognizers>
+                                                        </Grid>
+                                                    </ViewCell>
+                                                </DataTemplate>
+                                            </ListView.GroupHeaderTemplate>
+                                        </ListView>
+                                    </StackLayout>
+                                </StackLayout>
 
-                                                    <Label Grid.Column="1" Text="{Binding DifficultyName}" 
-                                                           TextColor="{Binding Color}" 
-                                                           FontSize="20" 
-                                                           FontFamily="Gotham-Medium"
-                                                           VerticalOptions="Center"
-                                                           VerticalTextAlignment="Center"
-                                                           HorizontalTextAlignment="Center"/>
-
-                                                    <ImageButton Grid.Column="2" Source="carousel_back_arrow.png"
-                                                                 BackgroundColor="Transparent" 
-                                                                 Margin="0,0,15,0"
-                                                                 Clicked="OnSkillNext_Clicked"/>
-
-                                                    <Label Grid.Row="1" Grid.ColumnSpan="3" TextColor="#707070" 
-                                                       FontSize="16" 
-                                                       FontFamily="Gotham-Book"
-                                                       VerticalOptions="Center"
-                                                       VerticalTextAlignment="Center"
-                                                       HorizontalTextAlignment="Center">
-                                                        <Label.FormattedText>
-                                                            <FormattedString>
-                                                                <Span Text="The focus of Level " />
-                                                                <Span Text="{Binding Level}"/>
-                                                                <Span Text=" is "/>
-                                                                <Span TextColor="{Binding Color}" Text="{Binding Focus}"/>
-                                                            </FormattedString>
-                                                        </Label.FormattedText>
-                                                    </Label>
-
-                                                </Grid>
-
-                                            </StackLayout>
-                                        </DataTemplate>
-                                    </CarouselView.ItemTemplate>
-                                </CarouselView>-->
                             </StackLayout>
+                        </DataTemplate>
+                    </CarouselView.ItemTemplate>
+                </CarouselView>
 
-                        </StackLayout>
-                    </DataTemplate>
-                </CarouselView.ItemTemplate>
-            </CarouselView>
-
-        </StackLayout>
+                <StackLayout Padding="0,-10,0,0">
+                    <renderers:CustomFrame
+                        CornerRadius="20,20,0,0"
+                        HasShadow="True"
+                        Margin="0,1,0,0"
+                        Padding="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="33*"/>
+                            <ColumnDefinition Width="34*"/>
+                            <ColumnDefinition Width="33*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="55"/>
+                        </Grid.RowDefinitions>
+                        <Image Source="icon_swim_finder.png"
+                               HeightRequest="45"
+                               WidthRequest="45"
+                               HorizontalOptions="End"/>
+                        <Image Source="icon_home.png"
+                               Grid.Column="1"
+                               HeightRequest="50"
+                               WidthRequest="50"/>
+                        <Image Source="icon_aqua_cards.png"
+                               Grid.Column="2"
+                               HeightRequest="45"
+                               WidthRequest="45"
+                               HorizontalOptions="Start"/>
+                    </Grid>
+                    </renderers:CustomFrame>
+                </StackLayout>
+                
+            </StackLayout>
+            
+            <StackLayout
+                    IsVisible="{Binding IsRunning, Mode=OneWay}"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    BackgroundColor="Gray" Opacity="0.5">
+                <ActivityIndicator
+                        IsRunning="{Binding IsRunning, Mode=OneWay}"
+                        HorizontalOptions="CenterAndExpand"
+                        VerticalOptions="CenterAndExpand"
+                        Color="Black"/>
+            </StackLayout>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

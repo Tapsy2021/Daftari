@@ -43,16 +43,6 @@ namespace Daftari.ViewModels
         
         private List<Visit> _visits { get; set; } = new List<Visit>();
         public ObservableCollection<Visit> Visits { get; private set; } = new ObservableCollection<Visit>();
-        //public List<Visit> Visits
-        //{
-        //    get => _visits;
-        //    set
-        //    {
-        //        _visits = value;
-        //        OnPropertyChanged("Visits");
-        //    }
-        //}    
-        //Used by Full Schedule Action Buttons
 
         private Visit PrevVisit { get; set; }
 
@@ -115,9 +105,6 @@ namespace Daftari.ViewModels
             //open right tab (requires listener in ui)
             _Context.OpenSchedule();
             LoadScheduleCommand.Execute(null);
-            //FetchVisits();
-            //SimulateVisits();
-
         });
 
         public ICommand VisitChangedCommand => new Command<Visit>((item) => 
@@ -151,7 +138,6 @@ namespace Daftari.ViewModels
                 {
                     await CancelSession(item);
                 }
-                //action
             }
         });
 
@@ -162,10 +148,7 @@ namespace Daftari.ViewModels
             LoadDependantsCommand = new Command(async () => await FetchDependants());
             LoadScheduleCommand = new Command(async () => await FetchVisits());
             _Context = Context;
-            //_visit_ct = new CancellationTokenSource();
-            //_dependants = GetDependants();
-            //DbHelper.Instance.SaveDependants(_dependants);
-            //Calendar_Dates = new List<CalendarDate>(); 
+
             _dependants = DbHelper.Instance.GetDependants().Result.OrderBy(x => x.CustomerID).ToList();
             Dependants = new ObservableCollection<Customer>(_dependants);
 
@@ -178,14 +161,6 @@ namespace Daftari.ViewModels
 
         public async Task FetchDependants()
         {
-            //IF NO DEPENDANTS YET THEN USE LOADING / GIF
-            //if (IsRunning)
-            //{
-            //    return;
-            //}
-            //IsRunning = true;
-            //OnPropertyChanged("IsRunning");
-
             _dependants = await CustomerHelper.GetDependantsAsync(new CancellationTokenSource());//?.OrderBy(x => x.CustomerID).ToList();
 
             var a1 = _dependants?.Select(x => x.CustomerID).Distinct().OrderBy(x => x).ToList() ?? new List<Guid>();
@@ -218,8 +193,6 @@ namespace Daftari.ViewModels
             {
                 DependencyService.Get<IMessage>().LongAlert("Failed to fetch dependants..");
             }
-            //IsRunning = false;
-            //OnPropertyChanged("IsRunning");
         }
 
         public async Task FetchVisits()
@@ -230,13 +203,7 @@ namespace Daftari.ViewModels
                 _visit_ct.Cancel();
             _visit_ct = new CancellationTokenSource();
             CalendarRunning = true;
-            //IF NO DEPENDANTS YET THEN USE LOADING / GIF
-            //if (IsRunning)
-            //{
-            //    return;
-            //}
-            //IsRunning = true;
-            //OnPropertyChanged("IsRunning");
+
             try
             {
                 var startAt = StartAt;
@@ -249,7 +216,6 @@ namespace Daftari.ViewModels
                     {
                         Visits.Add(obj);
                     }
-                    //Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
                     var visits = _visits_data.GroupBy(x => x.StartAt.Value.Date).ToList();
 
                     foreach (var obj in Calendar_Dates)
@@ -272,8 +238,6 @@ namespace Daftari.ViewModels
             {
                 CalendarRunning = false;
             }
-            //IsRunning = false;
-            //OnPropertyChanged("IsRunning");
         }
 
         public async Task CancelSession(Visit item)
@@ -286,7 +250,6 @@ namespace Daftari.ViewModels
 
                 if (response.IsSuccess)
                 {
-                    //Visits.RemoveAll(x => x.VisitID == item.VisitID);
                     Visits.Remove(item);
                     OnPropertyChanged("Visits");
                     foreach (var obj in Calendar_Dates)
@@ -298,15 +261,11 @@ namespace Daftari.ViewModels
                             {
                                 obj.HasEvent = false;
                             }
-                            //obj.Visits.RemoveAll(x => x.VisitID == item.VisitID);
                             break;
                         }
                     }
                 }
-                //else
-                //{
-                //    DependencyService.Get<IMessage>().LongAlert(response.Message);
-                //}
+
                 DependencyService.Get<IMessage>().LongAlert(response.Message);
 
             } catch (Exception ex)
@@ -315,25 +274,6 @@ namespace Daftari.ViewModels
             }
             //check in invest (Dero)
         }
-        //void SimulateVisits()
-        //{
-        //    var _visits_data = GetVisits();
-        //    Visits = _visits_data.OrderBy(x => x.StartAt).ToList();
-        //    var visits = _visits_data.GroupBy(x => x.StartAt.Value.Date).ToList();
-        //    foreach (var obj in Calendar_Dates)
-        //    {
-        //        var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
-        //        if (date_visit.Any())
-        //        {
-        //            obj.Visits = date_visit;
-        //            if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
-        //            {
-        //                obj.OnNotify("Visits");
-        //            }
-        //            obj.HasEvent = true;
-        //        }
-        //    }
-        //}
 
         private List<CalendarDate> GetCalendarDates(DateTime startDate)
         {
@@ -343,20 +283,15 @@ namespace Daftari.ViewModels
 
             foreach (var date in start.To(end))
             {
-                // Map to event occurrences
-                //Insert
                 calendar_dates.Add(new CalendarDate
                 {
                     StartAt = date,
                     EndAt = date
-                    //HasEvent = date.Day == 11,
-                    //ServiceName = date.Day == 11 ? "4 - Seahorses" : ""
                 });
             }
 
             try
             {
-                //Week_Codes = new List<string> { "S", "M", "T", "W", "T", "F", "S" };
                 var culture = CultureInfo.CurrentCulture;
                 var firstDayOfWeek = culture.DateTimeFormat.FirstDayOfWeek;
 
@@ -421,27 +356,6 @@ namespace Daftari.ViewModels
                 PhotoMD = "https://d1nqv8xdwxria6.cloudfront.net/uploads/profile_photo/image/bc52be14-7e9c-4137-aac0-cd41dc84461c/image_profile_x200.jpg"
             }
         }.ToList();
-        //public int Year
-        //{
-        //    get { return _Year; }
-        //    set { _Year = value; OnPropertyChanged("Year"); }
-        //}
-
-        //public string Year
-        //{
-        //    get { return _Year.ToString(); }
-        //}
-
-        //public int Month
-        //{
-        //    get { return _Month; }
-        //    set { _Year = value; OnPropertyChanged("Month"); }
-        //}
-
-        //public string Month
-        //{
-        //    get { return new DateTime(_Year, _Month, 1).ToString("MMMM"); }
-        //}
 
         void ButtonPressed(string btnId)
         {
@@ -449,30 +363,10 @@ namespace Daftari.ViewModels
             {
                 case "Calendar_Back":
                     StartAt = StartAt.AddMonths(-1);
-                    //Calendar_Dates.Clear();
                     var prev_month = GetCalendarDates(StartAt);
                     Calendar_Dates.Clear();
                     prev_month.ForEach(obj => Calendar_Dates.Add(obj));
                     LoadScheduleCommand.Execute(null);
-                    //SimulateVisits();
-                    //FetchVisits();
-                    //do sync
-                    //var visits = GetVisits().GroupBy(x => x.StartAt.Value.Date).ToList();
-                    //month_data.ForEach(obj =>
-                    //{
-                    //    var date_visit = visits.Where(x => x.Key == obj.StartAt.Date).SelectMany(x => x.ToList()).ToList();
-                    //    if (date_visit.Any())
-                    //    {
-                    //        obj.Visits = date_visit;
-                    //        if (obj.StartAt.Date == SelectedDate?.StartAt.Date)
-                    //        {
-                    //            obj.OnNotify("Visits");
-                    //        }
-                    //        obj.HasEvent = true;
-                    //    }
-                    //});
-
-                    //OnPropertyChanged("StartAt");
                     break;
                 case "Calendar_Forward":
                     StartAt = StartAt.AddMonths(1);                    
@@ -480,8 +374,6 @@ namespace Daftari.ViewModels
                     Calendar_Dates.Clear();
                     next_month.ForEach(obj => Calendar_Dates.Add(obj));
                     LoadScheduleCommand.Execute(null);
-                    //SimulateVisits();
-                    //FetchVisits();
                     break;
             }
         }
@@ -517,32 +409,6 @@ namespace Daftari.ViewModels
                 EndAt = new DateTime(2021, 12, 11).AddHours(14).AddMinutes(30)
             }
         };
-
-        //void ItemChanged(CalendarDate item)
-        //{
-        //    OnPropertyChanged("SelectedDate");
-        //    if (item != null)
-        //    {
-        //        //var page = Application.Current.MainPage.Navigation?.NavigationStack.Last() ?? Application.Current.MainPage;
-        //        //var target = (IChapterClickListener)page;
-        //        //_Context.OnChapterClick(item);
-
-        //        //SelectedDate = null;
-        //        //OnPropertyChanged("SelectedDate");
-        //    }
-        //}
-
-        //public List<Calendar_Date> GetCalendar_Dates(int Start, int Max) => (new List<Calendar_Date>
-        //{
-        //    new Calendar_Date
-        //    {
-        //        Date = DateTime.Today
-        //    },
-        //    new Calendar_Date
-        //    {
-        //        Date = DateTime.Today.AddDays(1)
-        //    }
-        //});
 
         public List<CalendarDate> GetCalendar_Dates(int Start, int Max) => (new List<CalendarDate>
         {

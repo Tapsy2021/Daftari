@@ -2,6 +2,7 @@
 using Daftari.ViewModels;
 using Microcharts;
 using SkiaSharp;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +20,8 @@ namespace Daftari.Models
         //Water/Boundaries/Comfort/Control/Independence/Tempo/Technique/Proficiency
         private List<string> Focus_Colors => new List<string> { "#f58220", "#ed1c24", "#8dc63f", "#006f45", "#004023", "#007db6", "#002f67", "#2e2d64", "#000000", "#000000", "#000000" };
 
+        [PrimaryKey]
+        public long StudentCardID { get; set; }
         public string Initial { get; set; }
 
         [Display(Name = "Last Name")]
@@ -74,6 +77,12 @@ namespace Daftari.Models
         public void OnNotify(string PropertyName)
         {
             OnPropertyChanged(PropertyName);
+        }
+
+        //private bool _isChartVisible;
+        public bool IsChartVisible
+        {
+            get => !DifficultyDetails?.Any(x => x.Expanded) ?? true;
         }
 
         private RadialGaugeChart _Chart;

@@ -1,5 +1,6 @@
 ﻿using Daftari.ViewModels;
 using MvvmHelpers;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,8 @@ namespace Daftari.Models
 {
     public class StudentCardDetail
     {
+        [PrimaryKey]
+        public long StudentCardDetailID { get; set; }
         public Skill Skill { get; set; }
         public bool IsComplete { get; set; }
 
