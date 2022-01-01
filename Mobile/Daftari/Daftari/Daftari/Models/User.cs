@@ -14,5 +14,6 @@ namespace Daftari.Models
         public string Token { get; set; }
         //public DateTime? LastLoggedIn { get; set; }
         public string DeviceId { get; set; }
+        public string Photo { get; set; }
     }
 }

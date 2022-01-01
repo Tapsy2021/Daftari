@@ -7,7 +7,12 @@
              x:Class="Daftari.Views.HomePageSideMenu"
              Title="Master"
              x:Name="MyMasterPage">
-  <StackLayout>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <x:String x:Key="DefaultImage">icon_avatar.png</x:String>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <StackLayout>
     <ListView x:Name="MenuItemsListView"
               SeparatorVisibility="None"
               HasUnevenRows="true"
@@ -32,10 +37,11 @@
             <RowDefinition/>
             <RowDefinition Height="7"/>
           </Grid.RowDefinitions>
-          <Image Grid.Row="1" Source="icon_avatar.png"
+          <Image Grid.Row="1" Source="{Binding Photo, FallbackValue={StaticResource DefaultImage}}"
                  HeightRequest="50" 
                  WidthRequest="50"
-                 VerticalOptions="Center" >
+                 VerticalOptions="Center"
+                 BindingContext="{Binding Source={x:Reference MyMasterPage}, Path=BindingContext}">
                 <Image.Clip>
                     <EllipseGeometry
                         Center="25,25"

@@ -83,8 +83,9 @@ namespace Daftari.API.Controllers
                         var person = TokenProvider.GetProvider().GetUserData(user.UserName);
                         var FirstName = person.PersonName?.Split(' ').FirstOrDefault() ?? user.FirstName;
                         var LastName = person.PersonName?.Split(' ').LastOrDefault() ?? user.LastName;
+                        var Photo = person?.Photo;
 
-                        return Ok(new DaftariResult<LoginResult>() { Body = new LoginResult() { AccessToken = token, FirstName = FirstName, LastName = LastName, Message = "Logged in" }, IsSuccess = true });
+                        return Ok(new DaftariResult<LoginResult>() { Body = new LoginResult() { AccessToken = token, FirstName = FirstName, LastName = LastName, Photo = Photo, Message = "Logged in" }, IsSuccess = true });
                         //    CookieHelper.StoreInCookie("Session", null, "TimezoneOffset", model.TimezoneOffset?.ToString(), System.DateTime.Today.AddYears(10));
                         //    return RedirectToLocal(returnUrl);
 

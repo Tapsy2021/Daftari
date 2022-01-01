@@ -16,6 +16,7 @@ namespace Daftari.Utils
             public static readonly string Get_Visits = "pike13access/getschedule";
             public static readonly string Cancel_Visit = "pike13access/cancelvisit";
             public static readonly string Get_Cards = "aquacards/getcards";
+            public static readonly string Get_Image = "account/initialImage";
         }
 
         public static class Keys

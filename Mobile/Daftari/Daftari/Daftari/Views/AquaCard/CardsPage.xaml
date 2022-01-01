@@ -10,6 +10,11 @@
              NavigationPage.HasNavigationBar="False"
              BackgroundColor="White"
              x:Name="currentPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <x:String x:Key="DefaultImage">icon_avatar.png</x:String>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <AbsoluteLayout>
             <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
@@ -48,14 +53,32 @@
                         <DataTemplate>
                             <StackLayout BackgroundColor="Transparent">
                                 <StackLayout>
-                                    <StackLayout IsVisible="{Binding IsChartVisible}"
-                                                 PropertyChanged="ChartView_PropertyChanged">
-                                        <forms:ChartView Chart="{Binding Chart}"                                                 
-                                                     VerticalOptions="Start" 
-                                                     HorizontalOptions="Center" 
-                                                     HeightRequest="220" 
-                                                     WidthRequest="220"/>
-                                    </StackLayout>
+                                    <RelativeLayout IsVisible="{Binding IsChartVisible}"
+                                                    PropertyChanged="ChartView_PropertyChanged"
+                                                    HeightRequest="220"
+                                                    WidthRequest="220">
+                                        <forms:ChartView Chart="{Binding Chart}"
+                                                     RelativeLayout.XConstraint="0"
+                                                     RelativeLayout.YConstraint="0"
+                                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"/>
+
+                                        <Image Source="{Binding ProfileImage, FallbackValue={StaticResource DefaultImage}}"
+                                                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.39}"
+                                                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.32}"
+                                                HeightRequest="80" 
+                                                WidthRequest="80"
+                                                BackgroundColor="Red">
+
+                                        <Image.Clip>
+                                            <EllipseGeometry
+                                                Center="40,40"
+                                                RadiusX="40"
+                                                RadiusY="40"/>
+                                        </Image.Clip>
+                                    </Image>
+                                        
+                                    </RelativeLayout>
                                     <StackLayout Margin="0">
                                         <Grid>
                                             <Grid.ColumnDefinitions>

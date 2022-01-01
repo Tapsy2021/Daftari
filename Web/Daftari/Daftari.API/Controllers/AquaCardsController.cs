@@ -29,19 +29,20 @@ namespace Daftari.API.Controllers
                 customer_ids.Add(customer.Select(x => x.CustomerID).FirstOrDefault());
 
                 var cards = db.StudentCards.Include(s => s.StudentCardDetails)
-                            .Include(c => c.Customer).Where(s => customer_ids.Contains(s.CustomerID))
-                            .OrderByDescending(s => s.Level).ToList();
-
-
+                                            .Include(c => c.Customer)
+                                            .Where(s => customer_ids.Contains(s.CustomerID))
+                                            .OrderByDescending(s => s.Level).ToList();
 
                 var data = cards.Select(x => new
                 {
                     x.StudentCardID,
                     x.Initial,
-                    x.LastName,
+                    x.Customer?.FirstName,
+                    x.Customer?.LastName,
                     x.StudentName,
                     x.BirthDate,
                     x.Level,
+                    x.Customer?.PhotoLG,
                     StudentCardDetails = x.StudentCardDetails?.Select(cd => new
                     {
                         cd.StudentCardDetailID,

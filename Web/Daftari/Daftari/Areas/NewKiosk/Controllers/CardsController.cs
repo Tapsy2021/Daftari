@@ -3,6 +3,7 @@ using Daftari.AquaCards.Models;
 using Daftari.Areas.NewKiosk.ViewModel;
 using Daftari.Handlers;
 using Daftari.Helpers;
+using LukeApps.Utilities.Helpers;
 using System;
 using System.Data;
 using System.Data.Entity;

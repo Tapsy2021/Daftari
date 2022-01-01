@@ -24,6 +24,9 @@ namespace Daftari.Models
         public long StudentCardID { get; set; }
         public string Initial { get; set; }
 
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
@@ -33,6 +36,8 @@ namespace Daftari.Models
         public DateTime? BirthDate { get; set; }
 
         public SkillLevel Level { get; set; }
+
+        public string PhotoLG { get; set; }
 
         public List<StudentCardDetail> StudentCardDetails { get; set; }
 
@@ -136,5 +141,17 @@ namespace Daftari.Models
 
         public string Focus => Level.GetDescription().ToUpper();
         public string Focus_Color => Focus_Colors[(int)Level];
+
+        public string _profileImage;
+        public string ProfileImage
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_profileImage))
+                    return _profileImage;
+                _profileImage = PhotoLG ?? $"{Constants.URLs.BaseURL}{Constants.URLs.Get_Image}?FirstName={FirstName}&LastName={LastName}";
+                return _profileImage;
+            }
+        }
     }
 }

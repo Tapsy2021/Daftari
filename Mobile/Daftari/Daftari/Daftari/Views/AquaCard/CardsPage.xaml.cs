@@ -39,11 +39,11 @@ namespace Daftari.Views.AquaCard
         private void ChartView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName != "IsVisible") return;
-            var viewModel = (StackLayout)sender;
-            if (!viewModel.IsVisible)
-                viewModel.FadeTo(0, 200);
+            var view = (RelativeLayout)sender;
+            if (!view.IsVisible)
+                view.FadeTo(0, 200);
             else
-                viewModel.FadeTo(1, 600);
+                view.FadeTo(1, 600);
         }
 
         private void OnSkillBack_Clicked(object sender, EventArgs e)
@@ -89,26 +89,26 @@ namespace Daftari.Views.AquaCard
             //}
         }
 
-        private StudentCard GetStudentCard(object sender)
-        {
-            if (sender is ImageButton)
-            {
-                try
-                {
-                    var obj = ((ImageButton)sender).BindingContext as StudentCard;
-                    if (obj != null)
-                    {
-                        if (ViewModel != null)
-                        {
-                            return ViewModel.Cards.Where(cd => cd == obj).FirstOrDefault();
-                        }
-                    }
-                }
-                catch { }
+        //private StudentCard GetStudentCard(object sender)
+        //{
+        //    if (sender is ImageButton)
+        //    {
+        //        try
+        //        {
+        //            var obj = ((ImageButton)sender).BindingContext as StudentCard;
+        //            if (obj != null)
+        //            {
+        //                if (ViewModel != null)
+        //                {
+        //                    return ViewModel.Cards.Where(cd => cd == obj).FirstOrDefault();
+        //                }
+        //            }
+        //        }
+        //        catch { }
 
-            }
-            return null;
-        }
+        //    }
+        //    return null;
+        //}
         protected override void OnAppearing()
         {
             base.OnAppearing();

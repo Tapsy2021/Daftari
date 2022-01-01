@@ -1,8 +1,12 @@
 ﻿using Daftari.API.ViewModels;
 using Daftari.AquaCards.DAL;
 using Daftari.Pike13Api.Services;
+using LukeApps.Utilities.Helpers;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -36,5 +40,22 @@ namespace Daftari.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/account/initialImage")]
+        public IHttpActionResult InitialImage(string FirstName, string LastName)
+        {
+            var stream = ImageHelper.GenerateCircle(FirstName, LastName);
+            stream.Position = 0;
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new ByteArrayContent(stream.GetBuffer())
+            };
+
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            response.Content.Headers.ContentLength = stream.Length;
+
+            return ResponseMessage(response);
+        }
     }
 }

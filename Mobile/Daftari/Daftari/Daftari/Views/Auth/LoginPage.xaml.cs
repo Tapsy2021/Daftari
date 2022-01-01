@@ -120,7 +120,8 @@ namespace Daftari.Views.Auth
                     // put other fields
                     Token = result.AccessToken,
                     FirstName = result.FirstName,
-                    LastName = result.LastName
+                    LastName = result.LastName,
+                    Photo = result.Photo
                 };
 
                 await DbHelper.Instance.SaveUser(user);
